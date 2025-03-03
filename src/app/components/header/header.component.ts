@@ -180,7 +180,7 @@ export class HeaderComponent  {
   faBars = faBars;
   faXmark = faXmark;
 
- toggleSidebar() {
+  toggleSidebar() {
    this.sidebarActive = !this.sidebarActive;
- }
+  }
 }
