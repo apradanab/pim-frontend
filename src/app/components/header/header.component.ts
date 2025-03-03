@@ -181,6 +181,6 @@ export class HeaderComponent  {
   faXmark = faXmark;
 
  toggleSidebar() {
-  this.sidebarActive = !this.sidebarActive;
-  }
+   this.sidebarActive = !this.sidebarActive;
+ }
 }
