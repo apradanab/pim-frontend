@@ -27,6 +27,9 @@ describe('HeaderComponent', () => {
     component.toggleSidebar();
     expect(component.sidebarActive).toBeTrue();
 
+    fixture.detectChanges();
+
+    component.sidebarActive = true;
     component.toggleSidebar();
     expect(component.sidebarActive).toBeFalse()
   })
