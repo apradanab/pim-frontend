@@ -46,14 +46,14 @@ import { CommonModule } from '@angular/common';
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 150px;
+    padding: 0 120px;
     background-color: #ebece9;
-    height: 102px;
+    height: 90px;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 1000;
+    z-index: 2;
     border-bottom: 2px solid #b3b3b3;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   }
@@ -64,7 +64,7 @@ import { CommonModule } from '@angular/common';
   }
 
   .logo-icon {
-    width: 87px;
+    width: 75px;
     height: auto;
     margin-right: 16px;
   }
@@ -73,7 +73,7 @@ import { CommonModule } from '@angular/common';
     display: flex;
     flex-direction: column;
     font-family: 'Carlito', sans-serif;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
     color: #17475f;
   }
@@ -86,7 +86,7 @@ import { CommonModule } from '@angular/common';
 
   .nav-option {
     padding: 10px 1px;
-    font-size: 16px;
+    font-size: 17px;
     font-family: 'Carlito', sans-serif;
     font-weight: normal;
     color: #000000;
@@ -113,18 +113,19 @@ import { CommonModule } from '@angular/common';
 
   .login-button {
     font-family: 'Carlito', sans-serif;
-    font-size: 18px;
+    font-size: 17px;
     color: #FFFFFF;
     background-color: transparent;
     border: none;
     cursor: pointer;
-    padding: 8px 16px;
+    padding: 6px 14px;
   }
 
   .login-container:active {
     background-color: transparent;
     border: 2px solid black;
     background-color: #f2f8fa;
+    padding : 3px 8px;
   }
 
   .login-button:active {

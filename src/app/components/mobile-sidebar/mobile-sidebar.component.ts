@@ -21,19 +21,18 @@ import { Component, Input } from '@angular/core';
   styles: `
   .sidebar {
       position: fixed;
-      top: 100px;
-      width: 100%;
-      height: 246px;
+      width: 45%;
+      height: 229px;
       background-color: #ebece9;
       border: 1px solid #b3b3b3;
       box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
-      transform: translateX(100%);
+      transform: translateX(225%);
       transition: transform 1s ease-in-out;
-      z-index: 1;
+      z-index: 2;
     }
 
     .sidebar.active {
-      transform: translateX(0);
+      transform: translateX(122%);
       pointer-events: auto;
     }
 
@@ -46,15 +45,15 @@ import { Component, Input } from '@angular/core';
     a {
       font-family: "Carlito", sans-serif;
       text-decoration: none;
-      font-size: 1.2rem;
+      font-size: 1rem;
       font-weight: 700;
-      color: black;
+      color: #17475f;
       border-bottom: 1px solid #ccc;
       padding: 15px 20px;
     }
 
     a:active {
-      color: #d4a517;
+      color: #1bbdbf;
     }
   `
 })
