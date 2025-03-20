@@ -22,15 +22,14 @@ describe('HeaderComponent', () => {
   });
 
   it('should toggle sidebarActive state when toggleSidebar is called', () => {
-    component.sidebarActive = false;
+    expect(component.sidebarActive).toBeFalse();
+
     component.toggleSidebar();
+    fixture.detectChanges();
     expect(component.sidebarActive).toBeTrue();
 
     component.toggleSidebar();
-    expect(component.sidebarActive).toBeFalse();
-
-    component.sidebarActive = true;
-    component.toggleSidebar();
-    expect(component.sidebarActive).toBeFalse();
+    fixture.detectChanges();
+    expect(component.sidebarActive).toBeFalse()
   })
 });

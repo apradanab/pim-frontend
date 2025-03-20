@@ -140,7 +140,7 @@ import { CommonModule } from '@angular/common';
 
   @media(max-width: 768px) {
     .header {
-      padding: 0 20px;
+      padding: 0 30px;
       justify-content: space-between;
       position: relative;
     }

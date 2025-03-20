@@ -21,32 +21,33 @@ import { Component } from '@angular/core';
   .intro-section {
     position: relative;
     text-align: center;
-    padding: 40px;
+    padding: 0 40px 60px;
     padding-top: 150px;
     background: #fcfcf9;
+    display: flex;
+    justify-content: center;
   }
 
   .grid-background {
     position: absolute;
     top: 90px;
     left: 50%;
-    transform: translateX(-50%); /* Centra la cuadrícula */
-    width: 83%; /* Tamaño de la cuadrícula */
-    height: 350px; /* Altura de la cuadrícula */
+    transform: translateX(-50%);
+    width: 83%;
+    height: 350px;
     background-image:
-      repeating-linear-gradient(90deg, #f4f2ed 0, #f4f2ed 1px, transparent 1px, transparent 100%), /* Líneas verticales */
-      repeating-linear-gradient(0deg, #f4f2ed 0, #f4f2ed 1px, transparent 1px, transparent 100%); /* Líneas horizontales */
+      repeating-linear-gradient(90deg, #f4f2ed 0, #f4f2ed 1px, transparent 1px, transparent 100%),
+      repeating-linear-gradient(0deg, #f4f2ed 0, #f4f2ed 1px, transparent 1px, transparent 100%);
     background-size: calc(100% / 16) calc(100% / 5);
-    background-position: top left;
     border-bottom: 3px solid #f4f2ed;
     border-left: 2px solid #f4f2ed;
     border-right: 2px solid #f4f2ed;
   }
 
   .content {
-    position: relative;
-    z-index: 1;
-
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .intro-section h1 {
@@ -68,9 +69,8 @@ import { Component } from '@angular/core';
   .intro-section p {
     font-family: 'Carlito', sans-serif;
     font-size: 1.3rem;
-    margin: 20px 390px;
-    position: relative;
-    bottom: 20px;
+    width: 570px;
+    z-index: 1;
   }
 
   .intro-section button {
@@ -84,7 +84,7 @@ import { Component } from '@angular/core';
     box-shadow: inset 0px -7px 2px #b64022;
     cursor: pointer;
     position: relative;
-    bottom: 29px;
+    top: 10px;
   }
 
   .intro-section button:active {
@@ -104,26 +104,29 @@ import { Component } from '@angular/core';
     }
 
     .intro-section h1 {
-      font-size: 2rem;
+      font-size: 2.5rem;
       top: 5px;
     }
 
     .intro-section h2 {
-      font-size: 1.4rem;
+      font-size: 1.8rem;
       top: 1px;
     }
 
     .intro-section p {
       margin: auto;
-      font-size: 0.8rem;
-      top: 20px;
+      font-size: 0.9rem;
+      padding: 0 35px;
+      width: 460px;
+      position: relative;
+      top: 10px;
     }
 
     .intro-section button {
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       padding: 15px 20px;
       box-shadow: inset 0px -5px 2px #b64022;
-      top: 40px;
+      top: 30px;
     }
 
     .intro-section button:active {

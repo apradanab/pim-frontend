@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'pim-mobile-sidebar',
@@ -8,7 +8,7 @@ import { Component, Input } from '@angular/core';
   template: `
     <div
       class="sidebar"
-      [ngClass]= "{ 'active': active }"
+      [ngClass]= "{ 'active': active() }"
       >
       <div class="menu">
         <a href="#">Servicios</a>
@@ -58,5 +58,5 @@ import { Component, Input } from '@angular/core';
   `
 })
 export class MobileSidebarComponent {
-  @Input() active= false;
+  active= input(false);
 }
