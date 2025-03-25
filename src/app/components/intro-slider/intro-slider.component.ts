@@ -1,11 +1,10 @@
-import { Component, input, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, input, signal, effect } from '@angular/core';
 import { Slide } from '../../models/slide.model';
 
 @Component({
   selector: 'pim-intro-slider',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
   <div class="slider-container">
     <div class="image-container">
@@ -30,12 +29,11 @@ import { Slide } from '../../models/slide.model';
       @if (indicatorsVisible()) {
         <div id="indicators">
           @for (slide of slides(); track $index) {
-            <button
-              (click)="jumpToSlide($index)"
-              class="indicator"
-              [class.active]="$index === currentSlide()"
-              [attr.aria-label]="'Ir al slide ' + ($index + 1)"
-            ></button>
+            <button (click)="jumpToSlide($index)"
+                    class="indicator"
+                    [class.active]="$index === currentSlide()"
+                    [attr.aria-label]="'Ir al slide ' + ($index + 1)">
+            </button>
           }
         </div>
       }
@@ -212,7 +210,7 @@ import { Slide } from '../../models/slide.model';
   }
   `]
 })
-export class IntroSliderComponent implements OnInit {
+export class IntroSliderComponent {
   slides = input<Slide[]>([]);
   indicatorsVisible = input(true);
   animationSpeed = input(800);
@@ -220,6 +218,21 @@ export class IntroSliderComponent implements OnInit {
   autoPlaySpeed = input(3000);
   currentSlide = signal(0);
   hidden = signal(false);
+
+  constructor() {
+
+    effect((onCleanup) => {
+
+      if(!this.autoPlay()) return;
+      const interval = setInterval(() => {
+        this.next();
+      }, this.autoPlaySpeed());
+
+      onCleanup(() => {
+        clearInterval(interval);
+      });
+    });
+  }
 
   next() {
     const nextIndex = (this.currentSlide() + 1) % this.slides().length;
@@ -233,14 +246,5 @@ export class IntroSliderComponent implements OnInit {
       this.currentSlide.set(index);
       this.hidden.set(false);
     }, this.animationSpeed());
-  }
-
-  ngOnInit() {
-    if (this.autoPlay()) {
-      setInterval(() => {
-        this.next();
-      },
-      this.autoPlaySpeed());
-    }
   }
 }

@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, flush, tick } from '@angular/core/testing';
 import { signal, WritableSignal } from '@angular/core';
 import { IntroSliderComponent } from './intro-slider.component';
 import { Slide } from '../../models/slide.model';
@@ -12,7 +12,6 @@ interface MutableIntroSliderComponent {
   hidden: WritableSignal<boolean>;
   jumpToSlide: (index: number) => void;
   next: () => void;
-  ngOnInit: () => void;
 }
 
 describe('IntroSliderComponent', () => {
@@ -34,7 +33,7 @@ describe('IntroSliderComponent', () => {
     component = fixture.componentInstance as unknown as MutableIntroSliderComponent;
 
     component.slides = signal(mockSlides);
-    component.animationSpeed = signal(50);
+    component.animationSpeed = signal(800);
     component.autoPlay = signal(false);
     component.autoPlaySpeed = signal(3000);
 
@@ -71,27 +70,25 @@ describe('IntroSliderComponent', () => {
   }));
 
   it('should autoPlay slides when enabled', fakeAsync(() => {
-    component.autoPlay.set(true);
+    component.slides = signal(mockSlides);
+    component.animationSpeed.set(0);
     component.autoPlaySpeed.set(1000);
-    component.ngOnInit();
+    component.autoPlay.set(true);
 
-    expect(component.autoPlay()).toBeTrue();
-
-    tick(500);
+    fixture.detectChanges();
+    tick();
 
     tick(1000);
-    fixture.detectChanges();
     expect(component.currentSlide()).toBe(1);
 
     tick(1000);
-    fixture.detectChanges();
     expect(component.currentSlide()).toBe(2);
 
     tick(1000);
-    fixture.detectChanges();
     expect(component.currentSlide()).toBe(0);
 
-    discardPeriodicTasks();
+    fixture.destroy();
+    flush();
   }));
 
   it('should not change slide when given an out-of-bounds index (negative)', fakeAsync(() => {
