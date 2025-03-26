@@ -1,5 +1,6 @@
-import { Component, input, signal, effect } from '@angular/core';
+import { Component, input, signal, effect, inject } from '@angular/core';
 import { Slide } from '../../models/slide.model';
+import { CloudinaryService } from '../../services/cloudinary.service';
 
 @Component({
   selector: 'pim-intro-slider',
@@ -8,7 +9,7 @@ import { Slide } from '../../models/slide.model';
   template: `
   <div class="slider-container">
     <div class="image-container">
-      <img src="assets/intro-slider-image.webp" alt="Imagen de fondo" class="background-image">
+      <img [src]="backgroundImage" alt="Imagen de fondo" class="background-image">
 
       <div class="slides">
         @for (slide of slides(); track $index) {
@@ -20,7 +21,7 @@ import { Slide } from '../../models/slide.model';
           >
             <div class="text-container">
               <h2>{{ slide.text }}</h2>
-              <img src="assets/pim-logo-inline.svg" alt="logo">
+              <img [src]="logoInline" alt="logo">
             </div>
           </div>
         }
@@ -40,7 +41,7 @@ import { Slide } from '../../models/slide.model';
     </div>
   </div>
 
-  <img src="assets/triangle-child.svg" alt="" class="overlay-image">
+  <img [src]="triangle" alt="" class="overlay-image">
   `,
   styles: [`
   :host {
@@ -219,8 +220,12 @@ export class IntroSliderComponent {
   currentSlide = signal(0);
   hidden = signal(false);
 
-  constructor() {
+  private cloudinary = inject(CloudinaryService);
+  backgroundImage = this.cloudinary.getImage('v1742986436/pim-images/intro-slider-image_i9sx5d.webp');
+  logoInline = this.cloudinary.getSvg('v1742987785/pim-images/pim-logo-inline_fitso1.svg');
+  triangle = this.cloudinary.getSvg('v1742987983/pim-images/triangle-child_wh3npr.svg');
 
+  constructor() {
     effect((onCleanup) => {
 
       if(!this.autoPlay()) return;
