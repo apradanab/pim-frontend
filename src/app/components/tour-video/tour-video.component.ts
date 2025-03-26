@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { CloudinaryService } from '../../services/cloudinary.service';
 
 @Component({
   selector: 'pim-tour-video',
@@ -33,7 +34,7 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
       </div>
     </div>
 
-    <img src="assets/star-flower.svg" alt="Imagen superpuesta" class="overlay-image" />
+    <img [src]="starFlower" alt="" class="overlay-image" />
   `,
   styles: `
     .tour-video-container {
@@ -156,5 +157,7 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
   `
 })
 export class TourVideoComponent {
+  private cloudinary = inject(CloudinaryService);
+  starFlower = this.cloudinary.getSvg('v1742987952/pim-images/star-flower_oowu4r.svg');
   faArrowRight = faArrowRight;
 }

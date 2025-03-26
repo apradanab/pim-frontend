@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faLeaf } from '@fortawesome/free-solid-svg-icons';
+import { CloudinaryService } from '../../services/cloudinary.service';
 
 @Component({
   selector: 'pim-about-me',
@@ -11,7 +12,7 @@ import { faLeaf } from '@fortawesome/free-solid-svg-icons';
       <div class="grid-background"></div>
 
       <div class="content">
-        <img src="assets/pim-logo-orange.svg" alt="Logo" class="logo">
+        <img [src]="logoOrange" alt="Logo" class="logo">
 
         <h2 class="highlight-text">
           <span class="bold">+ 12 años</span> ayudando y acompañando a niños, jóvenes y familias
@@ -167,5 +168,7 @@ import { faLeaf } from '@fortawesome/free-solid-svg-icons';
   `
 })
 export class AboutMeComponent {
+  private cloudinary = inject(CloudinaryService);
+  logoOrange = this.cloudinary.getSvg('v1742987811/pim-images/pim-logo-orange_ojgvrk.svg');
   faLeaf = faLeaf;
 }
