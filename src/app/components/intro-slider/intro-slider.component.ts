@@ -9,7 +9,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   template: `
   <div class="slider-container">
     <div class="image-container">
-      <img [src]="backgroundImage" alt="Imagen de fondo" class="background-image">
+      <img [src]="backgroundImage" width="4048" height="3036" class="background-image" alt="Niños alegres" fetchpriority="high">
 
       <div class="slides">
         @for (slide of slides(); track $index) {
@@ -21,7 +21,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
           >
             <div class="text-container">
               <h2>{{ slide.text }}</h2>
-              <img [src]="logoInline" alt="logo">
+              <img [src]="logoInline" width="500" height="500" alt="Logo">
             </div>
           </div>
         }
@@ -41,7 +41,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     </div>
   </div>
 
-  <img [src]="triangle" alt="" class="overlay-image">
+  <img [src]="triangle" width="500" height="500" class="overlay-image" alt="Triángulo" >
   `,
   styles: [`
   :host {
@@ -221,9 +221,9 @@ export class IntroSliderComponent {
   hidden = signal(false);
 
   private cloudinary = inject(CloudinaryService);
-  backgroundImage = this.cloudinary.getImage('v1742986436/pim-images/intro-slider-image_i9sx5d.webp');
-  logoInline = this.cloudinary.getSvg('v1742987785/pim-images/pim-logo-inline_fitso1.svg');
-  triangle = this.cloudinary.getSvg('v1742987983/pim-images/triangle-child_wh3npr.svg');
+  backgroundImage = this.cloudinary.image('v1742986436/pim-images/intro-slider-image_i9sx5d.webp');
+  logoInline = this.cloudinary.svg('v1742987785/pim-images/pim-logo-inline_fitso1.svg');
+  triangle = this.cloudinary.svg('v1742987983/pim-images/triangle-child_wh3npr.svg');
 
   constructor() {
     effect((onCleanup) => {

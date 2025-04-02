@@ -34,7 +34,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       </div>
     </div>
 
-    <img [src]="starFlower" alt="" class="overlay-image" />
+    <img [src]="starFlower" width="500" height="500" alt="" class="overlay-image" />
   `,
   styles: `
     .tour-video-container {
@@ -158,6 +158,6 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 })
 export class TourVideoComponent {
   private cloudinary = inject(CloudinaryService);
-  starFlower = this.cloudinary.getSvg('v1742987952/pim-images/star-flower_oowu4r.svg');
+  starFlower = this.cloudinary.svg('v1742987952/pim-images/star-flower_oowu4r.svg');
   faArrowRight = faArrowRight;
 }
