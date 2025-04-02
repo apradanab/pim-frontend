@@ -12,7 +12,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       <div class="grid-background"></div>
 
       <div class="content">
-        <img [src]="logoOrange" alt="Logo" class="logo">
+        <img [src]="logoOrange" width="500" height="500" class="logo" alt="Logo" loading="eager">
 
         <h2 class="highlight-text">
           <span class="bold">+ 12 años</span> ayudando y acompañando a niños, jóvenes y familias
@@ -168,7 +168,6 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   `
 })
 export class AboutMeComponent {
-  private cloudinary = inject(CloudinaryService);
-  logoOrange = this.cloudinary.getSvg('v1742987811/pim-images/pim-logo-orange_ojgvrk.svg');
+  logoOrange = inject(CloudinaryService).svg('v1742987811/pim-images/pim-logo-orange_ojgvrk.svg');
   faLeaf = faLeaf;
 }

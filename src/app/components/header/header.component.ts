@@ -1,9 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { MobileSidebarComponent } from "../mobile-sidebar/mobile-sidebar.component";
 import { CommonModule } from '@angular/common';
-import { CloudinaryService } from '../../services/cloudinary.service';
 
 @Component({
   selector: 'pim-header',
@@ -12,7 +11,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   template: `
     <header class="header">
       <div class="logo">
-        <img [src]="logo" alt="Logo" class="logo-icon">
+        <img src="assets/logo.svg" alt="Logo" class="logo-icon">
         <div class="logo-text">
           <span>Psicología</span>
           <span>Infantojuvenil</span>
@@ -178,8 +177,6 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   `
 })
 export class HeaderComponent  {
-  private cloudinary = inject(CloudinaryService);
-  logo = this.cloudinary.getSvg('v1742987785/pim-images/pim-logo-inline_fitso1.svg');
   sidebarActive = false;
   faBars = faBars;
   faXmark = faXmark;

@@ -14,37 +14,48 @@ describe('CloudinaryService', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('getImage()', () => {
-    it('should return URL with default optimizations when no width provided', () => {
+  describe('image()', () => {
+    it('should return URL with default optimizations', () => {
       const url = 'v123/path/image.webp';
-      const result = service.getImage(url);
+      const result = service.image(url);
       expect(result).toBe(`${CLOUDINARY_BASE}/q_auto,f_webp/${url}`);
     });
 
-    it('should include width parameter in URL when width is provided', () => {
-      const url = 'v123/path/image.webp';
-      const width = 800;
-      const result = service.getImage(url, width);
-      expect(result).toBe(`${CLOUDINARY_BASE}/q_auto,f_webp,w_${width}/${url}`);
+    it('should handle empty string URL without errors', () => {
+      const result = service.image('');
+      expect(result).toBe(`${CLOUDINARY_BASE}/q_auto,f_webp/`);
     });
 
-    it('should handle empty string URL without errors', () => {
-      const result = service.getImage('');
-      expect(result).toContain(CLOUDINARY_BASE);
+    it('should handle special characters in URL', () => {
+      const url = 'v123/path/íma ge@special.webp';
+      const result = service.image(url);
+      expect(result).toBe(`${CLOUDINARY_BASE}/q_auto,f_webp/${url}`);
     });
   });
 
-  describe('getSvg()', () => {
-    it('should return direct SVG URL without any transformations', () => {
+  describe('svg()', () => {
+    it('should return direct SVG URL without transformations', () => {
       const url = 'v123/path/icon.svg';
-      const result = service.getSvg(url);
+      const result = service.svg(url);
       expect(result).toBe(`${CLOUDINARY_BASE}/${url}`);
     });
 
-    it('should preserve existing query parameters in SVG URLs', () => {
+    it('should preserve existing query parameters', () => {
       const url = 'v123/path/icon.svg?param=value';
-      const result = service.getSvg(url);
+      const result = service.svg(url);
       expect(result).toBe(`${CLOUDINARY_BASE}/${url}`);
     });
+
+    it('should handle SVG URLs with special characters', () => {
+      const url = 'v123/path/ícon@special.svg';
+      const result = service.svg(url);
+      expect(result).toBe(`${CLOUDINARY_BASE}/${url}`);
+    });
+  });
+
+  it('should not include width parameter in image URLs', () => {
+    const url = 'v123/path/image.webp';
+    const result = service.image(url);
+    expect(result).not.toContain('w_');
   });
 });

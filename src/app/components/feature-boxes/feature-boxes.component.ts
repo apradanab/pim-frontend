@@ -21,7 +21,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
         </button>
 
         <div class="admin-image">
-          <img [src]="lydiaImage" alt="Psicóloga" />
+          <img [src]="lydiaImg" width="894" height="984" alt="Psicóloga Lydia" loading="eager" decoding="async" />
         </div>
 
         <h2 class="text-left">Psicóloga</h2>
@@ -32,10 +32,9 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     <div class="bento-box bento-box-2">
       <h2>Todo niño merece crecer en un ambiente de apoyo</h2>
       <div class="icons-container">
-        <img [src]="icons.doubleCircle" class="circle" alt="" />
-        <img [src]="icons.star" class="star" alt="" />
-        <img [src]="icons.flower" class="flower" alt="" />
-        <img [src]="icons.heart" class="heart" alt="" />
+        @for (icon of icons; track icon.name) {
+          <img [src]="icon.src" [class]="icon.class" [alt]="icon.alt" width="500" height="500" loading="lazy"/>
+        }
       </div>
     </div>
   </div>
@@ -258,13 +257,36 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   `
 })
 export class FeatureBoxesComponent {
-  faLightbulb = faLightbulb;
   private cloudinary = inject(CloudinaryService);
-  lydiaImage = this.cloudinary.getImage('v1742987718/pim-images/Lydia_o0fwbi.webp', 200);
-  icons = {
-    doubleCircle: this.cloudinary.getSvg('v1742987877/pim-images/purple-doble-circle_vgbgeq.svg'),
-    star: this.cloudinary.getSvg('v1742987918/pim-images/purple-star_sztmgu.svg'),
-    flower: this.cloudinary.getSvg('v1742987854/pim-images/mom-flower_hjh8tr.svg'),
-    heart: this.cloudinary.getSvg('v1742987898/pim-images/purple-heart_s2odmn.svg')
-  };
+
+  lydiaImg = this.cloudinary.image('v1742987718/pim-images/Lydia_o0fwbi.webp');
+
+  icons = [
+    {
+      src: this.cloudinary.svg('v1742987877/pim-images/purple-doble-circle_vgbgeq.svg'),
+      class: 'circle',
+      alt: 'Doble círculo',
+      name: 'doubleCircle'
+    },
+    {
+      src: this.cloudinary.svg('v1742987918/pim-images/purple-star_sztmgu.svg'),
+      class: 'star',
+      alt: 'Estrella',
+      name: 'star'
+    },
+    {
+      src: this.cloudinary.svg('v1742987854/pim-images/mom-flower_hjh8tr.svg'),
+      class: 'flower',
+      alt: 'Estrella',
+      name: 'flower'
+    },
+    {
+      src: this.cloudinary.svg('v1742987898/pim-images/purple-heart_s2odmn.svg'),
+      class:  'heart',
+      alt: 'Corazón',
+      name: 'heart'
+    },
+  ]
+
+  faLightbulb = faLightbulb;
 }
