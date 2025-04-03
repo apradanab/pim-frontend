@@ -21,8 +21,8 @@ import { Component, input } from '@angular/core';
   styles: `
   .sidebar {
       position: fixed;
-      width: 45%;
-      height: 229px;
+      width: 50%;
+      height: 232px;
       background-color: #ebece9;
       border: 1px solid #b3b3b3;
       box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
@@ -32,7 +32,7 @@ import { Component, input } from '@angular/core';
     }
 
     .sidebar.active {
-      transform: translateX(122%);
+      transform: translateX(100%);
       pointer-events: auto;
     }
 
@@ -50,10 +50,6 @@ import { Component, input } from '@angular/core';
       color: #17475f;
       border-bottom: 1px solid #ccc;
       padding: 15px 20px;
-    }
-
-    a:active {
-      color: #1bbdbf;
     }
   `
 })

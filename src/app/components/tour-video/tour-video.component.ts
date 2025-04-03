@@ -81,7 +81,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     }
 
     .info-text p {
-      font-size: 1.20rem;
+      font-size: 1.15rem;
       line-height: 0.9;
       color: black;
     }
@@ -121,8 +121,9 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       top: 490px;
       right: 80px;
       width: 120px;
+      height: 120px;
       transform: rotate(25deg);
-      z-index: 2;
+      z-index: 1;
     }
     @media (max-width: 768px) {
       .tour-video-container {
@@ -152,6 +153,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
         top: -20px;
         right: -40px;
         width: 75px;
+        height: 75px;
       }
     }
   `

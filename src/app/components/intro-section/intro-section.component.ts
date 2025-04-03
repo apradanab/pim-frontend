@@ -55,7 +55,7 @@ import { Component } from '@angular/core';
     font-weight: normal;
     font-size: 4.8rem;
     position: relative;
-    bottom: 10px;
+    bottom: 20px;
   }
 
   .intro-section h2 {
@@ -63,7 +63,7 @@ import { Component } from '@angular/core';
     font-weight: normal;
     font-size: 3.8rem;
     position: relative;
-    bottom: 15px;
+    bottom: 25px;
   }
 
   .intro-section p {
@@ -71,6 +71,8 @@ import { Component } from '@angular/core';
     font-size: 1.3rem;
     width: 570px;
     z-index: 1;
+    position: relative;
+    bottom: 13px;
   }
 
   .intro-section button {

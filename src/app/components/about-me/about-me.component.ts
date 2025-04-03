@@ -76,6 +76,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
   .logo {
     width: 80px;
+    height: 80px;
     margin-bottom: 20px;
     position: relative;
     bottom: 58px;
@@ -144,6 +145,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
     .logo {
       width: 55px;
+      height: 55px;
       margin-top: 20px;
     }
 

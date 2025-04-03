@@ -50,8 +50,6 @@ import { CommonModule } from '@angular/common';
     background-color: #ebece9;
     height: 90px;
     position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
     z-index: 2;
     border-bottom: 2px solid #b3b3b3;
@@ -65,7 +63,6 @@ import { CommonModule } from '@angular/common';
 
   .logo-icon {
     width: 75px;
-    height: auto;
     margin-right: 16px;
   }
 
@@ -73,7 +70,7 @@ import { CommonModule } from '@angular/common';
     display: flex;
     flex-direction: column;
     font-family: 'Carlito', sans-serif;
-    font-size: 20px;
+    font-size: 1.3rem;
     font-weight: bold;
     color: #17475f;
   }
@@ -81,28 +78,24 @@ import { CommonModule } from '@angular/common';
   .nav-options {
     display: flex;
     gap: 20px;
-    margin-right: 200px;
+    margin-right: 280px;
   }
 
   .nav-option {
-    padding: 10px 1px;
-    font-size: 17px;
+    font-size: 1.06rem;
     font-family: 'Carlito', sans-serif;
-    font-weight: normal;
-    color: #000000;
+    color: #2f2929;
     text-decoration: none;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: background-color 0.15s ease, transform 0.1s ease;
     border-radius: 30px;
     padding: 5px 10px;
   }
 
   .nav-option:hover {
     background-color: #f2f8fa;
+    color: #17475f;
     border-radius: 30px;
-    transform: scale(1.05);
+    transform: scale(1.02);
   }
 
   .login-container {
@@ -113,8 +106,8 @@ import { CommonModule } from '@angular/common';
 
   .login-button {
     font-family: 'Carlito', sans-serif;
-    font-size: 17px;
-    color: #FFFFFF;
+    font-size: 1.06rem;
+    color: #f2f8fa;
     background-color: transparent;
     border: none;
     cursor: pointer;
@@ -126,12 +119,12 @@ import { CommonModule } from '@angular/common';
     border: 2px solid black;
     background-color: #f2f8fa;
     padding : 3px 8px;
+    border-color: #17475f;
   }
 
   .login-button:active {
-    color: black;
-    transform: scale(1);
-    transition: all 0.2s ease;
+    color: #17475f;
+    transition: all 0.15s ease;
   }
 
   .burger-menu {
@@ -141,12 +134,11 @@ import { CommonModule } from '@angular/common';
   @media(max-width: 768px) {
     .header {
       padding: 0 30px;
-      justify-content: space-between;
       position: relative;
     }
 
     .logo-text {
-      font-size: 1rem;
+      font-size: 1.2rem;
     }
 
     .nav-options {
@@ -159,12 +151,13 @@ import { CommonModule } from '@angular/common';
 
     .burger-menu {
       display: block;
-      font-size: 1.5rem;
+      min-width: 45px;
+      min-height: 53px;
+      font-size: 1.85rem;
       color: #f2f8fa;
       background-color: #2f2929;
       border-radius: 10px;
-      padding: 10px;
-      transition: background-color 0.3s ease,
+      transition: background-color 0.2s ease,
       transform 0.2s ease;
     }
 
@@ -173,6 +166,7 @@ import { CommonModule } from '@angular/common';
       border: 2px solid black;
       background-color: #f2f8fa;
     }
+
   }
   `
 })
