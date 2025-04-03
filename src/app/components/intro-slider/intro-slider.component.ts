@@ -161,6 +161,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   .overlay-image {
     position: absolute;
     width: 95px;
+    height: 95px;
     top: 452px;
     left: 140px;
   }
@@ -205,6 +206,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
     .overlay-image {
       width: 60px;
+      height: 60px;
       top: 325px;
       left: 63px;
     }

@@ -76,10 +76,6 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     left: 20px;
   }
 
-  .bento-box-1 h2.text-left {
-
-  }
-
   .bento-box-1 h3 {
     font-family: 'Carlito', sans-serif;
     font-size: 2.2rem;
@@ -144,44 +140,41 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     color: black;
     line-height: 0.8;
     position: relative;
-    bottom: 30px;
+    bottom: 35px;
   }
 
   .icons-container {
-    margin-top: 20px;
-  }
+    position: relative;
 
-  .icons-container img {
-    object-fit: contain;
-  }
+    img {
+      position: absolute;
 
-  .circle {
-    width: 25px;
-    position: absolute;
-    bottom: 50px;
-    left: 70px;
-  }
+      &.circle {
+        width: 25px;
+        left: -70px;
+        bottom: -250px;
+      }
 
-  .star {
-    width: 21px;
-    position: absolute;
-    right: 140px;
-    bottom: 30px;
-  }
+      &.star {
+        width: 21px;
+        right: 3px;
+        bottom: -280px;
+      }
 
-  .flower {
-    width: 120px;
-    position: absolute;
-    right: 20px;
-    bottom: 5px;
-  }
+      &.flower {
+        width: 120px;
+        height: 120px;
+        left: 2px;
+        bottom: -60px;
+      }
 
-  .heart {
-    width: 30px;
-    position: absolute;
-    top: 25px;
-    right: 30px;
-    transform: rotate(-40deg)
+      &.heart {
+        width: 30px;
+        top: -380px;
+        right: -100px;
+        transform: rotate(-30deg)
+      }
+    }
   }
   @media (max-width: 768px) {
     .feature-boxes-container {
@@ -232,26 +225,31 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       font-size: 1.53rem;
     }
 
-    .circle {
-      width: 18px;
-      left: 50px;
-    }
+    .icons-container {
+      img {
+        &.circle {
+          width: 18px;
+          left: -50px;
+        }
 
-    .star {
-      width: 15px;
-      right: 100px;
-    }
+        &.star {
+          width: 15px;
+          right: 0px;
+        }
 
-    .flower {
-      width: 100px;
-      right: 5px;
-      bottom: 10px;
-    }
+        &.flower {
+          width: 100px;
+          height: 100px;
+          left: -5px;
+          bottom: -50px;
+        }
 
-    .heart {
-      width: 22px;
-      top: 20px;
-      right: 20px;
+        &.heart {
+          width: 22px;
+          top: -355px;
+          right: -80px;
+        }
+      }
     }
   }
   `
