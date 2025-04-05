@@ -9,6 +9,7 @@ describe('ServicesShowcaseComponent', () => {
   let component: ServicesShowcaseComponent;
   let fixture: ComponentFixture<ServicesShowcaseComponent>;
   let mockStateService: Partial<StateService>;
+
   const mockServices: Service[] = [
     {
       id: '1',
@@ -18,12 +19,24 @@ describe('ServicesShowcaseComponent', () => {
       image: 'image1.jpg',
       createdAt: new Date(),
       updatedAt: new Date()
+    },
+    {
+      id: '2',
+      title: 'Terapia 2',
+      description: 'Descripción 2',
+      content: 'Contenido 2',
+      image: 'image2.jpg',
+      createdAt: new Date(),
+      updatedAt: new Date()
     }
   ];
 
   beforeEach(async () => {
     mockStateService = {
-      services: signal(mockServices),
+      state$: signal({
+        services: mockServices,
+        currentService: null
+      }),
       loadServices: jasmine.createSpy('loadServices')
     };
 
@@ -50,11 +63,36 @@ describe('ServicesShowcaseComponent', () => {
   it('should display services', () => {
     fixture.detectChanges();
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('h3').textContent).toContain('Terapia 1');
+    const serviceTitles = compiled.querySelectorAll('h3');
+    expect(serviceTitles.length).toBe(2);
+    expect(serviceTitles[0].textContent).toContain('Terapia 1');
+    expect(serviceTitles[1].textContent).toContain('Terapia 2');
   });
 
   it('should have correct service styles', () => {
     expect(component.serviceStyles.length).toBe(3);
     expect(component.serviceStyles[0].bgColor).toBe('#fea087');
+    expect(component.serviceStyles[1].tags).toContain('Grupos abiertos');
+  });
+
+  it('should apply correct styles based on index', () => {
+    const style1 = component.getServiceStyle(0);
+    const style2 = component.getServiceStyle(1);
+    const style3 = component.getServiceStyle(2);
+    const style4 = component.getServiceStyle(3);
+
+    expect(style1.bgColor).toBe('#fea087');
+    expect(style2.bgColor).toBe('#e0f15e');
+    expect(style3.bgColor).toBe('#b7a8ed');
+    expect(style4.bgColor).toBe('#fea087');
+  });
+
+  it('should render service images', () => {
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement;
+    const images = compiled.querySelectorAll('img');
+    expect(images.length).toBe(2);
+    expect(images[0].src).toContain('image1.jpg');
+    expect(images[1].alt).toBe('Terapia 2');
   });
 });

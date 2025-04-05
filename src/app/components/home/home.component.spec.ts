@@ -10,7 +10,7 @@ describe('HomeComponent', () => {
       imports: [HomeComponent],
       providers: [
         provideRouter([]),
-        provideHttpClient(), 
+        provideHttpClient(),
         provideHttpClientTesting()
       ]
     }).compileComponents();
