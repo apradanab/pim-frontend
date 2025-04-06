@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { StateService } from './state.service';
 import { ServicesRepoService } from './services.repo.service';
 import { Service } from '../models/service.model';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 describe('StateService', () => {
@@ -15,7 +15,7 @@ describe('StateService', () => {
       title: 'Terapia 1',
       description: 'Descripción 1',
       content: 'Contenido 1',
-      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg==',
+      image: 'data:image/png;base64,...',
       createdAt: new Date(),
       updatedAt: new Date()
     }
@@ -26,7 +26,7 @@ describe('StateService', () => {
     title: 'Nueva Terapia',
     description: 'Nueva Descripción',
     content: 'Nuevo Contenido',
-    image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAEBgIA5qKO1AAAAABJRU5ErkJggg==',
+    image: 'data:image/png;base64,...',
     createdAt: new Date(),
     updatedAt: new Date()
   };
@@ -60,59 +60,102 @@ describe('StateService', () => {
   });
 
   it('should initialize with empty state', () => {
-    const initialState = service.state$();
-    expect(initialState.services).toEqual([]);
-    expect(initialState.currentService).toBeNull();
-  });
-
-  it('should load services and update state', () => {
-    service.loadServices();
-    expect(mockRepo.getServices).toHaveBeenCalled();
-
     const state = service.state$();
-    expect(state.services).toEqual(mockServices);
+    expect(state.services).toEqual([]);
     expect(state.currentService).toBeNull();
   });
 
-  it('should load service by id and update state', () => {
-    service.loadServiceById('1');
-    expect(mockRepo.getServiceById).toHaveBeenCalledWith('1');
-
-    const state = service.state$();
-    expect(state.currentService).toEqual(mockServices[0]);
-  });
-
-  it('should create a service and update state', (done) => {
-    service.createService(newService).pipe(take(1)).subscribe(() => {
+  describe('loadServices', () => {
+    it('should load services and update state', () => {
+      service.loadServices();
       const state = service.state$();
-      expect(state.services).toContain(newService);
-      done();
+      expect(state.services).toEqual(mockServices);
+    });
+
+    it('should set empty array on error', () => {
+      mockRepo.getServices.and.returnValue(throwError(() => new Error('Error')));
+      service.loadServices();
+      const state = service.state$();
+      expect(state.services).toEqual([]);
     });
   });
 
-  it('should update a service and update state', (done) => {
-    service.loadServices();
-
-    const updatedData = { title: 'Updated' };
-
-    service.updateService('1', updatedData).pipe(take(1)).subscribe(() => {
+  describe('loadServiceById', () => {
+    it('should load service and update currentService', () => {
+      service.loadServiceById('1');
       const state = service.state$();
-      expect(state.services[0].title).toBe('Updated');
-      expect(state.currentService?.title).toBe('Updated');
-      done();
+      expect(state.currentService).toEqual(mockServices[0]);
     });
 
-    mockRepo.updateService.and.returnValue(of({...mockServices[0], ...updatedData}));
-  });
-
-  it('should delete a service and update state', (done) => {
-    service.loadServices();
-
-    service.deleteService('1').pipe(take(1)).subscribe(() => {
+    it('should set currentService to null on error', () => {
+      mockRepo.getServiceById.and.returnValue(throwError(() => new Error('Error')));
+      service.loadServiceById('1');
       const state = service.state$();
-      expect(state.services.length).toBe(0);
       expect(state.currentService).toBeNull();
-      done();
+    });
+  });
+
+  describe('createService', () => {
+    it('should add new service to state', (done) => {
+      service.createService(newService).pipe(take(1)).subscribe(() => {
+        const state = service.state$();
+        expect(state.services).toContain(newService);
+        done();
+      });
+    });
+  });
+
+  describe('updateService', () => {
+    beforeEach(() => {
+      service.loadServices();
+    });
+
+    it('should update the correct service and leave others unchanged', (done) => {
+      const updatedData = { title: 'Updated' };
+      const initialService2 = {...mockServices[1]};
+
+      service.updateService('1', updatedData).pipe(take(1)).subscribe(() => {
+        const state = service.state$();
+
+        const updatedService = state.services.find(s => s.id === '1');
+        expect(updatedService?.title).toBe('Updated');
+
+        const unchangedService = state.services.find(s => s.id === '2');
+        expect(unchangedService).toEqual(initialService2);
+
+        expect(state.currentService?.title).toBe('Updated');
+
+        done();
+      });
+    });
+
+    it('should not modify state if service id is not found', (done) => {
+      const originalState = service.state$();
+      const updatedData = { title: 'Updated' };
+
+      service.updateService('99', updatedData).pipe(take(1)).subscribe({
+        next: () => {
+          const newState = service.state$();
+          expect(newState).toEqual(originalState);
+          done();
+        },
+        error: () => done.fail('No debería fallar')
+      });
+    });
+  });
+
+  describe('deleteService', () => {
+    beforeEach(() => {
+      service.loadServices();
+    });
+
+    it('should remove service from state', (done) => {
+      service.deleteService('1').pipe(take(1)).subscribe(() => {
+        const state = service.state$();
+        expect(state.services.length).toBe(0);
+        expect(state.currentService).toBeNull();
+        done();
+      });
     });
   });
 });

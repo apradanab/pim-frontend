@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { Service } from '../models/service.model';
@@ -11,9 +11,12 @@ export class ServicesRepoService {
   private readonly http = inject(HttpClient);
   private readonly url = `${environment.apiUrl}/services`;
 
+
   getServices(): Observable<Service[]> {
     return this.http.get<Service[]>(this.url).pipe(
-      catchError(err => throwError(() => this.mapError(err)))
+      catchError(() => {
+        return throwError(() => new Error('Service error'));
+      })
     );
   }
 
@@ -31,9 +34,5 @@ export class ServicesRepoService {
 
   deleteService(id: string): Observable<void> {
     return this.http.delete<void>(`${this.url}/${id}`)
-  }
-
-  private mapError(error: HttpErrorResponse): Error {
-    return new Error(error.message || 'Service error');
   }
 }

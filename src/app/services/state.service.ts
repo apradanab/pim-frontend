@@ -13,9 +13,9 @@ interface ServicesState {
   providedIn: 'root'
 })
 export class StateService {
-  private repo = inject(ServicesRepoService);
-  private destroyRef = inject(DestroyRef);
-  private state = signal<ServicesState>({
+  private readonly repo = inject(ServicesRepoService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly state = signal<ServicesState>({
     services: [],
     currentService: null
   });
@@ -24,66 +24,55 @@ export class StateService {
 
   loadServices(): void {
     this.repo.getServices().pipe(
-      takeUntilDestroyed(this.destroyRef),
-      tap({
-        next: (services) => this.state.update(s => ({ ...s, services })),
-        error: () => this.state.update(s => ({ ...s, services: [] }))
-      })
-    ).subscribe();
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
+      next: (services) => this.state.update(s => ({ ...s, services })),
+      error: () => this.state.update(s => ({ ...s, services: [] }))
+    });
   }
 
   loadServiceById(id: string): void {
     this.repo.getServiceById(id).pipe(
-      takeUntilDestroyed(this.destroyRef),
-      tap({
-        next: (service) => this.state.update(s => ({ ...s, currentService: service })),
-        error: (err) => console.error('Error loading service:', err)
-      })
-    ).subscribe();
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
+      next: (service) => this.state.update(s => ({ ...s, currentService: service })),
+      error: () => this.state.update(s => ({ ...s, currentService: null }))
+    });
   }
 
   createService(service: Service): Observable<Service> {
     return this.repo.createService(service).pipe(
-      tap({
-        next: (newService) => {
-          this.state.update(s => ({
-            ...s,
-            services: [...s.services, newService]
-          }));
-        },
-        error: (err) => console.error('Error creating service:', err)
+      tap((newService) => {
+        this.state.update(s => ({
+          ...s,
+          services: [...s.services, newService]
+        }));
       })
     );
   }
 
   updateService(id: string, service: Partial<Service>): Observable<Service> {
     return this.repo.updateService(id, service).pipe(
-      tap({
-        next: (updatedService) => {
-          this.state.update(s => ({
-            ...s,
-            services: s.services.map(svc =>
-              svc.id === id ? updatedService : svc
-            ),
-            currentService: updatedService
-          }));
-        },
-        error: (err) => console.error('Error updating service:', err)
+      tap((updatedService) => {
+        this.state.update(s => ({
+          ...s,
+          services: s.services.map(svc =>
+            svc.id === id ? updatedService : svc
+          ),
+          currentService: updatedService
+        }));
       })
     );
   }
 
   deleteService(id: string): Observable<void> {
     return this.repo.deleteService(id).pipe(
-      tap({
-        next: () => {
-          this.state.update(s => ({
-            ...s,
-            services: s.services.filter(svc => svc.id !== id),
-            currentService: null
-          }));
-        },
-        error: (err) => console.error('Error deleting service:', err)
+      tap(() => {
+        this.state.update(s => ({
+          ...s,
+          services: s.services.filter(svc => svc.id !== id),
+          currentService: null
+        }));
       })
     );
   }

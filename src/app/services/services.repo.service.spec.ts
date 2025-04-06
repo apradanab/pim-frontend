@@ -14,7 +14,7 @@ describe('ServicesRepoService', () => {
       title: 'Terapia 1',
       description: 'Descripción 1',
       content: 'Contenido 1',
-      image: 'image1.jpg',
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg==',
       createdAt: new Date(),
       updatedAt: new Date()
     }
@@ -25,7 +25,7 @@ describe('ServicesRepoService', () => {
     title: 'Nueva Terapia',
     description: 'Nueva Descripción',
     content: 'Nuevo Contenido',
-    image: 'new-image.jpg',
+    image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAEBgIA5qKO1AAAAABJRU5ErkJggg==',
     createdAt: new Date(),
     updatedAt: new Date()
   };
@@ -53,6 +53,21 @@ describe('ServicesRepoService', () => {
     const req = httpTestingController.expectOne(service['url']);
     expect(req.request.method).toBe('GET');
     req.flush(mockServices);
+  });
+
+  it('should return Service error message on failure', () => {
+    service.getServices().subscribe({
+      next: () => fail('should have failed'),
+      error: (error) => {
+        expect(error.message).toBe('Service error');
+      }
+    });
+
+    const req = httpTestingController.expectOne(service['url']);
+    req.flush(null, {
+      status: 500,
+      statusText: 'Internal Server Error'
+    });
   });
 
   it('should fetch service by id', () => {
@@ -101,23 +116,6 @@ describe('ServicesRepoService', () => {
     const req = httpTestingController.expectOne(`${service['url']}/${serviceId}`);
     expect(req.request.method).toBe('DELETE');
     req.flush(null, { status: 204, statusText: 'No Content' });
-  });
-
-  it('should handle errors', () => {
-    const errorMessage = 'Test error';
-
-    service.getServices().subscribe({
-      next: () => fail('should have failed'),
-      error: (error) => {
-        expect(error.message).toContain('Http failure response');
-      }
-    });
-
-    const req = httpTestingController.expectOne(service['url']);
-    req.flush(errorMessage, {
-      status: 404,
-      statusText: 'Not Found'
-    });
   });
 
   afterEach(() => {

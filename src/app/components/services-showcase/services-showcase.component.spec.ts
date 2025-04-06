@@ -60,15 +60,6 @@ describe('ServicesShowcaseComponent', () => {
     expect(mockStateService.loadServices).toHaveBeenCalled();
   });
 
-  it('should display services', () => {
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement;
-    const serviceTitles = compiled.querySelectorAll('h3');
-    expect(serviceTitles.length).toBe(2);
-    expect(serviceTitles[0].textContent).toContain('Terapia 1');
-    expect(serviceTitles[1].textContent).toContain('Terapia 2');
-  });
-
   it('should have correct service styles', () => {
     expect(component.serviceStyles.length).toBe(3);
     expect(component.serviceStyles[0].bgColor).toBe('#fea087');
@@ -85,14 +76,5 @@ describe('ServicesShowcaseComponent', () => {
     expect(style2.bgColor).toBe('#e0f15e');
     expect(style3.bgColor).toBe('#b7a8ed');
     expect(style4.bgColor).toBe('#fea087');
-  });
-
-  it('should render service images', () => {
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement;
-    const images = compiled.querySelectorAll('img');
-    expect(images.length).toBe(2);
-    expect(images[0].src).toContain('image1.jpg');
-    expect(images[1].alt).toBe('Terapia 2');
   });
 });

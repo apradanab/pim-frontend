@@ -42,7 +42,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   .about-me-section {
     position: relative;
     text-align: center;
-    padding: 100px 40px;
+    padding: 100px 40px 0px 40px;
     background: #fcfcf9;
     display: flex;
     justify-content: center;
@@ -170,6 +170,6 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   `
 })
 export class AboutMeComponent {
-  logoOrange = inject(CloudinaryService).svg('v1742987811/pim-images/pim-logo-orange_ojgvrk.svg');
+  readonly logoOrange = inject(CloudinaryService).svg('v1742987811/pim-images/pim-logo-orange_ojgvrk.svg');
   faLeaf = faLeaf;
 }
