@@ -160,6 +160,6 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 })
 export class TourVideoComponent {
   private cloudinary = inject(CloudinaryService);
-  starFlower = this.cloudinary.svg('v1742987952/pim-images/star-flower_oowu4r.svg');
+  starFlower = this.cloudinary.svg('v1743950515/pim-images/star-flower_zdpozp.svg');
   faArrowRight = faArrowRight;
 }

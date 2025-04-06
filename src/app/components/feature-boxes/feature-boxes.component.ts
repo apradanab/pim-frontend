@@ -255,31 +255,31 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   `
 })
 export class FeatureBoxesComponent {
-  private cloudinary = inject(CloudinaryService);
+  private readonly cloudinary = inject(CloudinaryService);
 
-  lydiaImg = this.cloudinary.image('v1742987718/pim-images/Lydia_o0fwbi.webp');
+  readonly lydiaImg = this.cloudinary.image('v1742987718/pim-images/Lydia_o0fwbi.webp');
 
   icons = [
     {
-      src: this.cloudinary.svg('v1742987877/pim-images/purple-doble-circle_vgbgeq.svg'),
+      src: this.cloudinary.svg('v1743950571/pim-images/purple-doble-circle_g3wy3u.svg'),
       class: 'circle',
       alt: 'Doble círculo',
       name: 'doubleCircle'
     },
     {
-      src: this.cloudinary.svg('v1742987918/pim-images/purple-star_sztmgu.svg'),
+      src: this.cloudinary.svg('v1743950532/pim-images/purple-star_zjfrf4.svg'),
       class: 'star',
       alt: 'Estrella',
       name: 'star'
     },
     {
-      src: this.cloudinary.svg('v1742987854/pim-images/mom-flower_hjh8tr.svg'),
+      src: this.cloudinary.svg('v1743950601/pim-images/flower-mom_zv1m0o.svg'),
       class: 'flower',
       alt: 'Estrella',
       name: 'flower'
     },
     {
-      src: this.cloudinary.svg('v1742987898/pim-images/purple-heart_s2odmn.svg'),
+      src: this.cloudinary.svg('v1743950549/pim-images/purple-heart_hcikp2.svg'),
       class:  'heart',
       alt: 'Corazón',
       name: 'heart'

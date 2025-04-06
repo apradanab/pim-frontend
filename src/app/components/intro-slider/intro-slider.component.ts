@@ -41,7 +41,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     </div>
   </div>
 
-  <img [src]="triangle" width="500" height="500" class="overlay-image" alt="Triángulo" >
+  <img [src]="triangle" width="200" height="200" class="overlay-image" alt="Triángulo" >
   `,
   styles: [`
   :host {
@@ -222,10 +222,11 @@ export class IntroSliderComponent {
   currentSlide = signal(0);
   hidden = signal(false);
 
-  private cloudinary = inject(CloudinaryService);
-  backgroundImage = this.cloudinary.image('v1742986436/pim-images/intro-slider-image_i9sx5d.webp');
-  logoInline = this.cloudinary.svg('v1742987785/pim-images/pim-logo-inline_fitso1.svg');
-  triangle = this.cloudinary.svg('v1742987983/pim-images/triangle-child_wh3npr.svg');
+
+  private readonly cloudinary = inject(CloudinaryService);
+  readonly backgroundImage = this.cloudinary.image('v1743950817/pim-images/intro-slider-image_swzpyc.webp');
+  readonly logoInline = this.cloudinary.svg('v1742987785/pim-images/pim-logo-inline_fitso1.svg');
+  readonly triangle = this.cloudinary.svg('v1743950491/pim-images/triangle-child_ffwtzt.svg');
 
   constructor() {
     effect((onCleanup) => {
