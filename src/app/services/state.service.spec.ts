@@ -106,40 +106,68 @@ describe('StateService', () => {
   });
 
   describe('updateService', () => {
+    const multipleMockServices: Service[] = [
+      {
+        id: '1',
+        title: 'Terapia 1',
+        description: 'Descripción 1',
+        content: 'Contenido 1',
+        image: 'data:image/png;base64,...',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: '2',
+        title: 'Terapia 2',
+        description: 'Descripción 2',
+        content: 'Contenido 2',
+        image: 'data:image/png;base64,...',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    ];
+
     beforeEach(() => {
+      mockRepo.getServices.and.returnValue(of([...multipleMockServices]));
       service.loadServices();
     });
 
     it('should update the correct service and leave others unchanged', (done) => {
       const updatedData = { title: 'Updated' };
-      const initialService2 = {...mockServices[1]};
+      const originalService2 = {...multipleMockServices[1]};
+
+      const updatedServiceMock = {
+        ...multipleMockServices[0],
+        ...updatedData
+      };
+      mockRepo.updateService.and.returnValue(of(updatedServiceMock));
 
       service.updateService('1', updatedData).pipe(take(1)).subscribe(() => {
         const state = service.state$();
 
         const updatedService = state.services.find(s => s.id === '1');
+        expect(updatedService).toBeDefined();
         expect(updatedService?.title).toBe('Updated');
 
         const unchangedService = state.services.find(s => s.id === '2');
-        expect(unchangedService).toEqual(initialService2);
+        expect(unchangedService).toEqual(originalService2);
 
-        expect(state.currentService?.title).toBe('Updated');
-
+        expect(state.currentService).toEqual(updatedServiceMock);
         done();
       });
     });
 
     it('should not modify state if service id is not found', (done) => {
       const originalState = service.state$();
-      const updatedData = { title: 'Updated' };
 
-      service.updateService('99', updatedData).pipe(take(1)).subscribe({
-        next: () => {
+      mockRepo.updateService.and.returnValue(throwError(() => new Error('Not found')));
+
+      service.updateService('99', { title: 'Updated' }).pipe(take(1)).subscribe({
+        error: () => {
           const newState = service.state$();
           expect(newState).toEqual(originalState);
           done();
-        },
-        error: () => done.fail('No debería fallar')
+        }
       });
     });
   });
