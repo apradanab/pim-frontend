@@ -1,6 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { StateService } from '../../services/state.service';
-import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { ServiceStyle } from '../../models/service.model';
@@ -9,7 +8,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 @Component({
   selector: 'pim-services-showcase',
   standalone: true,
-  imports: [CommonModule, FontAwesomeModule],
+  imports: [ FontAwesomeModule],
   template: `
     <div class="services-showcase">
       <div class="header-section">
@@ -31,11 +30,14 @@ import { CloudinaryService } from '../../services/cloudinary.service';
               </button>
             </div>
             <div class="tags">
-              @for (tag of getServiceStyle(i).tags; track tag) {
-                <span class="tag">{{ tag }}</span>
+              @for (tag of getServiceStyle(i).tags; track tag; let tagIndex = $index) {
+                <span class="tag tag-{{tagIndex + 1}} tag-pos-{{i}}-{{tagIndex}}">{{ tag }}</span>
               }
             </div>
-            <img [src]="service.image" [alt]="service.title" loading="lazy">
+            <img [src]="service.image"
+                [alt]="service.title"
+                loading="lazy"
+                [class]="'service-image service-image-' + (i + 1)">
           </div>
         }
       </div>
@@ -107,7 +109,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     }
 
     .service-box {
-      padding: 1.2rem;
+      padding: 2rem 0.8rem 0.8rem 0.8rem;
       border-radius: 1.5rem;
       color: #2f2929;
       transition: transform 0.3s ease;
@@ -121,7 +123,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     }
 
     .service-header h3 {
-      font: 400 1.85rem/1.2 'Caprasimo', sans-serif;
+      font: 400 1.75rem/1.2 'Caprasimo', sans-serif;
       max-width: 265px;
       max-height: 100px;
     }
@@ -151,24 +153,46 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     }
 
     .tags {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
     }
 
     .tag {
-      background: rgba(255, 255, 255, 0.9);
+      position: absolute;
+      font: 600 1.2rem/1 'Carlito', sans-serif;
       padding: 0.25rem 0.75rem;
       border-radius: 1rem;
-      font-size: 0.8rem;
+
     }
 
-    img {
+    .tag-1 { background: #fcfcf9; }
+    .tag-2 { background: #e0f15e; }
+    .tag-3 { background: #b7a8ed; }
+    .tag-pos-0-0 { top: 190px; left: 20px; }
+    .tag-pos-0-1 { top: 240px; left: 140px; }
+    .tag-pos-0-2 { top: 165px; left: 190px; }
+    .tag-pos-1-0 { top: 80px; left: 20px; }
+    .tag-pos-2-0 { top: 210px; left: 170px; }
+    .tag-pos-2-1 { top: 160px; left: 40px; }
+
+    .service-image {
       width: 100%;
       height: 300px;
       object-fit: cover;
+    }
+
+    .service-image-1 {
+      border-radius: 9rem 2rem 1rem 1rem;
+      clip-path: polygon(100% 5%, 94% 0, 10% 17%, 0% 23%, 0% 100%, 100% 100%);
+    }
+
+    .service-image-2 {
       border-radius: 1rem;
+    }
+
+    .service-image-3 {
+      border-radius: 2rem 9rem 1rem 1rem;
+      clip-path: polygon(0 5%, 6% 0, 90% 17%, 100% 23%, 100% 100%, 0 100%);
     }
 
     @media (max-width: 768px) {
@@ -191,8 +215,8 @@ export class ServicesShowcaseComponent implements OnInit {
 
   serviceStyles: ServiceStyle[] = [
     { bgColor: '#fea087', tags: ['de 3 a 20 años', 'pide cita', 'consulta horarios'] },
-    { bgColor: '#e0f15e', tags: ['Grupos abiertos'] },
-    { bgColor: '#b7a8ed', tags: ['apoyo educativo', 'personalizada'] }
+    { bgColor: '#e0f15e', tags: ['grupos abiertos'] },
+    { bgColor: '#b7a8ed', tags: ['personalizada' ,'apoyo educativo'] }
   ];
 
   get services() {
