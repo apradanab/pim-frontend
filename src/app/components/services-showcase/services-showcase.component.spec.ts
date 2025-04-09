@@ -63,7 +63,7 @@ describe('ServicesShowcaseComponent', () => {
   it('should have correct service styles', () => {
     expect(component.serviceStyles.length).toBe(3);
     expect(component.serviceStyles[0].bgColor).toBe('#fea087');
-    expect(component.serviceStyles[1].tags).toContain('Grupos abiertos');
+    expect(component.serviceStyles[1].tags).toContain('grupos abiertos');
   });
 
   it('should apply correct styles based on index', () => {

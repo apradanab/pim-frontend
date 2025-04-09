@@ -77,7 +77,7 @@ import { Component } from '@angular/core';
 
   .intro-section button {
     background: #f3552d;
-    font-size: 1.3rem;
+    font-size: 1.15rem;
     color: white;
     margin-top: 5px;
     border: none;
@@ -85,6 +85,8 @@ import { Component } from '@angular/core';
     border-radius: 30px;
     box-shadow: inset 0px -7px 2px #b64022;
     cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: bold;
     position: relative;
     top: 10px;
   }

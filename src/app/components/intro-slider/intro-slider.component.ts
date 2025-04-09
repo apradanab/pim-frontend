@@ -9,7 +9,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   template: `
   <div class="slider-container">
     <div class="image-container">
-      <img [src]="backgroundImage" width="4048" height="3036" class="background-image" alt="Niños alegres" fetchpriority="high">
+      <img [src]="backgroundImage" width="613" height="460" class="background-image" alt="Niños alegres" fetchpriority="high">
 
       <div class="slides">
         @for (slide of slides(); track $index) {
@@ -21,7 +21,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
           >
             <div class="text-container">
               <h2>{{ slide.text }}</h2>
-              <img [src]="logoInline" width="500" height="500" alt="Logo">
+              <img [src]="logoInline" width="150" height="70" alt="Logo">
             </div>
           </div>
         }
@@ -161,8 +161,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   .overlay-image {
     position: absolute;
     width: 95px;
-    height: 95px;
-    top: 452px;
+    top: 395px;
     left: 140px;
   }
 
@@ -206,8 +205,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
     .overlay-image {
       width: 60px;
-      height: 60px;
-      top: 325px;
+      top: 250px;
       left: 63px;
     }
   }
@@ -225,7 +223,7 @@ export class IntroSliderComponent {
 
   private readonly cloudinary = inject(CloudinaryService);
   readonly backgroundImage = this.cloudinary.image('v1743950817/pim-images/intro-slider-image_swzpyc.webp');
-  readonly logoInline = this.cloudinary.svg('v1742987785/pim-images/pim-logo-inline_fitso1.svg');
+  readonly logoInline = this.cloudinary.svg('v1744199869/pim-images/pim-logo-inline_t5wsdx.svg');
   readonly triangle = this.cloudinary.svg('v1743950491/pim-images/triangle-child_ffwtzt.svg');
 
   constructor() {

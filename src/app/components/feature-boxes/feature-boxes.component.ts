@@ -21,8 +21,9 @@ import { CloudinaryService } from '../../services/cloudinary.service';
         </button>
 
         <div class="admin-image">
-          <img [src]="lydiaImg" width="894" height="984" alt="Psicóloga Lydia" loading="eager" decoding="async" />
+          <img [src]="lydiaImg" width="894" height="984" alt="admin-image" loading="eager" decoding="async" />
         </div>
+        <img [src]="curvedLoopLine" width="200" height="53" alt="decoration-line" class="decoration-line" loading="lazy" >
 
         <h2 class="text-left">Psicóloga</h2>
         <h3 class="text-right">Profesional</h3>
@@ -33,7 +34,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       <h2>Todo niño merece crecer en un ambiente de apoyo</h2>
       <div class="icons-container">
         @for (icon of icons; track icon.name) {
-          <img [src]="icon.src" [class]="icon.class" [alt]="icon.alt" width="500" height="500" loading="lazy"/>
+          <img [src]="icon.src" [class]="icon.class" [alt]="icon.alt" width="200" height="200" loading="lazy"/>
         }
       </div>
     </div>
@@ -128,6 +129,13 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     transform: scale(1.25);
   }
 
+  .decoration-line {
+    width: 60px;
+    position: relative;
+    top: 60px;
+    right: 85px;
+  }
+
   .bento-box-2 {
     background-color: #B7A8ED;
     height: 243px;
@@ -151,14 +159,14 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
       &.circle {
         width: 25px;
-        left: -70px;
-        bottom: -250px;
+        left: -60px;
+        bottom: -100px;
       }
 
       &.star {
         width: 21px;
-        right: 3px;
-        bottom: -280px;
+        right: -10px;
+        bottom: -130px;
       }
 
       &.flower {
@@ -170,8 +178,8 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
       &.heart {
         width: 30px;
-        top: -380px;
-        right: -100px;
+        top: -230px;
+        right: -110px;
         transform: rotate(-30deg)
       }
     }
@@ -246,7 +254,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
         &.heart {
           width: 22px;
-          top: -355px;
+          top: -205px;
           right: -80px;
         }
       }
@@ -258,6 +266,7 @@ export class FeatureBoxesComponent {
   private readonly cloudinary = inject(CloudinaryService);
 
   readonly lydiaImg = this.cloudinary.image('v1742987718/pim-images/Lydia_o0fwbi.webp');
+  readonly curvedLoopLine = this.cloudinary.image('v1744225058/pim-images/curved-loop-line_kxouyv.svg');
 
   icons = [
     {

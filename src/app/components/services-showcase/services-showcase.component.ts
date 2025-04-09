@@ -8,7 +8,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 @Component({
   selector: 'pim-services-showcase',
   standalone: true,
-  imports: [ FontAwesomeModule],
+  imports: [FontAwesomeModule],
   template: `
     <div class="services-showcase">
       <div class="header-section">
@@ -75,11 +75,10 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     }
 
     .icon {
-      position: relative;
-      width: 50px;
-      height: 50px;
-      right: 90px;
-      top: -25px;
+      position: absolute;
+      width: 40px;
+      right: 680px;
+      top: 1482px;
     }
 
     .description {
@@ -102,10 +101,16 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       font-weight: bold;
     }
 
+    .cta-button:active {
+      background: #e8512b;
+      box-shadow: inset 0px 6px 2px #aa3e22;
+    }
+
     .services-grid {
       display: grid;
       gap: 1.5rem;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      padding-bottom: 1rem;
     }
 
     .service-box {
@@ -162,7 +167,6 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       font: 600 1.2rem/1 'Carlito', sans-serif;
       padding: 0.25rem 0.75rem;
       border-radius: 1rem;
-
     }
 
     .tag-1 { background: #fcfcf9; }
@@ -201,8 +205,49 @@ import { CloudinaryService } from '../../services/cloudinary.service';
         gap: 1rem;
       }
 
+      .header-content h2 {
+        font-size: 2.5rem;
+        width: 400px;
+      }
+
       .services-showcase {
         padding: 1rem;
+      }
+
+      .services-grid {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        grid-template-columns: unset;
+        scrollbar-width: none;
+        padding-bottom: 2rem;
+      }
+
+      .services-grid::-webkit-scrollbar {
+        display: none;
+      }
+
+      .service-box {
+        flex: 0 0 85%;
+        scroll-snap-align: start;
+        margin-right: 1.5rem;
+        max-width: 350px;
+      }
+
+      .service-box:last-child {
+        margin-right: 8.4vw;
+      }
+
+      .tag-pos-0-0 { top: 160px; left: 15px; }
+      .tag-pos-0-1 { top: 200px; left: 120px; }
+      .tag-pos-0-2 { top: 135px; left: 160px; }
+      .tag-pos-1-0 { top: 60px; left: 15px; }
+      .tag-pos-2-0 { top: 180px; left: 150px; }
+      .tag-pos-2-1 { top: 130px; left: 30px; }
+
+      .service-image {
+        height: 250px;
       }
     }
   `

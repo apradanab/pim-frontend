@@ -34,7 +34,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       </div>
     </div>
 
-    <img [src]="starFlower" width="500" height="500" alt="" class="overlay-image" />
+    <img [src]="starFlower" width="200" height="200" alt="overlay-image" class="overlay-image" />
   `,
   styles: `
     .tour-video-container {
@@ -118,10 +118,9 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
     .overlay-image {
       position: absolute;
-      top: 490px;
+      top: 440px;
       right: 80px;
-      width: 120px;
-      height: 120px;
+      width: 105px;
       transform: rotate(25deg);
       z-index: 1;
     }
@@ -150,10 +149,9 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       }
 
       .overlay-image {
-        top: -20px;
+        top: -85px;
         right: -40px;
-        width: 75px;
-        height: 75px;
+        width: 65px;
       }
     }
   `
