@@ -2,12 +2,11 @@ import { Component } from '@angular/core';
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { MobileSidebarComponent } from "../mobile-sidebar/mobile-sidebar.component";
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'pim-header',
   standalone: true,
-  imports: [FontAwesomeModule, MobileSidebarComponent, CommonModule],
+  imports: [FontAwesomeModule, MobileSidebarComponent],
   template: `
     <header class="header">
       <div class="logo">
