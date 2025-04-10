@@ -131,6 +131,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
   .decoration-line {
     width: 60px;
+    height: 20px;
     position: relative;
     top: 60px;
     right: 85px;

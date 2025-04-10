@@ -1,5 +1,4 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { CloudinaryService } from '../../services/cloudinary.service';
@@ -7,7 +6,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 @Component({
   selector: 'pim-tour-video',
   standalone: true,
-  imports: [CommonModule, FontAwesomeModule],
+  imports: [FontAwesomeModule],
   template: `
     <div class="tour-video-container">
 
@@ -118,9 +117,9 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
     .overlay-image {
       position: absolute;
-      top: 440px;
-      right: 80px;
-      width: 105px;
+      top: 435px;
+      right: 90px;
+      width: 90px;
       transform: rotate(25deg);
       z-index: 1;
     }

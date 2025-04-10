@@ -55,7 +55,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
     .header-section {
       display: flex;
-      justify-content: center;
+      justify-content: flex-start;
       margin-bottom: 3rem;
     }
 
@@ -77,20 +77,20 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     .icon {
       position: absolute;
       width: 40px;
-      right: 680px;
-      top: 1482px;
+      right: 720px;
+      top: 1475px;
     }
 
     .description {
-      font-size: 1.1rem;
+      font-size: 1.3rem;
       color: #555;
       margin: 0;
-      max-width: 290px;
+      max-width: 330px;
     }
 
     .cta-button {
       background: #f3552d;
-      font-size: 1rem;
+      font-size: 1.15rem;
       color: white;
       border: none;
       padding: 20px 45px;
@@ -148,13 +148,14 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       transition: all 0.3s ease;
     }
 
-    .service-button:hover {
-      transform: translateX(3px);
-    }
-
     .service-button fa-icon {
       color: black;
-      font-size: 0.8rem;
+      font-size: 1.15rem;
+    }
+
+    .service-button fa-icon:hover {
+      transition: transform 0.5s ease;
+      transform: translateX(5px);
     }
 
     .tags {
