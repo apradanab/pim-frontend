@@ -13,7 +13,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       <div class="video-wrapper">
         <video
           class="video"
-          src="assets/tour-video.mp4"
+          [src]="cloudinary.local.tourVideo"
           autoplay
           loop
           [muted]="true"
@@ -31,9 +31,10 @@ import { CloudinaryService } from '../../services/cloudinary.service';
           <fa-icon [icon]="faArrowRight" class="icon"></fa-icon>
         </button>
       </div>
+      <img [src]="starFlower" width="200" height="200" alt="overlay-image" class="overlay-image" />
     </div>
 
-    <img [src]="starFlower" width="200" height="200" alt="overlay-image" class="overlay-image" />
+
   `,
   styles: `
     .tour-video-container {
@@ -41,7 +42,6 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       width: 327px;
       height: 459px;
       border-radius: 30px;
-      overflow: hidden;
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
       display: flex;
       flex-direction: column;
@@ -49,12 +49,12 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     }
 
     .video-wrapper {
-      position: relative;
       width: 100%;
       height: 100%;
     }
 
     .video {
+      position: relative;
       width: 100%;
       height: 100%;
       border-radius: 30px;
@@ -102,7 +102,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       justify-content: center;
       cursor: pointer;
       position: relative;
-      right: -8px;
+      right: -5px;
     }
 
     .icon {
@@ -117,11 +117,11 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
     .overlay-image {
       position: absolute;
-      top: 435px;
-      right: 90px;
+      top: -25px;
+      right: -35px;
       width: 90px;
+      height: 90px;
       transform: rotate(25deg);
-      z-index: 1;
     }
     @media (max-width: 768px) {
       .tour-video-container {
@@ -148,15 +148,16 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       }
 
       .overlay-image {
-        top: -85px;
-        right: -40px;
+        top: -20px;
+        right: -25px;
         width: 65px;
+        height: 65px;
       }
     }
   `
 })
 export class TourVideoComponent {
-  private cloudinary = inject(CloudinaryService);
-  starFlower = this.cloudinary.svg('v1743950515/pim-images/star-flower_zdpozp.svg');
+  cloudinary = inject(CloudinaryService);
+  starFlower = this.cloudinary.svg.starFlower;
   faArrowRight = faArrowRight;
 }

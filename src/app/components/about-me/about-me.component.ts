@@ -135,12 +135,13 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   @media (max-width: 768px) {
     .about-me-section {
       padding: 60px 55px;
+      height: 400px;
     }
 
     .grid-background {
       height: 350px;
       background-size: calc(100% / 10) calc(100% / 8);
-      top: 47px;
+      top: 40px;
     }
 
     .logo {
@@ -170,6 +171,6 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   `
 })
 export class AboutMeComponent {
-  readonly logoOrange = inject(CloudinaryService).svg('v1744199262/pim-images/pim-logo-orange_tjqv88.svg');
+  readonly logoOrange = inject(CloudinaryService).svg.orangeLogo;
   faLeaf = faLeaf;
 }

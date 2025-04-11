@@ -251,6 +251,24 @@ import { CloudinaryService } from '../../services/cloudinary.service';
         padding: 2rem 1rem;
       }
 
+      .info-section {
+        position: relative;
+      }
+
+      .title {
+        font-size: 2.5rem;
+      }
+
+      .description {
+        max-width: 280px;
+      }
+
+      .cta-button {
+        position: absolute;
+        right: 30px;
+        bottom: 32px;
+      }
+
       .bento-rectangle {
         height: 200px;
       }
@@ -260,7 +278,6 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       }
 
       .bento-row {
-        flex-direction: column;
         height: auto;
       }
 
@@ -275,13 +292,24 @@ import { CloudinaryService } from '../../services/cloudinary.service';
         min-height: 180px;
       }
 
+      .support-icon {
+        width: 180px;
+        top: 10px;
+        left: 30px;
+      }
+
+      .growth-icon2 {
+        width: 120px;
+        bottom: 10px;
+        left: 35px;
+      }
     }
   `
 })
 export class ResourcesShowcaseComponent {
   private readonly cloudinary = inject(CloudinaryService);
-  readonly backgroundImage = this.cloudinary.image('v1744292048/pim-images/image1_rlpbxb.webp');
-  readonly iconShapes = this.cloudinary.svg('v1744294373/pim-images/icon-shapes_x3tykr.svg');
-  readonly iconTriangle = this.cloudinary.svg('v1744294371/pim-images/icon-triangle_ggdxxr.svg');
-  readonly together = this.cloudinary.svg('v1744294373/pim-images/together_d4gwhr.svg');
+  readonly backgroundImage = this.cloudinary.images.background;
+  readonly iconShapes = this.cloudinary.svg.shapes;
+  readonly iconTriangle = this.cloudinary.svg.iconTriangle;
+  readonly together = this.cloudinary.svg.together;
 }
