@@ -54,6 +54,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     }
 
     .header-section {
+      position: relative;
       display: flex;
       justify-content: flex-start;
       margin-bottom: 3rem;
@@ -77,8 +78,9 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     .icon {
       position: absolute;
       width: 40px;
-      right: 720px;
-      top: 1475px;
+      height: 40px;
+      right: 570px;
+      bottom: 65px;
     }
 
     .description {
@@ -201,9 +203,17 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     }
 
     @media (max-width: 768px) {
+      .services-showcase {
+        padding: 2rem 1rem 0rem 1rem;
+      }
+
+      .header-section {
+        margin: 0;
+      }
+
       .header-content {
-        flex-direction: column;
-        gap: 1rem;
+        justify-content: flex-start;
+        padding: 1rem;
       }
 
       .header-content h2 {
@@ -211,8 +221,21 @@ import { CloudinaryService } from '../../services/cloudinary.service';
         width: 400px;
       }
 
-      .services-showcase {
-        padding: 1rem;
+      .icon {
+        width: 33px;
+        right: 85px;
+        bottom: 85px;
+      }
+
+      .description {
+        font-size: 1.2rem;
+        max-width: 280px;
+      }
+
+      .cta-button {
+        position: absolute;
+        right: 30px;
+        bottom: 32px;
       }
 
       .services-grid {
@@ -222,7 +245,8 @@ import { CloudinaryService } from '../../services/cloudinary.service';
         -webkit-overflow-scrolling: touch;
         grid-template-columns: unset;
         scrollbar-width: none;
-        padding-bottom: 2rem;
+        gap: 1rem;
+
       }
 
       .services-grid::-webkit-scrollbar {
@@ -232,20 +256,34 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       .service-box {
         flex: 0 0 85%;
         scroll-snap-align: start;
-        margin-right: 1.5rem;
-        max-width: 350px;
+        max-width: 280px;
       }
 
-      .service-box:last-child {
-        margin-right: 8.4vw;
+      .service-header h3 {
+        font-size: 1.4rem;
+        max-width: 220px;
+      }
+
+      .service-button {
+        width: 35px;
+        height: 35px;
+        top: 10px;
+      }
+
+      .service-button fa-icon {
+        font-size: 0.9rem;
+      }
+
+      .tag {
+        font-size: 0.85rem;
       }
 
       .tag-pos-0-0 { top: 160px; left: 15px; }
       .tag-pos-0-1 { top: 200px; left: 120px; }
-      .tag-pos-0-2 { top: 135px; left: 160px; }
-      .tag-pos-1-0 { top: 60px; left: 15px; }
-      .tag-pos-2-0 { top: 180px; left: 150px; }
-      .tag-pos-2-1 { top: 130px; left: 30px; }
+      .tag-pos-0-2 { top: 125px; left: 120px; }
+      .tag-pos-1-0 { top: 75px; left: 15px; }
+      .tag-pos-2-0 { top: 180px; left: 130px; }
+      .tag-pos-2-1 { top: 135px; left: 20px; }
 
       .service-image {
         height: 250px;
@@ -256,7 +294,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 export class ServicesShowcaseComponent implements OnInit {
   private readonly stateService = inject(StateService);
 
-  readonly circleStar = inject(CloudinaryService).svg('v1743950619/pim-images/star-circle_oa3bpf.svg');
+  readonly circleStar = inject(CloudinaryService).svg.circleStar;
   faArrowRight = faArrowRight;
 
   serviceStyles: ServiceStyle[] = [

@@ -39,11 +39,10 @@ import { CloudinaryService } from '../../services/cloudinary.service';
         </div>
       }
     </div>
+    <img [src]="triangle" width="200" height="200" class="overlay-image" alt="Triángulo" >
   </div>
-
-  <img [src]="triangle" width="200" height="200" class="overlay-image" alt="Triángulo" >
   `,
-  styles: [`
+  styles: `
   :host {
     display: block;
     width: 100%;
@@ -77,8 +76,8 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
   .slides {
     position: absolute;
-    top: 80%;
-    left: 72%;
+    top: 78%;
+    left: 70%;
     transform: translate(-50%, -50%);
     display: flex;
     justify-content: center;
@@ -161,8 +160,9 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   .overlay-image {
     position: absolute;
     width: 85px;
-    top: 395px;
-    left: 140px;
+    height: 85px;
+    top: -60px;
+    left: 15px;
   }
 
   @media (max-width: 768px) {
@@ -205,11 +205,12 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
     .overlay-image {
       width: 60px;
-      top: 250px;
-      left: 63px;
+      height: 60px;
+      top: -43px;
+      left: 20px;
     }
   }
-  `]
+  `
 })
 export class IntroSliderComponent {
   slides = input<Slide[]>([]);
@@ -222,9 +223,9 @@ export class IntroSliderComponent {
 
 
   private readonly cloudinary = inject(CloudinaryService);
-  readonly backgroundImage = this.cloudinary.image('v1743950817/pim-images/intro-slider-image_swzpyc.webp');
-  readonly logoInline = this.cloudinary.svg('v1744199869/pim-images/pim-logo-inline_t5wsdx.svg');
-  readonly triangle = this.cloudinary.svg('v1743950491/pim-images/triangle-child_ffwtzt.svg');
+  readonly backgroundImage = this.cloudinary.images.introSlider;
+  readonly logoInline = this.cloudinary.svg.logoInline;
+  readonly triangle = this.cloudinary.svg.triangle;
 
   constructor() {
     effect((onCleanup) => {
