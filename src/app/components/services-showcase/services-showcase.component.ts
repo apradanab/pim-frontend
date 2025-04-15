@@ -47,7 +47,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     .services-showcase {
       font-family: 'Carlito', sans-serif;
       width: 100%;
-      padding: 0 8.4vw;
+      padding: 4rem 8.4vw;
       background-color: #fcfcf9;
     }
 

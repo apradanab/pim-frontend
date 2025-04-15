@@ -54,7 +54,6 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     align-items: center;
     justify-content: center;
     position: relative;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     width: 268px;
   }
 
@@ -196,7 +195,6 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
     .bento-box {
       width: 200px;
-      box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);
     }
 
     .bento-box-1 {
