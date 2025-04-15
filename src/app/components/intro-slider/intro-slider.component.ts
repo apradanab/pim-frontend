@@ -82,7 +82,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 400px;
+    width: 320px;
     height: 140px;
   }
 
@@ -185,12 +185,12 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     }
 
     .left-1 {
-      transform: scale(0.6) translateX(-80px);
+      transform: scale(0.6) translateX(-35px);
       right: 16%;
     }
 
     .left-2 {
-      transform: scale(0.4) translateX(-185px);
+      transform: scale(0.4) translateX(-115px);
       right: 18%;
     }
 

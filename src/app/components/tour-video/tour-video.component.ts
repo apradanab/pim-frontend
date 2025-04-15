@@ -31,7 +31,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
           <fa-icon [icon]="faArrowRight" class="icon"></fa-icon>
         </button>
       </div>
-      <img [src]="starFlower" width="200" height="200" alt="overlay-image" class="overlay-image" />
+      <img [src]="starFlower" width="200" height="200" alt="Overlay image" class="overlay-image" />
     </div>
 
 

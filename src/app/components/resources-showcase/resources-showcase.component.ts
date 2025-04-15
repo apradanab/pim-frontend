@@ -30,17 +30,17 @@ import { CloudinaryService } from '../../services/cloudinary.service';
         <div class="bento-row">
           <div class="bento-square support-box">
             <h4 class="support-title">Soporte integral</h4>
-            <div class="support-icons">
-              <img [src]="iconShapes" alt="Support icon" class="support-icon">
-            </div>
+
+              <img [src]="iconShapes" width="200" height="176" alt="Support icon" class="support-icon">
+
             <p class="support-text">Hemos acompañado a una amplia variedad de casos con éxito</p>
           </div>
 
           <div class="bento-square growth-box">
             <h4 class="growth-title">Crecemos juntos</h4>
             <div class="growth-icons">
-              <img [src]="iconTriangle" alt="Growth icon" class="growth-icon1">
-              <img [src]="together" alt="Growth icon" class="growth-icon2">
+              <img [src]="iconTriangle" width="150" height="164" alt="Growth icon" class="growth-icon1">
+              <img [src]="together" width="200" height="160" alt="Growth icon" class="growth-icon2">
             </div>
             <p class="growth-text">Celebramos cada avance hacia una mejor salud emocional</p>
           </div>
@@ -83,6 +83,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     .cta-button {
       background: #f3552d;
       font-size: 1.15rem;
+      font-weight: normal;
       color: white;
       border: none;
       padding: 20px 45px;
@@ -189,18 +190,6 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       max-width: 200px;
     }
 
-    .support-icons {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      margin: 1rem 0;
-    }
-
-    .support-icon {
-      position: absolute;
-      width: 200px;
-    }
-
     .support-icon {
       position: absolute;
       width: 220px;
@@ -221,16 +210,17 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     }
 
     .growth-icon1 {
-      width: 60px;
+      width: 75px;
+      height: 75px;
       position: relative;
-      top: 15px;
+      top: -25px;
     }
 
     .growth-icon2 {
       width: 150px;
       position: relative;
-      bottom: -25px;
-      left: 60px;
+      bottom: -5px;
+      left: 40px;
     }
 
     .growth-text {
@@ -264,6 +254,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       }
 
       .cta-button {
+        font-size: 1rem;
         position: absolute;
         right: 30px;
         bottom: 32px;
@@ -271,6 +262,16 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
       .bento-rectangle {
         height: 200px;
+      }
+
+      .support-box {
+        flex: 3;
+        min-height: 180px;
+      }
+
+      .growth-box {
+        flex: 4;
+        min-height: 180px;
       }
 
       .content-overlay {
@@ -285,23 +286,16 @@ import { CloudinaryService } from '../../services/cloudinary.service';
         height: 150px;
       }
 
-      .support-box,
-      .growth-box {
-        flex: 1 1 100%;
-        height: auto;
-        min-height: 180px;
-      }
-
       .support-icon {
         width: 180px;
-        top: 10px;
-        left: 30px;
+        top: 0px;
+        left: 15px;
       }
 
       .growth-icon2 {
         width: 120px;
-        bottom: 10px;
-        left: 35px;
+        bottom: 38px;
+        left: 40px;
       }
     }
   `
