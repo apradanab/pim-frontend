@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { MobileSidebarComponent } from "../mobile-sidebar/mobile-sidebar.component";
+import { CloudinaryService } from '../../services/cloudinary.service';
 
 @Component({
   selector: 'pim-header',
@@ -10,7 +11,7 @@ import { MobileSidebarComponent } from "../mobile-sidebar/mobile-sidebar.compone
   template: `
     <header class="header">
       <div class="logo">
-        <img src="assets/logo.svg" alt="Logo" class="logo-icon">
+        <img [src]="cloudinary.local.favicon" width="150" height="150" alt="Logo" class="logo-icon">
         <div class="logo-text">
           <span>Psicología</span>
           <span>Infantojuvenil</span>
@@ -61,7 +62,8 @@ import { MobileSidebarComponent } from "../mobile-sidebar/mobile-sidebar.compone
   }
 
   .logo-icon {
-    width: 75px;
+    width: 82px;
+    height: 82px;
     margin-right: 16px;
   }
 
@@ -136,6 +138,11 @@ import { MobileSidebarComponent } from "../mobile-sidebar/mobile-sidebar.compone
       position: relative;
     }
 
+    .logo-icon {
+      width: 78px;
+      height: 78px;
+    }
+
     .logo-text {
       font-size: 1.2rem;
     }
@@ -156,20 +163,24 @@ import { MobileSidebarComponent } from "../mobile-sidebar/mobile-sidebar.compone
       color: #f2f8fa;
       background-color: #2f2929;
       border-radius: 10px;
-      transition: background-color 0.2s ease,
-      transform 0.2s ease;
+      border: 2px solid transparent;
+      transition:
+        background-color 0.2s ease,
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
     }
 
     .burger-menu:active {
-      background-color: transparent;
-      border: 2px solid black;
       background-color: #f2f8fa;
+      border-color: #2f2929;
+      color: #2f2929;
     }
-
   }
   `
 })
 export class HeaderComponent  {
+  cloudinary = inject(CloudinaryService);
   sidebarActive = false;
   faBars = faBars;
   faXmark = faXmark;

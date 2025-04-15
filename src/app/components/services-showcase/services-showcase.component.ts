@@ -12,12 +12,12 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   template: `
     <div class="services-showcase">
       <div class="header-section">
-        <div class="header-content">
+        <div class="title-section">
           <h2>Terapias que impulsan el cambio</h2>
           <img [src]="circleStar" width="200" height="200" class="icon" alt="icon">
+        </div>
           <p class="description">Ofrecemos soluciones psicológicas centradas en el bienestar de los niños y la mejora de las relaciones familiares</p>
           <button class="cta-button">Saber más</button>
-        </div>
       </div>
 
       <div class="services-grid">
@@ -45,30 +45,27 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   `,
   styles: `
     .services-showcase {
-      padding: 2rem;
       font-family: 'Carlito', sans-serif;
       width: 100%;
       padding: 0 8.4vw;
-      margin: 0 auto;
       background-color: #fcfcf9;
     }
 
     .header-section {
-      position: relative;
       display: flex;
       justify-content: flex-start;
       margin-bottom: 3rem;
-    }
-
-    .header-content {
-      display: flex;
       align-items: center;
       gap: 1.5rem;
       flex-wrap: wrap;
       justify-content: center;
     }
 
-    .header-content h2 {
+    .title-section {
+      position: relative;
+    }
+
+    .title-section h2 {
       font: 400 4rem/1 'Caprasimo', cursive;
       margin: 0;
       color: #2f2929;
@@ -79,8 +76,8 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       position: absolute;
       width: 40px;
       height: 40px;
-      right: 570px;
-      bottom: 65px;
+      right: 5px;
+      bottom: 60px;
     }
 
     .description {
@@ -131,7 +128,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
     .service-header h3 {
       font: 400 1.75rem/1.2 'Caprasimo', sans-serif;
-      max-width: 265px;
+      max-width: 270px;
       max-height: 100px;
     }
 
@@ -204,27 +201,25 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
     @media (max-width: 768px) {
       .services-showcase {
-        padding: 2rem 1rem 0rem 1rem;
+        padding: 0rem 1rem;
       }
 
       .header-section {
+        position: relative;
         margin: 0;
-      }
-
-      .header-content {
         justify-content: flex-start;
         padding: 1rem;
       }
 
-      .header-content h2 {
+      .title-section h2 {
         font-size: 2.5rem;
         width: 400px;
       }
 
       .icon {
         width: 33px;
-        right: 85px;
-        bottom: 85px;
+        right: -2px;
+        bottom: 35px;
       }
 
       .description {
@@ -233,9 +228,10 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       }
 
       .cta-button {
+        font-size: 1rem;
         position: absolute;
         right: 30px;
-        bottom: 32px;
+        bottom: 45px;
       }
 
       .services-grid {

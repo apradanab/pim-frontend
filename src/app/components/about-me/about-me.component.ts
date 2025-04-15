@@ -135,11 +135,11 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   @media (max-width: 768px) {
     .about-me-section {
       padding: 60px 55px;
-      height: 400px;
+      height: 390px;
     }
 
     .grid-background {
-      height: 350px;
+      height: 330px;
       background-size: calc(100% / 10) calc(100% / 8);
       top: 40px;
     }

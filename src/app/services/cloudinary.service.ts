@@ -17,6 +17,8 @@ export class CloudinaryService {
 
   readonly svg = {
     orangeLogo: this.generateSvgUrl('v1744199262/pim-images/pim-logo-orange_tjqv88.svg'),
+    purpleLogo: this.generateSvgUrl('v1744406061/pim-images/pim-logo-purple_tkfhxo.svg'),
+    greenLogo: this.generateSvgUrl('v1744406068/pim-images/pim-logo-green_pkwnq0.svg'),
     starFlower: this.generateSvgUrl('v1743950515/pim-images/star-flower_zdpozp.svg'),
     triangle: this.generateSvgUrl('v1743950491/pim-images/triangle-child_ffwtzt.svg'),
     shapes: this.generateSvgUrl('v1744294373/pim-images/icon-shapes_x3tykr.svg'),
@@ -28,7 +30,11 @@ export class CloudinaryService {
     flowerMom: this.generateSvgUrl('v1743950601/pim-images/flower-mom_zv1m0o.svg'),
     purpleHeart: this.generateSvgUrl('v1743950549/pim-images/purple-heart_hcikp2.svg'),
     iconTriangle: this.generateSvgUrl('v1744294371/pim-images/icon-triangle_ggdxxr.svg'),
-    circleStar: this.generateSvgUrl('v1743950619/pim-images/star-circle_oa3bpf.svg')
+    circleStar: this.generateSvgUrl('v1743950619/pim-images/star-circle_oa3bpf.svg'),
+    purpleCircle: this.generateSvgUrl('v1744405647/pim-images/purple-circle_dzyomw.svg'),
+    greenCircle: this.generateSvgUrl('v1744405647/pim-images/green-circle_jkghpo.svg'),
+    orangeSquare: this.generateSvgUrl('v1744405647/pim-images/orange-square_mdknip.svg'),
+    purpleStar2: this.generateSvgUrl('v1744405733/pim-images/purple-star2_qchrxu.svg')
   };
 
   private generateImageUrl(url: string): string {

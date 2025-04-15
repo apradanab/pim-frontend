@@ -11,7 +11,6 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   template: `
   <div class="feature-boxes-container">
     <div class="bento-box bento-box-1">
-      <div class="icon-and-admin">
         <button
           class="icon-button"
           [routerLink]="['/home']"
@@ -27,7 +26,6 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
         <h2 class="text-left">Psicóloga</h2>
         <h3 class="text-right">Profesional</h3>
-      </div>
     </div>
 
     <div class="bento-box bento-box-2">
@@ -90,7 +88,8 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   }
 
   .icon-button {
-    background-color: #F3552D;
+    background-color: #f3552d;
+    box-shadow: inset 0px -4px 2px #b64022;
     border: none;
     border-radius: 50%;
     width: 40px;
@@ -102,8 +101,9 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     transition: transform 0.3s ease;
   }
 
-  .icon-button:hover {
-    transform: rotate(30deg);
+  .icon-button:active {
+    background: #e8512b;
+    box-shadow: inset 0px 4px 2px #aa3e22;
   }
 
   .icon {
@@ -160,14 +160,16 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
       &.circle {
         width: 25px;
+        height: 25px;
         left: -60px;
-        bottom: -100px;
+        bottom: -20px;
       }
 
       &.star {
         width: 21px;
+        height: 21px;
         right: -10px;
-        bottom: -130px;
+        bottom: -40px;
       }
 
       &.flower {
@@ -179,7 +181,8 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
       &.heart {
         width: 30px;
-        top: -230px;
+        height: 30px;
+        top: -150px;
         right: -110px;
         transform: rotate(-30deg)
       }
@@ -264,7 +267,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
         &.heart {
           width: 22px;
-          top: -205px;
+          top: -120px;
           right: -80px;
         }
       }
