@@ -48,7 +48,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     .grid-section {
     position: relative;
     text-align: center;
-    padding: 4rem 8.4vw 7rem 8.4vw;
+    padding: 4rem 8.4vw 8rem 8.4vw;
     background: #fcfcf9;
     display: flex;
     justify-content: center;
@@ -90,7 +90,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   }
 
   .title {
-    font: 400 4rem / 1 'Caprasimo', cursive;
+    font: 400 3.5rem / 1 'Caprasimo', cursive;
     color: #2f2929;
     width: 600px;
   }
@@ -103,7 +103,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     width: 45px;
     height: 45px;
     position: absolute;
-    bottom: 0px;
+    bottom: -20px;
     right: 480px;
   }
 
@@ -111,7 +111,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     width: 30px;
     height: 30px;
     position: absolute;
-    bottom: 140px;
+    bottom: 125px;
     right: 330px;
   }
 
@@ -119,7 +119,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     width: 35px;
     height: 35px;
     position: absolute;
-    bottom: 90px;
+    bottom: 70px;
     left: 315px;
   }
 
@@ -127,7 +127,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     width: 45px;
     height: 45px;
     position: absolute;
-    bottom: -59px;
+    bottom: -75px;
     left: 475px;
   }
 
@@ -136,14 +136,14 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     font-size: 1.15rem;
     color: white;
     border: none;
-    padding: 20px 45px;
+    padding: 20px 50px;
     border-radius: 30px;
     box-shadow: inset 0px -5px 2px #b64022;
     cursor: pointer;
     transition: all 0.2s ease;
     font-family: 'Carlito', sans-serif;
     position: absolute;
-    bottom: 60px;
+    bottom: 65px;
   }
 
   .cta-button:active {

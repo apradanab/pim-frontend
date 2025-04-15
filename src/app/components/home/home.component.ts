@@ -6,11 +6,12 @@ import { AboutMeComponent } from '../about-me/about-me.component';
 import { ServicesShowcaseComponent } from "../services-showcase/services-showcase.component";
 import { ResourcesShowcaseComponent } from "../resources-showcase/resources-showcase.component";
 import { GridSectionComponent } from "../grid-section/grid-section.component";
+import { FooterComponent } from "../footer/footer.component";
 
 @Component({
   selector: 'pim-home',
   standalone: true,
-  imports: [HeaderComponent, IntroSectionComponent, HeroSectionComponent, AboutMeComponent, ServicesShowcaseComponent, ResourcesShowcaseComponent, GridSectionComponent],
+  imports: [HeaderComponent, IntroSectionComponent, HeroSectionComponent, AboutMeComponent, ServicesShowcaseComponent, ResourcesShowcaseComponent, GridSectionComponent, FooterComponent],
   template: `
     <pim-header></pim-header>
     <pim-intro-section></pim-intro-section>
@@ -30,6 +31,7 @@ import { GridSectionComponent } from "../grid-section/grid-section.component";
       [showButton]="true"
     >
     </pim-grid-section>
+    <pim-footer></pim-footer>
   `,
   styles: ``
 })
