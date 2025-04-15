@@ -147,6 +147,10 @@ import { CloudinaryService } from '../../services/cloudinary.service';
         height: 25px;
       }
 
+      .icon {
+        font-size: 0.8rem;
+      }
+
       .overlay-image {
         top: -20px;
         right: -25px;

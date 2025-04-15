@@ -17,8 +17,8 @@ export class CloudinaryService {
 
   readonly svg = {
     orangeLogo: this.generateSvgUrl('v1744199262/pim-images/pim-logo-orange_tjqv88.svg'),
-    purpleLogo: this.generateSvgUrl('v1744406061/pim-images/pim-logo-purple_tkfhxo.svg'),
-    greenLogo: this.generateSvgUrl('v1744406068/pim-images/pim-logo-green_pkwnq0.svg'),
+    purpleLogo: this.generateSvgUrl('v1744733899/pim-images/pim-logo-purple_zonwit.svg'),
+    greenLogo: this.generateSvgUrl('v1744733907/pim-images/pim-logo-green_cgcztj.svg'),
     starFlower: this.generateSvgUrl('v1743950515/pim-images/star-flower_zdpozp.svg'),
     triangle: this.generateSvgUrl('v1743950491/pim-images/triangle-child_ffwtzt.svg'),
     shapes: this.generateSvgUrl('v1744294373/pim-images/icon-shapes_x3tykr.svg'),

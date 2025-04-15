@@ -81,12 +81,11 @@ import { Component } from '@angular/core';
     color: white;
     margin-top: 5px;
     border: none;
-    padding: 20px 45px;
+    padding: 20px 50px;
     border-radius: 30px;
-    box-shadow: inset 0px -7px 2px #b64022;
+    box-shadow: inset 0px -6px 2px #b64022;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-weight: bold;
     position: relative;
     top: 10px;
   }

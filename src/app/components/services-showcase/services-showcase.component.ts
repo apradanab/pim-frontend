@@ -47,7 +47,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     .services-showcase {
       font-family: 'Carlito', sans-serif;
       width: 100%;
-      padding: 0 8.4vw;
+      padding: 4rem 8.4vw;
       background-color: #fcfcf9;
     }
 
@@ -92,12 +92,11 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       font-size: 1.15rem;
       color: white;
       border: none;
-      padding: 20px 45px;
+      padding: 25px 55px;
       border-radius: 30px;
       box-shadow: inset 0px -5px 2px #b64022;
       cursor: pointer;
       transition: all 0.2s ease;
-      font-weight: bold;
     }
 
     .cta-button:active {
