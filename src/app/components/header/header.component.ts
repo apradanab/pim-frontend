@@ -62,8 +62,8 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   }
 
   .logo-icon {
-    width: 82px;
-    height: 82px;
+    width: 80px;
+    height: 80px;
     margin-right: 16px;
   }
 
