@@ -126,10 +126,10 @@ import { Component } from '@angular/core';
     }
 
     .intro-section button {
-      font-size: 0.9rem;
-      padding: 15px 20px;
+      font-size: 1rem;
+      padding: 20px 40px;
       box-shadow: inset 0px -5px 2px #b64022;
-      top: 30px;
+      top: 25px;
     }
 
     .intro-section button:active {

@@ -200,7 +200,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
     @media (max-width: 768px) {
       .services-showcase {
-        padding: 0rem 1rem;
+        padding: 0 8.4vw;
       }
 
       .header-section {
@@ -222,15 +222,16 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       }
 
       .description {
-        font-size: 1.2rem;
-        max-width: 280px;
+        font-size: 1rem;
+        max-width: 240px;
       }
 
       .cta-button {
         font-size: 1rem;
         position: absolute;
-        right: 30px;
-        bottom: 45px;
+        right: 20px;
+        bottom: 30px;
+        padding: 20px 50px;
       }
 
       .services-grid {

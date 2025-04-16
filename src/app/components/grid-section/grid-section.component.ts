@@ -157,20 +157,54 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       padding: 60px 20px;
     }
 
+    .grid-background {
+      height: 160px;
+      background-size: calc(100% / 10) calc(100% / 4);
+    }
+
     .logo {
       width: 55px;
       height: 55px;
       top: 0px;
     }
 
-    .decorations img {
-      width: 30px;
-      height: 30px;
+    .title {
+      font-size: 2rem;
+      width: 300px;
     }
 
     .cta-button {
       font-size: 1rem;
-      padding: 15px 30px;
+      padding: 12px 30px;
+      bottom: 40px;
+    }
+
+    .purple-circle {
+      width: 25px;
+      height: 25px;
+      bottom: 15px;
+      right: 180px;
+    }
+
+    .purple-star {
+      width: 20px;
+      height: 20px;
+      bottom: 95px;
+      right: 150px;
+    }
+
+    .orange-square {
+      width: 20px;
+      height: 20px;
+      bottom: 65px;
+      left: 155px;
+    }
+
+    .green-circle {
+      width: 25px;
+      height: 25px;
+      bottom: -15px;
+      left: 180px;
     }
   }
   `

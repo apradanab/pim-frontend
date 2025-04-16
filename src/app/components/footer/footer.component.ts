@@ -24,7 +24,7 @@ import { faFacebook, faInstagram, faLinkedin } from '@fortawesome/free-brands-sv
             <a href="#horarios">Horarios</a>
           </div>
           <div class="links-column">
-            <a href="#contacto">Contacta conmigo</a>
+            <a href="#contacto">Conecta conmigo</a>
             <a href="#centro">Conoce nuestro centro</a>
           </div>
         </div>
@@ -57,10 +57,7 @@ import { faFacebook, faInstagram, faLinkedin } from '@fortawesome/free-brands-sv
 
     .footer-content {
       display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
       gap: 2rem;
-      margin-bottom: 2rem;
     }
 
     .footer-block {
@@ -74,12 +71,12 @@ import { faFacebook, faInstagram, faLinkedin } from '@fortawesome/free-brands-sv
 
     .footer-logo {
       width: 100px;
-      margin-bottom: 1rem;
     }
 
     .footer-description {
       color: #968484;
-      line-height: 1.6;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
     }
 
     .links-block {
@@ -129,29 +126,44 @@ import { faFacebook, faInstagram, faLinkedin } from '@fortawesome/free-brands-sv
       width: 100%;
       height: 1px;
       background-color: #2f2929;;
-      margin-bottom: 1rem;
     }
 
     .copyright {
       color: #968484;
       font-size: 0.9rem;
+      margin-bottom: 0.5rem;
     }
 
     @media (max-width: 768px) {
+      footer {
+        padding: 1rem 8.4vw 0.2rem;
+      }
+
       .footer-content {
-        flex-direction: column;
+        flex-direction: row;
+      }
+
+      .footer-description {
+        font-size: 0.65rem;
+        width: 190px;
       }
 
       .links-block {
-        justify-content: space-between;
+        display: none;
       }
 
       .social-block {
-        justify-content: flex-start;
+        justify-content: flex-end;
+        align-items: flex-end;
+        gap: 1.35rem;
       }
 
-      .footer-bottom {
-        align-items: flex-start;
+      .social-block a {
+        font-size: 2.1rem;
+      }
+
+      .copyright {
+        font-size: 0.65rem;
       }
     }
 `

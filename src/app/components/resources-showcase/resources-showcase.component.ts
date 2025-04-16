@@ -236,26 +236,30 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     @media (max-width: 768px) {
       .resources-showcase {
         flex-direction: column;
-        padding: 2rem 1rem;
+        padding: 1rem 8.4vw;
+        gap: 1rem;
       }
 
       .info-section {
         position: relative;
+        padding: 0rem 1rem;
       }
 
       .title {
-        font-size: 2.5rem;
+        font-size: 2.3rem;
       }
 
       .description {
-        max-width: 280px;
+        font-size: 1rem;
+        max-width: 240px;
       }
 
       .cta-button {
         font-size: 1rem;
         position: absolute;
-        right: 30px;
-        bottom: 32px;
+        right: 25px;
+        bottom: 15px;
+        padding: 20px 50px;
       }
 
       .bento-rectangle {
@@ -287,13 +291,28 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       .support-icon {
         width: 180px;
         top: 0px;
-        left: 15px;
+        left: 5px;
+      }
+
+      .growth-icon1 {
+        width: 50px;
+        height: 50px;
+        top: 5px;
       }
 
       .growth-icon2 {
         width: 120px;
-        bottom: 38px;
-        left: 40px;
+        height: 100px;
+        bottom: 0px;
+        left: 35px;
+      }
+
+      .support-text {
+        bottom: 20px;
+      }
+
+      .growth-text {
+        bottom: 20px;
       }
     }
   `
