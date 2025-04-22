@@ -213,9 +213,9 @@ export class ServicesTabsComponent implements OnInit {
   cleanContent(content: string): string {
     if (!content) return '';
 
-    let cleaned = content.replace(/<(?!\/?b\b|\/?br\b)[^>]+>/g, '');
+    let cleaned = content.replace(/<(?!\/?b(?=>|\s)|\/?br(?=>|\s))[^>]+>/g, '');
 
-    cleaned = cleaned.replace(/<(b|br)(?:\s+[^>]*)?>/g, '<$1>');
+    cleaned = cleaned.replace(/<(b|br)\s*[^>]*>/g, '<$1>');
 
     return cleaned;
   }
