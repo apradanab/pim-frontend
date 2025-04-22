@@ -3,6 +3,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { MobileSidebarComponent } from "../mobile-sidebar/mobile-sidebar.component";
 import { CloudinaryService } from '../../services/cloudinary.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'pim-header',
@@ -10,7 +11,10 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   imports: [FontAwesomeModule, MobileSidebarComponent],
   template: `
     <header class="header">
-      <div class="logo">
+      <div class="logo"
+          (click)="navigateToHome()"
+          (keyup.enter)="navigateToHome()"
+          tabindex="0">
         <img [src]="cloudinary.local.favicon" width="150" height="150" alt="Logo" class="logo-icon">
         <div class="logo-text">
           <span>Psicología</span>
@@ -20,7 +24,12 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       </div>
 
       <nav class="nav-options">
-        <a class="nav-option" href="#servicios">Servicios</a>
+        <a class="nav-option"
+          (click)="navigateToServicesDetail()"
+          (keyup.enter)="navigateToServicesDetail()"
+          tabindex="0"
+          >Servicios
+        </a>
         <a class="nav-option" href="#recursos">Recursos</a>
         <a class="nav-option" href="#conecta">Conecta conmigo</a>
         <a class="nav-option" href="#centro">Nuestro centro</a>
@@ -65,6 +74,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     width: 82px;
     height: 82px;
     margin-right: 16px;
+    cursor: pointer;
   }
 
   .logo-text {
@@ -79,6 +89,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   .nav-options {
     display: flex;
     gap: 20px;
+    cursor: pointer;
     margin-right: 280px;
   }
 
@@ -181,9 +192,18 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 })
 export class HeaderComponent  {
   cloudinary = inject(CloudinaryService);
+  router = inject(Router)
   sidebarActive = false;
   faBars = faBars;
   faXmark = faXmark;
+
+  navigateToHome() {
+    this.router.navigate(['/home'])
+  }
+
+  navigateToServicesDetail() {
+    this.router.navigate(['/services-detail']);
+  }
 
   toggleSidebar() {
     this.sidebarActive = !this.sidebarActive;

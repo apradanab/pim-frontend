@@ -15,4 +15,13 @@ describe('App Routes', () => {
     const homeComponent = await homeRoute!.loadComponent!();
     expect(homeComponent).toBeDefined();
   });
+
+  it('should lazy load ServicesDetailComponent on /services-detail', async () => {
+    const servicesDetailRoute = routes.find(route => route.path == 'services-detail');
+    expect(servicesDetailRoute).toBeDefined();
+    expect(servicesDetailRoute?.loadComponent).toBeDefined();
+
+    const servicesDetailComponent = await servicesDetailRoute!.loadComponent!();
+    expect (servicesDetailComponent).toBeDefined();
+  });
 });
