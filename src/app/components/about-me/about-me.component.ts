@@ -51,7 +51,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
   .grid-background {
     position: absolute;
-    top: 80px;
+    top: 100px;
     left: 50%;
     transform: translateX(-50%);
     width: 83%;
@@ -79,7 +79,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     height: 80px;
     margin-bottom: 20px;
     position: relative;
-    bottom: 58px;
+    bottom: 38px;
     background-color: #fcfcf9;
   }
 
@@ -89,7 +89,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     color: #9e9e9b;
     margin-bottom: 20px;
     position: relative;
-    bottom: 80px;
+    bottom: 60px;
   }
 
   .highlight-text .bold {
@@ -104,7 +104,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     margin-bottom: 15px;
     text-align: justify;
     position: relative;
-    bottom: 70px;
+    bottom: 50px;
   }
 
   .bold {
@@ -148,6 +148,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       width: 55px;
       height: 55px;
       margin-top: 20px;
+      bottom: 59px;
     }
 
     .content {
@@ -157,10 +158,12 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     .highlight-text {
       font-size: 0.95rem;
       margin-top: 5px;
+      bottom: 80px;
     }
 
     p {
       font-size: 0.8rem;
+      bottom: 85px;
     }
 
     .motivational-quote {

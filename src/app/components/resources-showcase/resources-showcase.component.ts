@@ -51,7 +51,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   styles: `
     .resources-showcase {
       display: flex;
-      padding: 4rem 8.4vw;
+      padding: 4rem 8.4vw 2.5rem;
       gap: 2rem;
       background-color: #fcfcf9;
       font-family: 'Carlito', sans-serif;
