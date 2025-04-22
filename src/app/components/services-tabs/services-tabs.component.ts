@@ -209,8 +209,14 @@ export class ServicesTabsComponent implements OnInit {
     this.activeTab.set(index);
   }
 
-  cleanContent(content: string) {
-    return this.sanitizer.bypassSecurityTrustHtml(content || '');
+  cleanContent(content: string): string {
+    if (!content) return '';
+
+    const allowedTags = ['<br>', '<br/>', '<b>', '</b>'];
+
+    return String(content).replace(/<[^>]+>/g, tag =>
+      allowedTags.includes(tag.toLowerCase()) ? tag : ''
+    );
   }
 
   getServiceStyle(index: number) {
