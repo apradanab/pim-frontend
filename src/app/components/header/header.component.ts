@@ -71,8 +71,8 @@ import { Router } from '@angular/router';
   }
 
   .logo-icon {
-    width: 82px;
-    height: 82px;
+    width: 80px;
+    height: 80px;
     margin-right: 16px;
     cursor: pointer;
   }
