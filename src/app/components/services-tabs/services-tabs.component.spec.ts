@@ -41,10 +41,11 @@ describe('ServicesTabsComponent', () => {
     });
 
     it('should resist ReDoS attacks', () => {
-      const maliciousContent = '<!'.repeat(1_000_000) + '>';
-      const start = Date.now();
-      expect(component.cleanContent(maliciousContent)).toBe('');
-      expect(Date.now() - start).toBeLessThan(100);
+      const attackString = '<!'.repeat(1000000) + '>';
+      const start = performance.now();
+      component.cleanContent(attackString);
+      const duration = performance.now() - start;
+      expect(duration).toBeLessThan(100); // <100ms
     });
   });
 

@@ -213,11 +213,11 @@ export class ServicesTabsComponent implements OnInit {
   cleanContent(content: string): string {
     if (!content) return '';
 
-    const tagPattern = /<(?:(?!\/?b\b|\/?br\b)[^>])+>/g;
-    let cleaned = content.replace(tagPattern, '');
+    const forbiddenTags = /<(?!\/?b\b(>|\s)|\/?br\b(>|\s))[^>]*>/g;
+    let cleaned = content.replace(forbiddenTags, '');
 
-    const attrPattern = /<(b|br)(?:\s+[^>]*?)?>/g;
-    cleaned = cleaned.replace(attrPattern, '<$1>');
+    const removeAttributes = /<(b|br)\s*[^>]*>/g;
+    cleaned = cleaned.replace(removeAttributes, '<$1>');
 
     return cleaned;
   }
