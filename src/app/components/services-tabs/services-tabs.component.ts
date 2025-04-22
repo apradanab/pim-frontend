@@ -147,7 +147,7 @@ import { DomSanitizer } from '@angular/platform-browser';
     }
 
     .content {
-      line-height: 1.7;
+      line-height: 1.6;
       color: #555;
     }
 
