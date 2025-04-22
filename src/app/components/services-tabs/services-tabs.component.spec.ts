@@ -39,6 +39,13 @@ describe('ServicesTabsComponent', () => {
     it('should clean non-empty content', () => {
       expect(component.cleanContent('<b>text</b><script>')).toBe('<b>text</b>');
     });
+
+    it('should resist ReDoS attacks', () => {
+      const maliciousContent = '<!'.repeat(1_000_000) + '>';
+      const start = Date.now();
+      expect(component.cleanContent(maliciousContent)).toBe('');
+      expect(Date.now() - start).toBeLessThan(100);
+    });
   });
 
   it('should change tab', () => {
