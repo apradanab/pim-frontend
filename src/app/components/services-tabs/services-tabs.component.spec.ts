@@ -60,10 +60,10 @@ describe('ServicesTabsComponent', () => {
       expect(result).toBe(content);
     });
 
-    it('should remove all other HTML tags', () => {
+    it('should remove all other HTML tags but keep their content', () => {
       const content = '<p>Hola</p><script>alert()</script><i>itálica</i><b>negrita</b>';
       const result = component.cleanContent(content);
-      expect(result).toBe('Holaalert()<b>negrita</b>');
+      expect(result).toBe('Holaalert()itálica<b>negrita</b>');
     });
 
     it('should handle empty/null/undefined content', () => {
