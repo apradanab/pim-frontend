@@ -209,15 +209,17 @@ export class ServicesTabsComponent implements OnInit {
     this.activeTab.set(index);
   }
 
+
   cleanContent(content: string): string {
     if (!content) return '';
 
-    const allowedTags = ['<br>', '<br/>', '<b>', '</b>'];
+    let cleaned = content.replace(/<(?!\/?b\b|\/?br\b)[^>]+>/g, '');
 
-    return String(content).replace(/<[^>]+>/g, tag =>
-      allowedTags.includes(tag.toLowerCase()) ? tag : ''
-    );
+    cleaned = cleaned.replace(/<(b|br)(?:\s+[^>]*)?>/g, '<$1>');
+
+    return cleaned;
   }
+
 
   getServiceStyle(index: number) {
     return this.serviceStyles[index % this.serviceStyles.length];
