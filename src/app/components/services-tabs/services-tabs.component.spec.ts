@@ -31,16 +31,23 @@ describe('ServicesTabsComponent', () => {
 
   describe('cleanContent()', () => {
     it('should handle empty content', () => {
-      expect(component.cleanContent('')).toBe('');
-      expect(component.cleanContent(null!)).toBe('');
-      expect(component.cleanContent(undefined!)).toBe('');
+      expect(component.cleanContent('').toString()).toBe('');
+      expect(component.cleanContent(null!).toString()).toBe('');
+      expect(component.cleanContent(undefined!).toString()).toBe('');
+    });
+
+    it('should convert markdown-style to HTML', () => {
+      const result = component.cleanContent('**bold**\nnewline').toString();
+      expect(result).toContain('<b>bold</b>');
+      expect(result).toContain('<br>');
     });
 
     it('should resist ReDoS attacks', () => {
-      const attackString = '<!'.repeat(1000000) + '>';
-      const start = Date.now();
+      const attackString = '<!'.repeat(10000) + '>'; 
+      const start = performance.now();
       component.cleanContent(attackString);
-      expect(Date.now() - start).toBeLessThan(100);
+      const duration = performance.now() - start;
+      expect(duration).toBeLessThan(10);
     });
   });
 

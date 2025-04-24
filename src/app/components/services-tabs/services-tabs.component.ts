@@ -213,7 +213,12 @@ export class ServicesTabsComponent implements OnInit {
   cleanContent(content: string): SafeHtml {
     if (!content) return '';
 
-    const cleaned = content.replace(/<(?!\/?(b|br)\s*>)[^>]+>/gi, '');
+    const tempDiv = document.createElement('div');
+    tempDiv.textContent = content;
+
+    const cleaned = tempDiv.innerHTML
+      .replace(/\n/g, '<br>')
+      .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
 
     return this.sanitizer.bypassSecurityTrustHtml(cleaned);
   }
