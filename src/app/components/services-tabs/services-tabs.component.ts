@@ -2,7 +2,7 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { StateService } from '../../services/state.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'pim-services-tabs',
@@ -210,16 +210,12 @@ export class ServicesTabsComponent implements OnInit {
   }
 
 
-  cleanContent(content: string): string {
+  cleanContent(content: string): SafeHtml {
     if (!content) return '';
 
-    const forbiddenTags = /<(?!\/?b\b(>|\s)|\/?br\b(>|\s))[^>]*>/g;
-    let cleaned = content.replace(forbiddenTags, '');
+    const cleaned = content.replace(/<(?!\/?(b|br)\s*>)[^>]+>/gi, '');
 
-    const removeAttributes = /<(b|br)\s*[^>]*>/g;
-    cleaned = cleaned.replace(removeAttributes, '<$1>');
-
-    return cleaned;
+    return this.sanitizer.bypassSecurityTrustHtml(cleaned);
   }
 
   getServiceStyle(index: number) {

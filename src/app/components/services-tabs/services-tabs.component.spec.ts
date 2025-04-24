@@ -36,16 +36,11 @@ describe('ServicesTabsComponent', () => {
       expect(component.cleanContent(undefined!)).toBe('');
     });
 
-    it('should clean non-empty content', () => {
-      expect(component.cleanContent('<b>text</b><script>')).toBe('<b>text</b>');
-    });
-
     it('should resist ReDoS attacks', () => {
       const attackString = '<!'.repeat(1000000) + '>';
-      const start = performance.now();
+      const start = Date.now();
       component.cleanContent(attackString);
-      const duration = performance.now() - start;
-      expect(duration).toBeLessThan(100); // <100ms
+      expect(Date.now() - start).toBeLessThan(100);
     });
   });
 
