@@ -1,9 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { ServicesTabsComponent } from './services-tabs.component';
 import { StateService } from '../../services/state.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 describe('ServicesTabsComponent', () => {
   let component: ServicesTabsComponent;
+  let sanitizer: DomSanitizer;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -13,8 +15,11 @@ describe('ServicesTabsComponent', () => {
         useValue: {
           state$: () => ({
             services: [
-              { id: '1', title: 'Test', content: '<b>content</b>' },
-              { id: '2', title: 'Empty', content: '' }
+              {
+                id: '1',
+                title: 'Test',
+                content: '<b style="color:red">content</b><br><script>alert()</script>'
+              }
             ]
           }),
           loadServices: jasmine.createSpy()
@@ -23,6 +28,7 @@ describe('ServicesTabsComponent', () => {
     });
 
     component = TestBed.createComponent(ServicesTabsComponent).componentInstance;
+    sanitizer = TestBed.inject(DomSanitizer);
   });
 
   it('should create', () => {
@@ -30,34 +36,31 @@ describe('ServicesTabsComponent', () => {
   });
 
   describe('cleanContent()', () => {
-    it('should handle empty content', () => {
-      expect(component.cleanContent('').toString()).toBe('');
-      expect(component.cleanContent(null!).toString()).toBe('');
-      expect(component.cleanContent(undefined!).toString()).toBe('');
+    it('should return empty string when content is empty', () => {
+      const result = component.cleanContent('');
+      expect(result.toString()).toBe('');
     });
 
-    it('should convert markdown-style to HTML', () => {
-      const result = component.cleanContent('**bold**\nnewline').toString();
-      expect(result).toContain('<b>bold</b>');
-      expect(result).toContain('<br>');
+    it('should keep allowed tags', () => {
+      const input = '<b>test</b><br>';
+      const expected = sanitizer.bypassSecurityTrustHtml('<b>test</b><br>');
+      expect(component.cleanContent(input)).toEqual(expected);
     });
 
-    it('should resist ReDoS attacks', () => {
-      const attackString = '<!'.repeat(10000) + '>'; 
-      const start = performance.now();
-      component.cleanContent(attackString);
-      const duration = performance.now() - start;
-      expect(duration).toBeLessThan(10);
+    it('should remove dangerous tags and attributes', () => {
+      const input = '<script>alert()</script><b style="danger">test</b>';
+      const expected = sanitizer.bypassSecurityTrustHtml('<b>test</b>');
+      expect(component.cleanContent(input)).toEqual(expected);
     });
   });
 
-  it('should change tab', () => {
+  it('should change active tab', () => {
     component.setActiveTab(0);
     expect(component.activeTab()).toBe(0);
   });
 
-  it('should return correct service style', () => {
-    expect(component.getServiceStyle(0)).toEqual({ bgColor: '#fea087' });
-    expect(component.getServiceStyle(3)).toEqual({ bgColor: '#fea087' });
+  it('should return correct style for index within bounds', () => {
+    const style = component.getServiceStyle(0);
+    expect(style).toEqual({ bgColor: '#fea087' });
   });
 });

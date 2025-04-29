@@ -209,17 +209,12 @@ export class ServicesTabsComponent implements OnInit {
     this.activeTab.set(index);
   }
 
-
   cleanContent(content: string): SafeHtml {
     if (!content) return '';
-
-    const tempDiv = document.createElement('div');
-    tempDiv.textContent = content;
-
-    const cleaned = tempDiv.innerHTML
-      .replace(/\n/g, '<br>')
-      .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-
+    const cleaned = content
+      .replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gi, '')
+      .replace(/<(?!\/?b\b|\/?br\b)[^>]+>/g, '')
+      .replace(/<(b|br)(?:\s+[^>]*)?>/g, '<$1>');
     return this.sanitizer.bypassSecurityTrustHtml(cleaned);
   }
 
