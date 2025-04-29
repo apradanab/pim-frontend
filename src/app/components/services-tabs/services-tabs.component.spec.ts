@@ -57,6 +57,14 @@ describe('ServicesTabsComponent', () => {
       expect(cleanedString).not.toContain('<script>');
       expect(cleanedString).not.toContain('style="danger"');
     });
+
+    it('should resist ReDoS attacks (large malicious input)', () => {
+      const attackInput = '<!' + '!'.repeat(100000) + '>';
+      const startTime = performance.now();
+      component.cleanContent(attackInput);
+      const processingTime = performance.now() - startTime;
+      expect(processingTime).toBeLessThan(100);
+    });
   });
 
   it('should change active tab', () => {
