@@ -210,11 +210,12 @@ export class ServicesTabsComponent implements OnInit {
   }
 
   cleanContent(content: string): SafeHtml {
-    if (!content) return '';
+    if (!content) return this.sanitizer.bypassSecurityTrustHtml('');
     const cleaned = content
-      .replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gi, '')
-      .replace(/<(?!\/?b\b|\/?br\b)[^>]+>/g, '')
-      .replace(/<(b|br)(?:\s+[^>]*)?>/g, '<$1>');
+      .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
+      .replace(/<(?!\/?(?:b|br)\b)[^>]+>/g, '')
+      .replace(/<(b|br)\b[^>]*>/g, '<$1>');
+
     return this.sanitizer.bypassSecurityTrustHtml(cleaned);
   }
 

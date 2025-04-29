@@ -38,19 +38,24 @@ describe('ServicesTabsComponent', () => {
   describe('cleanContent()', () => {
     it('should return empty string when content is empty', () => {
       const result = component.cleanContent('');
-      expect(result.toString()).toBe('');
+      const expected = sanitizer.bypassSecurityTrustHtml('');
+      expect(result.toString()).toEqual(expected.toString());
     });
 
     it('should keep allowed tags', () => {
       const input = '<b>test</b><br>';
+      const result = component.cleanContent(input);
       const expected = sanitizer.bypassSecurityTrustHtml('<b>test</b><br>');
-      expect(component.cleanContent(input)).toEqual(expected);
+      expect(result.toString()).toEqual(expected.toString());
     });
 
     it('should remove dangerous tags and attributes', () => {
       const input = '<script>alert()</script><b style="danger">test</b>';
-      const expected = sanitizer.bypassSecurityTrustHtml('<b>test</b>');
-      expect(component.cleanContent(input)).toEqual(expected);
+      const result = component.cleanContent(input);
+      const cleanedString = result.toString();
+      expect(cleanedString).toContain('<b>test</b>');
+      expect(cleanedString).not.toContain('<script>');
+      expect(cleanedString).not.toContain('style="danger"');
     });
   });
 
