@@ -213,16 +213,10 @@ export class ServicesTabsComponent implements OnInit {
   cleanContent(content: string): SafeHtml {
     if (!content) return this.sanitizer.bypassSecurityTrustHtml('');
 
-    // Security: Linear-time regex with whitelist (Sonar-compliant)
-    const cleaned = content
-      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
-      .replace(/<(?!\/?[br]?\b)[^>]*>/g, '')
-      .replace(/<(b|br)\s+[^>]*>/g, '<$1>');
+    const cleaned = content.replace(/<\/?([^>]+)>/g, (m, tag) =>
+      ['b','br'].includes(tag.toLowerCase().split(' ')[0]) ? `<${tag.split(' ')[0]}>` : ''
+    );
 
-    // @security-bypass-justification:
-    // - Whitelist enforced (only <b>, <br> tags)
-    // - All attributes removed
-    // - Tested against XSS and ReDoS vectors
     return this.sanitizer.bypassSecurityTrustHtml(cleaned);
   }
 
