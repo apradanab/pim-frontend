@@ -1,17 +1,21 @@
-import { CommonModule } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'pim-mobile-sidebar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <div
       class="sidebar"
-      [ngClass]= "{ 'active': active() }"
+      [class.active]="active()"
       >
       <div class="menu">
-        <a href="#">Servicios</a>
+        <a (click)="navigateToServicesDetail()"
+          (keyup.enter)="navigateToServicesDetail()"
+          tabindex="0"
+          >Servicios
+        </a>
         <a href="#">Recursos</a>
         <a href="#">Conecta conmigo</a>
         <a href="#">Nuestro centro</a>
@@ -54,5 +58,10 @@ import { Component, input } from '@angular/core';
   `
 })
 export class MobileSidebarComponent {
-  active= input(false);
+  active = input(false);
+  router = inject(Router);
+
+  navigateToServicesDetail() {
+    this.router.navigate(['/services-detail']);
+  }
 }

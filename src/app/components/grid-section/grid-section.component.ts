@@ -218,7 +218,7 @@ export class GridSectionComponent {
   buttonText = input('Pide información');
   showDecorations = input(false);
 
-  buttonAction = output<void>();
+  buttonAction = output();
 
   decorations = input([
     { src: this.cloudinary.svg.purpleCircle, class: 'purple-circle', alt: 'Círculo morado' },

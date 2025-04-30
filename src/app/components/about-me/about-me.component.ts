@@ -100,7 +100,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     font-size: 1.4rem;
     font-weight: bold;
     color: #9e9e9b;
-    line-height: 1.5;
+    line-height: 1.35;
     margin-bottom: 15px;
     text-align: justify;
     position: relative;
@@ -122,7 +122,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     color: #666;
     margin-top: 20px;
     position: relative;
-    bottom: 70px;
+    bottom: 60px;
     left: 250px;
   }
 
@@ -167,14 +167,13 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     }
 
     .motivational-quote {
-      font-size: 0.8rem;
-      left: 0px;
-      bottom: 100px;
+      font-size: 0.68rem;
+      left: 8px;
+      bottom: 65px;
     }
 
     .icon {
-      position: relative;
-      bottom: 5px;
+      font-size: 0.9rem;
     }
   }
   `

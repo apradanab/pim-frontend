@@ -1,35 +1,47 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { HeaderComponent } from './header.component';
+import { Router } from '@angular/router';
 
-describe('HeaderComponent', () => {
+describe('HeaderComponent Navigation', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
+  let router: Router;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [HeaderComponent]
-    })
-    .compileComponents();
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [HeaderComponent],
+      providers: [
+        {
+          provide: Router,
+          useValue: {
+            navigate: jasmine.createSpy('navigate')
+          }
+        }
+      ]
+    });
 
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    router = TestBed.inject(Router);
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should call router.navigate with /home when navigateToHome is called', () => {
+    component.navigateToHome();
+    expect(router.navigate).toHaveBeenCalledWith(['/home']);
   });
 
-  it('should toggle sidebarActive state when toggleSidebar is called', () => {
+  it('should call router.navigate with /services-detail when navigateToServicesDetail is called', () => {
+    component.navigateToServicesDetail();
+    expect(router.navigate).toHaveBeenCalledWith(['/services-detail']);
+  });
+
+  it('should toggle sidebarActive value', () => {
     expect(component.sidebarActive).toBeFalse();
 
     component.toggleSidebar();
-    fixture.detectChanges();
     expect(component.sidebarActive).toBeTrue();
 
     component.toggleSidebar();
-    fixture.detectChanges();
-    expect(component.sidebarActive).toBeFalse()
-  })
+    expect(component.sidebarActive).toBeFalse();
+  });
 });

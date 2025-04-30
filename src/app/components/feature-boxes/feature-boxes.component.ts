@@ -88,7 +88,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
   .icon-button {
     background-color: #f3552d;
-    box-shadow: inset 0px -4px 2px #b64022;
+    box-shadow: inset 0px -2px 2px #b64022;
     border: none;
     border-radius: 50%;
     width: 40px;
@@ -130,7 +130,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
   .decoration-line {
     width: 60px;
-    height: 20px;
+    height: 16px;
     position: relative;
     top: 60px;
     right: 85px;
