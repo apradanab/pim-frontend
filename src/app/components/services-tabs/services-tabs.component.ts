@@ -2,7 +2,7 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { StateService } from '../../services/state.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import DOMPurify from 'dompurify';
 
 @Component({
   selector: 'pim-services-tabs',
@@ -187,8 +187,6 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 })
 export class ServicesTabsComponent implements OnInit {
   private stateService = inject(StateService);
-  private sanitizer = inject(DomSanitizer);
-
   activeTab = signal(0);
   faArrowDown = faArrowDown;
 
@@ -210,29 +208,11 @@ export class ServicesTabsComponent implements OnInit {
     this.activeTab.set(index);
   }
 
-  /**
-   * Sanitizes HTML content allowing only specific whitelisted tags
-   * @security
-   * - Uses explicit allow-list (only <b> and <br> tags)
-   * - Removes ALL attributes for safety
-   * - Processes in linear time O(n) by using simple regex patterns
-   * - Tested against XSS and ReDoS vectors
-   */
-  cleanContent(content: string): SafeHtml {
-    if (!content) return this.sanitizer.bypassSecurityTrustHtml('');
-
-    // Security: Linear-time processing with strict whitelist
-    // @security-regex-safety: No nested quantifiers or complex lookarounds
-    const cleaned = content.replace(/<\/?([^>]+)>/g, (m, tag) =>
-      ['b','br'].includes(tag.toLowerCase().split(' ')[0]) ? `<${tag.split(' ')[0]}>` : ''
-    );
-
-    // @security-bypass-justification:
-    // - Whitelist enforced (only <b>, <br> tags)
-    // - All attributes removed
-    // - Dangerous tags completely removed
-    // - Tested against XSS and ReDoS vectors
-    return this.sanitizer.bypassSecurityTrustHtml(cleaned);
+  cleanContent(content: string) {
+    return DOMPurify.sanitize(content || '', {
+      ALLOWED_TAGS: ['b', 'br'],
+      ALLOWED_ATTR: []
+    });
   }
 
   getServiceStyle(index: number) {

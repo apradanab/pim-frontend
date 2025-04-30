@@ -1,11 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { ServicesTabsComponent } from './services-tabs.component';
 import { StateService } from '../../services/state.service';
-import { DomSanitizer } from '@angular/platform-browser';
 
 describe('ServicesTabsComponent', () => {
   let component: ServicesTabsComponent;
-  let sanitizer: DomSanitizer;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -20,36 +18,38 @@ describe('ServicesTabsComponent', () => {
     });
 
     component = TestBed.createComponent(ServicesTabsComponent).componentInstance;
-    sanitizer = TestBed.inject(DomSanitizer);
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should load services on init', () => {
+    const stateService = TestBed.inject(StateService);
+    component.ngOnInit();
+    expect(stateService.loadServices).toHaveBeenCalled();
+  });
+
   describe('cleanContent()', () => {
     it('should handle empty content', () => {
-      spyOn(sanitizer, 'bypassSecurityTrustHtml').and.callThrough();
-      component.cleanContent('');
-      expect(sanitizer.bypassSecurityTrustHtml).toHaveBeenCalledWith('');
+      expect(component.cleanContent('')).toBe('');
     });
 
-    it('should clean content with allowed tags', () => {
-      const result = component.cleanContent('<b style="color:red">test</b><br>');
-      expect(result.toString()).toContain('SafeValue');
-      expect(result.toString()).toContain('test');
+    it('should keep allowed tags', () => {
+      expect(component.cleanContent('<b>test</b>')).toBe('<b>test</b>');
     });
 
     it('should remove dangerous tags', () => {
-      const result = component.cleanContent('<script>alert()</script><b>test</b>');
-      expect(result.toString()).not.toContain('script');
-      expect(result.toString()).toContain('test');
+      expect(component.cleanContent('<script>alert(1)</script>')).toBe('');
     });
   });
 
   it('should handle tabs', () => {
     component.setActiveTab(0);
     expect(component.activeTab()).toBe(0);
-    expect(component.getServiceStyle(0)).toBeTruthy();
+  });
+
+  it('should return service style', () => {
+    expect(component.getServiceStyle(0)).toEqual({ bgColor: '#fea087' });
   });
 });
