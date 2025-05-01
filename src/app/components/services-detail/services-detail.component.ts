@@ -8,7 +8,7 @@ import { ServicesTabsComponent } from "../services-tabs/services-tabs.component"
 @Component({
   selector: 'pim-services-detail',
   standalone: true,
-  imports: [HeaderComponent, GridSectionComponent, FooterComponent, ServicesTabsComponent],
+  imports: [HeaderComponent, ServicesTabsComponent, GridSectionComponent, FooterComponent],
   template: `
     <pim-header></pim-header>
     <pim-services-tabs></pim-services-tabs>
@@ -23,6 +23,6 @@ import { ServicesTabsComponent } from "../services-tabs/services-tabs.component"
   `,
   styles: ``
 })
-export class ServicesDetailComponent {
+export default class ServicesDetailComponent {
 
 }

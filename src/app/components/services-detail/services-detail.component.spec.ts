@@ -1,8 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ServicesDetailComponent } from './services-detail.component';
+import  ServicesDetailComponent  from './services-detail.component';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { StateService } from '../../services/state.service';
 import { provideHttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 
 describe('ServicesDetailComponent', () => {
   let component: ServicesDetailComponent;
@@ -14,7 +16,13 @@ describe('ServicesDetailComponent', () => {
       providers: [
         StateService,
         provideHttpClient(),
-        provideHttpClientTesting()
+        provideHttpClientTesting(),
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            paramMap: of({ get: () => 'terapia-individual' })
+          }
+        }
       ]
     }).compileComponents();
 

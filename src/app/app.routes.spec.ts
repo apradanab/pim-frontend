@@ -16,8 +16,8 @@ describe('App Routes', () => {
     expect(homeComponent).toBeDefined();
   });
 
-  it('should lazy load ServicesDetailComponent on /services-detail', async () => {
-    const servicesDetailRoute = routes.find(route => route.path == 'services-detail');
+  it('should lazy load ServicesDetailComponent on /servicios/:serviceType', async () => {
+    const servicesDetailRoute = routes.find(route => route.path == 'servicios/:serviceType');
     expect(servicesDetailRoute).toBeDefined();
     expect(servicesDetailRoute?.loadComponent).toBeDefined();
 
