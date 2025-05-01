@@ -1,20 +1,36 @@
 import { TestBed } from '@angular/core/testing';
 import { ServicesTabsComponent } from './services-tabs.component';
 import { StateService } from '../../services/state.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { of } from 'rxjs';
 
 describe('ServicesTabsComponent', () => {
   let component: ServicesTabsComponent;
+  let mockRouter: jasmine.SpyObj<Router>;
 
   beforeEach(() => {
+    mockRouter = jasmine.createSpyObj('Router', ['navigate']);
+
     TestBed.configureTestingModule({
       imports: [ServicesTabsComponent],
-      providers: [{
-        provide: StateService,
-        useValue: {
-          state$: () => ({ services: [{ id: '1', title: 'Test', content: '' }] }),
-          loadServices: jasmine.createSpy()
-        }
-      }]
+      providers: [
+        {
+          provide: StateService,
+          useValue: {
+            state$: () => ({
+              services: [{ id: '1', title: 'Test', content: '' }]
+            }),
+            loadServices: jasmine.createSpy()
+          }
+        },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            paramMap: of({ get: () => 'terapia-individual' })
+          }
+        },
+        { provide: Router, useValue: mockRouter }
+      ]
     });
 
     component = TestBed.createComponent(ServicesTabsComponent).componentInstance;
@@ -44,12 +60,16 @@ describe('ServicesTabsComponent', () => {
     });
   });
 
-  it('should handle tabs', () => {
-    component.setActiveTab(0);
+  it('should navigate when changing tabs', () => {
+    component.navigateToTab(0);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/servicios', 'terapia-individual']);
     expect(component.activeTab()).toBe(0);
   });
 
-  it('should return service style', () => {
-    expect(component.getServiceStyle(0)).toEqual({ bgColor: '#fea087' });
+  it('should return default style for invalid index', () => {
+    expect(component.getServiceStyle(100)).toEqual({
+      bgColor: '#fea087',
+      tags: ['de 3 a 20 años', 'pide cita', 'consulta horarios']
+    });
   });
 });

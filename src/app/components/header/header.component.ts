@@ -28,7 +28,7 @@ import { Router } from '@angular/router';
           (click)="navigateToServicesDetail()"
           (keyup.enter)="navigateToServicesDetail()"
           tabindex="0"
-          >Servicios
+        >Servicios
         </a>
         <a class="nav-option" href="#recursos">Recursos</a>
         <a class="nav-option" href="#conecta">Conecta conmigo</a>
@@ -104,10 +104,9 @@ import { Router } from '@angular/router';
   }
 
   .nav-option:hover {
-    background-color: #f2f8fa;
-    color: #17475f;
+    color: #f3552d;
     border-radius: 30px;
-    transform: scale(1.02);
+    transition: color 0.3s;
   }
 
   .login-container {
@@ -191,8 +190,9 @@ import { Router } from '@angular/router';
   `
 })
 export class HeaderComponent  {
-  cloudinary = inject(CloudinaryService);
-  router = inject(Router)
+  readonly cloudinary = inject(CloudinaryService);
+  readonly router = inject(Router);
+
   sidebarActive = false;
   faBars = faBars;
   faXmark = faXmark;
@@ -202,7 +202,7 @@ export class HeaderComponent  {
   }
 
   navigateToServicesDetail() {
-    this.router.navigate(['/services-detail']);
+    this.router.navigate(['/servicios/terapia-individual']);
   }
 
   toggleSidebar() {

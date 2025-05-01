@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CloudinaryService } from '../../services/cloudinary.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faFacebook, faInstagram, faLinkedin } from '@fortawesome/free-brands-svg-icons';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'pim-footer',
@@ -19,7 +20,11 @@ import { faFacebook, faInstagram, faLinkedin } from '@fortawesome/free-brands-sv
 
         <div class="footer-block links-block">
           <div class="links-column">
-            <a href="#servicios">Servicios</a>
+            <a (click)="navigateToServicesDetail()"
+              (keyup.enter)="navigateToServicesDetail()"
+              tabindex="0"
+            >Servicios
+            </a>
             <a href="#recursos">Recursos</a>
             <a href="#horarios">Horarios</a>
           </div>
@@ -88,6 +93,7 @@ import { faFacebook, faInstagram, faLinkedin } from '@fortawesome/free-brands-sv
       display: flex;
       flex-direction: column;
       gap: 0.8rem;
+      cursor: pointer;
     }
 
     .links-column a {
@@ -169,13 +175,19 @@ import { faFacebook, faInstagram, faLinkedin } from '@fortawesome/free-brands-sv
 `
 })
 export class FooterComponent {
-  cloudinary = inject(CloudinaryService);
+  readonly cloudinary = inject(CloudinaryService);
+  readonly router = inject(Router);
+
   faInstagram = faInstagram;
   faFacebook = faFacebook;
   faLinkedin = faLinkedin;
 
+  navigateToServicesDetail() {
+    this.router.navigate(['/servicios/terapia-individual']);
+  }
+
   socialLinks = {
-    instagram: 'https://instagram.com',
+    instagram: 'https://www.instagram.com/espaipim/',
     facebook: 'https://facebook.com',
     linkedin: 'https://linkedin.com'
   };

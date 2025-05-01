@@ -3,6 +3,7 @@ import { StateService } from '../../services/state.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import DOMPurify from 'dompurify';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'pim-services-tabs',
@@ -14,7 +15,9 @@ import DOMPurify from 'dompurify';
 
       <div class="tabs-header">
         @for (service of services; track service.id; let i = $index) {
-          <button class="tab-button" [class.active]="activeTab() === i" (click)="setActiveTab(i)"
+          <button class="tab-button"
+                  [class.active]="activeTab() === i"
+                  (click)="navigateToTab(i)"
                   [style.background]="getServiceStyle(i).bgColor">
             {{ service.title }}
             <span class="icon-circle">
@@ -186,14 +189,26 @@ import DOMPurify from 'dompurify';
   `
 })
 export class ServicesTabsComponent implements OnInit {
-  private stateService = inject(StateService);
-  activeTab = signal(0);
-  faArrowDown = faArrowDown;
+  private readonly stateService = inject(StateService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
-  serviceStyles = [
-    { bgColor: '#fea087' },
-    { bgColor: '#e0f15e' },
-    { bgColor: '#b7a8ed' }
+  faArrowDown = faArrowDown;
+  activeTab = signal(0);
+
+  servicesConfig = [
+    {
+      route: 'terapia-individual',
+      style: { bgColor: '#fea087', tags: ['de 3 a 20 años', 'pide cita', 'consulta horarios'] }
+    },
+    {
+      route: 'grupo-de-madres',
+      style: { bgColor: '#e0f15e', tags: ['grupos abiertos'] }
+    },
+    {
+      route: 'terapia-pedagogica',
+      style: { bgColor: '#b7a8ed', tags: ['personalizada', 'apoyo educativo'] }
+    }
   ];
 
   get services() {
@@ -202,10 +217,18 @@ export class ServicesTabsComponent implements OnInit {
 
   ngOnInit() {
     this.stateService.loadServices();
+    this.route.paramMap.subscribe(params => {
+      const serviceType = params.get('serviceType');
+      const tabIndex = this.servicesConfig.findIndex(config => config.route === serviceType);
+      if (tabIndex > -1) {
+        this.activeTab.set(tabIndex);
+      }
+    });
   }
 
-  setActiveTab(index: number) {
+  navigateToTab(index: number) {
     this.activeTab.set(index);
+    this.router.navigate(['/servicios', this.servicesConfig[index].route]);
   }
 
   cleanContent(content: string) {
@@ -216,6 +239,6 @@ export class ServicesTabsComponent implements OnInit {
   }
 
   getServiceStyle(index: number) {
-    return this.serviceStyles[index % this.serviceStyles.length];
+    return this.servicesConfig[index]?.style || this.servicesConfig[0].style;
   }
 }

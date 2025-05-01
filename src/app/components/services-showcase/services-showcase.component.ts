@@ -4,6 +4,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { ServiceStyle } from '../../models/service.model';
 import { CloudinaryService } from '../../services/cloudinary.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'pim-services-showcase',
@@ -17,7 +18,12 @@ import { CloudinaryService } from '../../services/cloudinary.service';
           <img [src]="circleStar" width="200" height="200" class="icon" alt="icon">
         </div>
           <p class="description">Ofrecemos soluciones psicológicas centradas en el bienestar de los niños y la mejora de las relaciones familiares</p>
-          <button class="cta-button">Saber más</button>
+          <button class="cta-button"
+                  (click)="navigateToServices()"
+                  (keyup.enter)="navigateToServices()"
+                  tabindex="0"
+                  >Saber más
+          </button>
       </div>
 
       <div class="services-grid">
@@ -25,7 +31,9 @@ import { CloudinaryService } from '../../services/cloudinary.service';
           <div class="service-box" [style.background]="getServiceStyle(i).bgColor">
             <div class="service-header">
               <h3>{{ service.description }}</h3>
-              <button class="service-button">
+              <button class="service-button"
+                      (click)="navigateToServiceByIndex($index)"
+                      (keyup.enter)="navigateToServiceByIndex($index)">
                 <fa-icon [icon]="faArrowRight" />
               </button>
             </div>
@@ -92,7 +100,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       font-size: 1.15rem;
       color: white;
       border: none;
-      padding: 25px 55px;
+      padding: 20px 55px;
       border-radius: 30px;
       box-shadow: inset 0px -5px 2px #b64022;
       cursor: pointer;
@@ -289,6 +297,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 })
 export class ServicesShowcaseComponent implements OnInit {
   private readonly stateService = inject(StateService);
+  private readonly router = inject(Router);
 
   readonly circleStar = inject(CloudinaryService).svg.circleStar;
   faArrowRight = faArrowRight;
@@ -309,5 +318,14 @@ export class ServicesShowcaseComponent implements OnInit {
 
   getServiceStyle(index: number): ServiceStyle {
     return this.serviceStyles[index % this.serviceStyles.length];
+  }
+
+  navigateToServices() {
+    this.router.navigate(['/servicios/terapia-individual'])
+  }
+
+  navigateToServiceByIndex(index: number) {
+    const routes = ['terapia-individual', 'grupo-de-madres', 'terapia-pedagogica'];
+    this.router.navigate(['/servicios', routes[index]]);
   }
 }

@@ -4,11 +4,13 @@ import { StateService } from '../../services/state.service';
 import { Service } from '../../models/service.model';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { signal } from '@angular/core';
+import { Router } from '@angular/router';
 
 describe('ServicesShowcaseComponent', () => {
   let component: ServicesShowcaseComponent;
   let fixture: ComponentFixture<ServicesShowcaseComponent>;
   let mockStateService: Partial<StateService>;
+  let mockRouter: jasmine.SpyObj<Router>
 
   const mockServices: Service[] = [
     {
@@ -32,6 +34,7 @@ describe('ServicesShowcaseComponent', () => {
   ];
 
   beforeEach(async () => {
+    mockRouter = jasmine.createSpyObj('Router', ['navigate']);
     mockStateService = {
       state$: signal({
         services: mockServices,
@@ -43,7 +46,8 @@ describe('ServicesShowcaseComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ServicesShowcaseComponent, FontAwesomeModule],
       providers: [
-        { provide: StateService, useValue: mockStateService }
+        { provide: StateService, useValue: mockStateService },
+        { provide: Router, useValue: mockRouter}
       ]
     }).compileComponents();
 
@@ -76,5 +80,15 @@ describe('ServicesShowcaseComponent', () => {
     expect(style2.bgColor).toBe('#e0f15e');
     expect(style3.bgColor).toBe('#b7a8ed');
     expect(style4.bgColor).toBe('#fea087');
+  });
+
+  it('should navigate to terapia-individual', () => {
+    component.navigateToServices();
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/servicios/terapia-individual']);
+  });
+
+  it('should navigate to correct service by index', () => {
+    component.navigateToServiceByIndex(0);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/servicios', 'terapia-individual']);
   });
 });
