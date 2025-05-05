@@ -63,6 +63,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     transform: translateX(-50%);
     width: 83%;
     height: 280px;
+    background-color: white;
     background-image:
       repeating-linear-gradient(90deg, #f4f2ed 0, #f4f2ed 1px, transparent 1px, transparent 100%),
       repeating-linear-gradient(0deg, #f4f2ed 0, #f4f2ed 1px, transparent 1px, transparent 100%);
@@ -82,7 +83,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   }
 
   .logo {
-    background-color: #fcfcf9;
+    background-color: transparent;
     width: 80px;
     height: 80px;
     position: absolute;

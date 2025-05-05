@@ -25,8 +25,8 @@ describe('MobileSidebarComponent', () => {
     router = TestBed.inject(Router);
   });
 
-  it('should call router.navigate with /services-detail when navigateToServicesDetail is called', () => {
+  it('should call router.navigate with /servicios/terapia-individual when navigateToServicesDetail is called', () => {
     component.navigateToServicesDetail();
-    expect(router.navigate).toHaveBeenCalledWith(['/services-detail']);
+    expect(router.navigate).toHaveBeenCalledWith(['/servicios/terapia-individual']);
   });
 });

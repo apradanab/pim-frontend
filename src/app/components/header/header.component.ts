@@ -80,9 +80,7 @@ import { Router } from '@angular/router';
   .logo-text {
     display: flex;
     flex-direction: column;
-    font-family: 'Carlito', sans-serif;
-    font-size: 1.3rem;
-    font-weight: bold;
+    font: bold 1.3rem / 1.2 'Carlito', sans-serif;
     color: #17475f;
   }
 

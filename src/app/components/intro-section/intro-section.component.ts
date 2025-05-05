@@ -35,6 +35,7 @@ import { Component } from '@angular/core';
     transform: translateX(-50%);
     width: 83%;
     height: 350px;
+    background-color: white;
     background-image:
       repeating-linear-gradient(90deg, #f4f2ed 0, #f4f2ed 1px, transparent 1px, transparent 100%),
       repeating-linear-gradient(0deg, #f4f2ed 0, #f4f2ed 1px, transparent 1px, transparent 100%);
@@ -69,6 +70,7 @@ import { Component } from '@angular/core';
   .intro-section p {
     font-family: 'Carlito', sans-serif;
     font-size: 1.3rem;
+    color: #9e9e9b;
     width: 570px;
     z-index: 1;
     position: relative;
