@@ -75,9 +75,9 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 
     .description {
       font-size: 1.2rem;
-      color: #555;
+      color: #9e9e9b;
       margin: 0;
-      max-width: 300px;
+      max-width: 350px;
     }
 
     .cta-button {
@@ -243,6 +243,8 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       .info-section {
         position: relative;
         padding: 0rem 1rem;
+        gap: 1rem;
+        margin-bottom: 0.75rem;
       }
 
       .title {
@@ -250,16 +252,15 @@ import { CloudinaryService } from '../../services/cloudinary.service';
       }
 
       .description {
-        font-size: 1rem;
+        font-size: 0.88rem;
         max-width: 240px;
       }
 
       .cta-button {
         font-size: 1rem;
         position: absolute;
-        right: 25px;
-        bottom: 15px;
-        padding: 20px 50px;
+        right: 18px;
+        padding: 18px 50px;
       }
 
       .bento-rectangle {

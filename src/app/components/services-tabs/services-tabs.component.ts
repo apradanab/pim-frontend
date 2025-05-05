@@ -18,23 +18,29 @@ import { ActivatedRoute, Router } from '@angular/router';
           <button class="tab-button"
                   [class.active]="activeTab() === i"
                   (click)="navigateToTab(i)"
-                  [style.background]="getServiceStyle(i).bgColor">
+                  [style.background]="activeTab() === i ? getServiceStyle(i).bgColor : '#ebece9'"
+                  [style.color]="activeTab() === i ? 'white' : '#2f2929'">
             {{ service.title }}
-            <span class="icon-circle">
-              <fa-icon [icon]="faArrowDown" [class.rotated]="activeTab() === i" />
+            <span class="icon-circle" [style.background]="activeTab() === i ? 'rgba(255,255,255,0.3)' : 'white'">
+              <fa-icon [icon]="faArrowDown"
+                      [class.rotated]="activeTab() === i"
+                      [style.color]="activeTab() === i ? 'white' : 'black'"/>
             </span>
           </button>
         }
       </div>
 
-      <div class="tab-content">
-        @if (services[activeTab()]) {
-          <div class="service-detail">
-            <h3>{{ services[activeTab()].title }}</h3>
-            <p class="description">{{ services[activeTab()].description }}</p>
-            <div class="content" [innerHTML]="cleanContent(services[activeTab()].content)"></div>
-          </div>
-        }
+      <div class="tab-content-wrapper" [style.border-top-color]="getServiceStyle(activeTab()).bgColor">
+        <div class="tab-content">
+          @if (services[activeTab()]) {
+            <div class="service-detail">
+              <h3>{{ services[activeTab()].title }}</h3>
+              <p class="description">{{ services[activeTab()].description }}</p>
+              <div class="content" [innerHTML]="cleanContent(services[activeTab()].content)"></div>
+            </div>
+          }
+        </div>
+        <div class="tab-footer" [style.background]="getServiceStyle(activeTab()).bgColor"></div>
       </div>
     </div>
   `,
@@ -58,7 +64,7 @@ import { ActivatedRoute, Router } from '@angular/router';
       background-image:
         repeating-linear-gradient(90deg, #f4f2ed 0, #f4f2ed 1px, transparent 1px, transparent 100%),
         repeating-linear-gradient(0deg, #f4f2ed 0, #f4f2ed 1px, transparent 1px, transparent 100%);
-      background-size: calc(100% / 14) calc(100% / 5);
+      background-size: calc(100% / 16) calc(100% / 3);
       border: 2px solid #f4f2ed;
       border-top: none;
       z-index: 0;
@@ -69,36 +75,34 @@ import { ActivatedRoute, Router } from '@angular/router';
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 1rem;
-      margin-bottom: 2rem;
+      gap: 0.5rem;
+      margin-bottom: 0;
       position: relative;
-      z-index: 1;
+      z-index: 2;
     }
 
     .tab-button {
       border: none;
-      border-radius: 30px;
+      border-radius: 1.5rem;
       padding: 1rem 1.8rem;
       display: flex;
       align-items: center;
       gap: 0.8rem;
       transition: all 0.3s ease;
       font-family: 'Carlito', sans-serif;
-      font-size: 1rem;
-      color: #2f2929;
+      font-size: 1.25rem;
       cursor: pointer;
       position: relative;
-      overflow: hidden;
+      background: #ebece9;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 
       &:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        transform: translateY(-2px);
       }
 
       &.active {
-        color: white;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        z-index: 3;
       }
     }
 
@@ -108,35 +112,45 @@ import { ActivatedRoute, Router } from '@angular/router';
       justify-content: center;
       width: 24px;
       height: 24px;
-      background: white;
       border-radius: 50%;
       transition: all 0.3s ease;
 
       fa-icon {
-        color: black;
         font-size: 12px;
         transition: all 0.3s ease;
       }
     }
 
-    .tab-button.active .icon-circle {
-      background: rgba(255,255,255,0.3);
+    .tab-button.active .icon-circle fa-icon {
+      transform: rotate(180deg);
+    }
 
-      fa-icon {
-        color: white;
-        transform: rotate(180deg);
-      }
+    .tab-content-wrapper {
+      position: relative;
+      margin-top: -1rem;
+      padding-top: 2rem;
+      border-top: 4px solid;
+      box-shadow:
+        8px 0 15px -10px rgba(0,0,0,0.2),
+        -8px 0 15px -10px rgba(0,0,0,0.2);
     }
 
     .tab-content {
-      padding: 1rem 0;
-      animation: fadeIn 0.5s ease;
+      padding: 2rem;
+      background: white;
       position: relative;
       z-index: 1;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .tab-footer {
+      height: 10px;
+      border-radius: 0 0 1rem 1rem;
     }
 
     .service-detail h3 {
-      font-size: 1.8rem;
+      font-size: 3rem;
+      font-weight: 500;
       color: #2f2929;
       margin-bottom: 1.2rem;
       font-family: 'Caprasimo', cursive;
@@ -161,20 +175,33 @@ import { ActivatedRoute, Router } from '@angular/router';
 
     @media (max-width: 768px) {
       .services-tabs {
-        padding: 1.5rem;
-        padding-top: 120px;
+        padding: 0 8.4vw;
+        padding-top: 50px;
       }
 
       .grid-background {
-        width: 90%;
+        width: 85%;
         height: 150px;
-        top: 20px;
+        top: 0px;
         background-size: calc(100% / 10) calc(100% / 4);
+      }
+
+      .tabs-header {
+        gap: 0.5rem;
+        margin-bottom: 1rem;
       }
 
       .tab-button {
         padding: 0.8rem 1.2rem;
-        font-size: 0.9rem;
+        font-size: 1rem;
+      }
+
+      .tab-content {
+        padding: 1.5rem;
+      }
+
+      .service-detail h3 {
+        font-size: 2.5rem;
       }
 
       .icon-circle {

@@ -59,9 +59,9 @@ import { Router } from '@angular/router';
 })
 export class MobileSidebarComponent {
   active = input(false);
-  router = inject(Router);
+  readonly router = inject(Router);
 
   navigateToServicesDetail() {
-    this.router.navigate(['/services-detail']);
+    this.router.navigate(['/servicios/terapia-individual']);
   }
 }

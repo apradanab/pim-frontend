@@ -90,7 +90,7 @@ import { Router } from '@angular/router';
 
     .description {
       font-size: 1.3rem;
-      color: #555;
+      color: #9e9e9b;
       margin: 0;
       max-width: 330px;
     }
@@ -209,11 +209,12 @@ import { Router } from '@angular/router';
     @media (max-width: 768px) {
       .services-showcase {
         padding: 0 8.4vw;
+        overflow: hidden;
       }
 
       .header-section {
         position: relative;
-        margin: 0;
+        margin-bottom: 0.75rem;
         justify-content: flex-start;
         padding: 1rem;
       }
@@ -230,16 +231,16 @@ import { Router } from '@angular/router';
       }
 
       .description {
-        font-size: 1rem;
+        font-size: 0.9rem;
         max-width: 240px;
       }
 
       .cta-button {
         font-size: 1rem;
         position: absolute;
-        right: 20px;
-        bottom: 30px;
-        padding: 20px 50px;
+        right: 18px;
+        bottom: 18px;
+        padding: 18px 50px;
       }
 
       .services-grid {
@@ -250,7 +251,8 @@ import { Router } from '@angular/router';
         grid-template-columns: unset;
         scrollbar-width: none;
         gap: 1rem;
-
+        padding-right: 8.4vw;
+        margin-right: -8.4vw;
       }
 
       .services-grid::-webkit-scrollbar {

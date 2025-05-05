@@ -5,7 +5,7 @@ export const routes: Routes = [
   {
     path: 'home',
     loadComponent: () => import('./components/home/home.component'),
-    title: 'Inicio'
+    title: 'Psicología infantojuvenil Montcada - Inicio'
   },
   {
     path: 'servicios/:serviceType',

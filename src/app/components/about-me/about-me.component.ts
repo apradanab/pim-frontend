@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faLeaf } from '@fortawesome/free-solid-svg-icons';
+import { faSeedling } from '@fortawesome/free-solid-svg-icons';
 import { CloudinaryService } from '../../services/cloudinary.service';
 
 @Component({
@@ -32,7 +32,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
         </p>
 
         <div class="motivational-quote">
-          <fa-icon [icon]="faLeaf" class="icon"></fa-icon>
+          <fa-icon [icon]="faSeed" class="icon"></fa-icon>
           <span>Sembrando semillas a lo largo del crecimiento para un desarrollo emocional equilibrado.</span>
         </div>
       </div>
@@ -56,6 +56,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     transform: translateX(-50%);
     width: 83%;
     height: 420px;
+    background-color: white;
     background-image:
       repeating-linear-gradient(90deg, #f4f2ed 0, #f4f2ed 1px, transparent 1px, transparent 100%),
       repeating-linear-gradient(0deg, #f4f2ed 0, #f4f2ed 1px, transparent 1px, transparent 100%);
@@ -80,25 +81,20 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     margin-bottom: 20px;
     position: relative;
     bottom: 38px;
-    background-color: #fcfcf9;
+    background-color: transparent;
   }
 
   .highlight-text {
     font-size: 1.6rem;
-    font-weight: bold;
+    font-weight: normal;
     color: #9e9e9b;
     margin-bottom: 20px;
     position: relative;
     bottom: 60px;
   }
 
-  .highlight-text .bold {
-    color: black;
-  }
-
   p {
     font-size: 1.4rem;
-    font-weight: bold;
     color: #9e9e9b;
     line-height: 1.35;
     margin-bottom: 15px;
@@ -127,7 +123,7 @@ import { CloudinaryService } from '../../services/cloudinary.service';
   }
 
   .icon {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     margin-right: 8px;
     color: #74A57F;
   }
@@ -156,29 +152,29 @@ import { CloudinaryService } from '../../services/cloudinary.service';
     }
 
     .highlight-text {
-      font-size: 0.95rem;
+      font-size: 1rem;
       margin-top: 5px;
       bottom: 80px;
     }
 
     p {
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       bottom: 85px;
     }
 
     .motivational-quote {
       font-size: 0.68rem;
       left: 8px;
-      bottom: 65px;
+      bottom: 100px;
     }
 
     .icon {
-      font-size: 0.9rem;
+      font-size: 1.1rem;
     }
   }
   `
 })
 export class AboutMeComponent {
   readonly logoOrange = inject(CloudinaryService).svg.orangeLogo;
-  faLeaf = faLeaf;
+  faSeed = faSeedling;
 }
