@@ -113,7 +113,12 @@ export class StateService {
         });
       } catch (err) {
         localStorage.removeItem('token');
-        throw new Error('Invalid token format');
+        this.authState.set({
+          currentUser: null,
+          token: null,
+          status: 'error',
+          error: 'Invalid token format'
+        });
       }
     }
   }

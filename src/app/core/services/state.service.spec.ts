@@ -162,13 +162,16 @@ describe('StateService', () => {
       expect(service.token()).toBe(mockToken);
     });
 
-    it('should remove invalid token when checkAuth fails', () => {
+    it('should handle invalid token', () => {
       (localStorage.getItem as jasmine.Spy).and.returnValue('invalid.token');
       spyOn(JSON, 'parse').and.throwError('Invalid token');
 
-      expect(() => service.checkAuth()).toThrowError('Invalid token format');
+      service.checkAuth();
+
       expect(localStorage.removeItem).toHaveBeenCalledWith('token');
+
       expect(service.currentUser()).toBeNull();
+      expect(service.token()).toBeNull();
     });
 
     it('should handle complete registration successfully', () => {
