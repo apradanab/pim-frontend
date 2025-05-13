@@ -94,33 +94,23 @@ export class StateService {
 
   checkAuth = () => {
     const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        const user: User = {
-          id: payload.id,
-          name: payload.name,
-          email: payload.email,
-          role: payload.role,
-          approved: payload.approved
-        };
+    if (!token) return;
 
-        this.authState.set({
-          currentUser: user,
-          token: token,
-          status: 'success',
-          error: null
-        });
-      } catch (err) {
-        localStorage.removeItem('token');
-        this.authState.set({
-          currentUser: null,
-          token: null,
-          status: 'error',
-          error: 'Invalid token format'
-        });
-      }
-    }
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const user: User = {
+      id: payload.id,
+      name: payload.name,
+      email: payload.email,
+      role: payload.role,
+      approved: payload.approved
+    };
+
+    this.authState.set({
+      currentUser: user,
+      token: token,
+      status: 'success',
+      error: null
+    });
   }
 
   completeRegistration = (token: string, password: string) => {

@@ -162,17 +162,15 @@ describe('StateService', () => {
       expect(service.token()).toBe(mockToken);
     });
 
-    it('should handle invalid token', () => {
-      (localStorage.getItem as jasmine.Spy).and.returnValue('invalid.token');
-      spyOn(JSON, 'parse').and.throwError('Invalid token');
+    it('should do nothing when no token exists', () => {
+      (localStorage.getItem as jasmine.Spy).and.returnValue(null);
+      const initialAuthState = service.currentUser();
 
       service.checkAuth();
 
-      expect(localStorage.removeItem).toHaveBeenCalledWith('token');
-
-      expect(service.currentUser()).toBeNull();
-      expect(service.token()).toBeNull();
-    });
+      expect(service.currentUser()).toBe(initialAuthState);
+      expect(localStorage.removeItem).not.toHaveBeenCalled();
+    })
 
     it('should handle complete registration successfully', () => {
       mockUsersRepo.completeRegistration.and.returnValue(of(mockUser));
