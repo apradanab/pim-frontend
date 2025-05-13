@@ -152,8 +152,8 @@ import { StateService } from '../../../core/services/state.service';
 })
 export class LoginModalComponent {
   modalClosed = output<void>();
-  private stateService = inject(StateService);
-  private fb = inject(FormBuilder);
+  private readonly stateService = inject(StateService);
+  private readonly fb = inject(FormBuilder);
 
   faTimes = faTimes;
 

@@ -166,8 +166,7 @@ describe('StateService', () => {
       (localStorage.getItem as jasmine.Spy).and.returnValue('invalid.token');
       spyOn(JSON, 'parse').and.throwError('Invalid token');
 
-      service.checkAuth();
-
+      expect(() => service.checkAuth()).toThrowError('Invalid token format');
       expect(localStorage.removeItem).toHaveBeenCalledWith('token');
       expect(service.currentUser()).toBeNull();
     });

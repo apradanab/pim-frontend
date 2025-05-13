@@ -22,12 +22,12 @@ interface AuthState {
   providedIn: 'root'
 })
 export class StateService {
-  private usersRepo = inject(UsersRepoService);
-  private router = inject(Router);
-  private servicesRepo = inject(ServicesRepoService);
+  private readonly usersRepo = inject(UsersRepoService);
+  private readonly router = inject(Router);
+  private readonly servicesRepo = inject(ServicesRepoService);
 
   // Auth State
-  private authState = signal<AuthState>({
+  private readonly authState = signal<AuthState>({
     currentUser: null,
     status: 'idle',
     error: null,
@@ -35,7 +35,7 @@ export class StateService {
   });
 
   // Services State
-  private servicesState = signal<ServicesState>({
+  private readonly servicesState = signal<ServicesState>({
     services: [],
     currentService: null
   });
@@ -113,6 +113,7 @@ export class StateService {
         });
       } catch (err) {
         localStorage.removeItem('token');
+        throw new Error('Invalid token format');
       }
     }
   }

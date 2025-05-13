@@ -252,8 +252,8 @@ Tienes derecho a acceder, rectificar y suprimir tus datos, así como otros derec
 })
 export class ContactModalComponent {
   modalClosed = output<void>();
-  private fb = inject(FormBuilder);
-  private usersRepo = inject(UsersRepoService);
+  private readonly fb = inject(FormBuilder);
+  private readonly usersRepo = inject(UsersRepoService);
 
   error: ApiError | null = null;
   faTimes = faTimes;
