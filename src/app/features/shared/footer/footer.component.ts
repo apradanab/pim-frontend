@@ -211,7 +211,7 @@ export class FooterComponent {
 
   openGoogleMaps() {
     const address = encodeURIComponent('Calle París 1, Montcada, Barcelona, 08110');
-    window.open(`https://www.google.com/maps/search/?api=1&query=${address}`, '_blank', 'noopener,noreferrer');
+    window.open(`https://www.google.com/maps/search/?api=1&query=${address}`);
   }
 
   socialLinks = {
