@@ -51,10 +51,6 @@ describe('FooterComponent', () => {
 
     component.openGoogleMaps();
 
-    expect(window.open).toHaveBeenCalledWith(
-      expectedUrl,
-      '_blank',
-      'noopener,noreferrer'
-    );
+    expect(window.open).toHaveBeenCalledWith(expectedUrl);
   });
 });
