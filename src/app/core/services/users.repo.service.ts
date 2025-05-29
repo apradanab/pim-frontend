@@ -19,11 +19,19 @@ export class UsersRepoService {
     return this.http.post<{ token: string }>(`${this.url}/login`, data);
   }
 
-  completeRegistration(token: string, password: string): Observable<User> {
-    return this.http.patch<User>(`${this.url}/complete-registration`, { token, password });
-  }
-
   getById(id: string): Observable<User> {
     return this.http.get<User>(`${this.url}/${id}`);
+  }
+
+  updateUser(id: string, data: FormData, token: string): Observable<User> {
+    return this.http.patch<User>(
+      `${this.url}/${id}`,
+      data,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
   }
 }

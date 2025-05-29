@@ -21,8 +21,3 @@ export type UserLoginDto = {
   email: string;
   password: string;
 };
-
-export type UserRegistrationDto = {
-  token: string;
-  password: string;
-};
