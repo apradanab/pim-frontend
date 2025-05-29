@@ -1,23 +1,27 @@
 import { Component, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
+import { LoginModalComponent } from '../login-modal/login-modal.component';
 
 @Component({
   selector: 'pim-mobile-sidebar',
   standalone: true,
-  imports: [],
+  imports: [LoginModalComponent],
   template: `
     <div
       class="sidebar"
       [class.active]="active()"
       >
       <div class="menu">
+        <a (click)="openLoginModal()"
+          (keyup.enter)="openLoginModal()"
+          tabindex="0"
+        >Iniciar sesión</a>
         <a (click)="navigateToServicesDetail()"
           (keyup.enter)="navigateToServicesDetail()"
           tabindex="0"
           >Servicios
         </a>
         <a href="#">Recursos</a>
-        <a href="#">Conecta conmigo</a>
         <a aria-label="Ver en Google Maps"
           (click)="openGoogleMaps()"
           (keyup.enter)="openGoogleMaps()"
@@ -25,6 +29,10 @@ import { Router } from '@angular/router';
         >Nuestro centro</a>
       </div>
     </div>
+
+    @if (showLoginModal) {
+      <pim-login-modal (modalClosed)="closeLoginModal()"></pim-login-modal>
+    }
   `,
   styles: `
   .sidebar {
@@ -63,14 +71,23 @@ import { Router } from '@angular/router';
 })
 export class MobileSidebarComponent {
   active = input(false);
+  showLoginModal = false;
   readonly router = inject(Router);
 
   navigateToServicesDetail() {
     this.router.navigate(['/servicios/terapia-individual']);
   }
 
+  openLoginModal() {
+    this.showLoginModal = true;
+  }
+
+  closeLoginModal() {
+    this.showLoginModal = false;
+  }
+
   openGoogleMaps() {
     const address = encodeURIComponent('Calle París 1, Montcada, Barcelona, 08110');
-    window.open(`https://www.google.com/maps/search/?api=1&query=${address}`, '_blank', 'noopener,noreferrer');
+    window.open(`https://www.google.com/maps/search/?api=1&query=${address}`);
   }
 }

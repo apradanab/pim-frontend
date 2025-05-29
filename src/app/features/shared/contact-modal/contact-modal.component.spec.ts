@@ -14,7 +14,7 @@ describe('ContactModalComponent', () => {
 
   beforeEach(async () => {
     usersRepoMock = jasmine.createSpyObj<UsersRepoService>('UsersRepoService',
-      ['preregister', 'login', 'completeRegistration', 'getById']);
+      ['preregister', 'login', 'updateUser', 'getById']);
 
     usersRepoMock.preregister.and.returnValue(of({} as User));
 

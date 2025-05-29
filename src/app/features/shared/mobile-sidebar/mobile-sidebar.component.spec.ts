@@ -25,6 +25,18 @@ describe('MobileSidebarComponent', () => {
     router = TestBed.inject(Router);
   });
 
+  it('should open login modal', () => {
+    expect(component.showLoginModal).toBeFalse();
+    component.openLoginModal();
+    expect(component.showLoginModal).toBeTrue();
+  });
+
+  it('should close login modal', () => {
+    component.showLoginModal = true;
+    component.closeLoginModal();
+    expect(component.showLoginModal).toBeFalse();
+  });
+
   it('should call router.navigate with /servicios/terapia-individual when navigateToServicesDetail is called', () => {
     component.navigateToServicesDetail();
     expect(router.navigate).toHaveBeenCalledWith(['/servicios/terapia-individual']);
@@ -36,10 +48,6 @@ describe('MobileSidebarComponent', () => {
 
     component.openGoogleMaps();
 
-    expect(window.open).toHaveBeenCalledWith(
-      expectedUrl,
-      '_blank',
-      'noopener,noreferrer'
-    );
+    expect(window.open).toHaveBeenCalledWith(expectedUrl);
   });
 });
