@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { HeaderComponent } from '../shared/header/header.component';
 import { IntroSectionComponent } from './components/intro-section/intro-section.component';
 import { HeroSectionComponent } from './components/hero-section/hero-section.component';
+import CompleteRegistrationComponent from './components/complete-registration/complete-registration.component';
 import { AboutMeComponent } from './components/about-me/about-me.component';
 import { ServicesShowcaseComponent } from "./components/services-showcase/services-showcase.component";
 import { ResourcesShowcaseComponent } from "./components/resources-showcase/resources-showcase.component";
@@ -15,6 +16,7 @@ import { FooterComponent } from "../shared/footer/footer.component";
     HeaderComponent,
     IntroSectionComponent,
     HeroSectionComponent,
+    CompleteRegistrationComponent,
     AboutMeComponent,
     ServicesShowcaseComponent,
     ResourcesShowcaseComponent,
@@ -22,25 +24,24 @@ import { FooterComponent } from "../shared/footer/footer.component";
     FooterComponent
   ],
   template: `
-    <pim-header></pim-header>
-    <pim-intro-section></pim-intro-section>
-    <pim-hero-section></pim-hero-section>
-    <pim-about-me></pim-about-me>
-    <pim-services-showcase></pim-services-showcase>
-    <pim-grid-section
-      logoColor="purple"
-      sectionTitle="Descubre lo que necesitas saber"
-    >
-    </pim-grid-section>
-    <pim-resources-showcase></pim-resources-showcase>
-    <pim-grid-section
-      logoColor="green"
-      sectionTitle="Únete a nuestra comunidad"
-      [showDecorations]="true"
-      [showButton]="true"
-    >
-    </pim-grid-section>
-    <pim-footer></pim-footer>
+      <pim-header></pim-header>
+      <pim-intro-section></pim-intro-section>
+      <pim-hero-section></pim-hero-section>
+      <pim-about-me></pim-about-me>
+      <pim-services-showcase></pim-services-showcase>
+      <pim-grid-section
+        logoColor="purple"
+        sectionTitle="Descubre lo que necesitas saber">
+      </pim-grid-section>
+      <pim-resources-showcase></pim-resources-showcase>
+      <pim-grid-section
+        logoColor="green"
+        sectionTitle="Únete a nuestra comunidad"
+        [showDecorations]="true"
+        [showButton]="true">
+      </pim-grid-section>
+      <pim-footer></pim-footer>
+      <pim-complete-registration/>
   `,
   styles: ``
 })

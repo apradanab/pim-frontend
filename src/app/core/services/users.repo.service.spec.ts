@@ -61,21 +61,6 @@ describe('UsersRepoService', () => {
     req.flush(mockResponse);
   });
 
-  it('should call completeRegistration', () => {
-    const mockToken = 'token';
-    const mockPassword = 'password';
-    const mockResponse = {} as User;
-
-    service.completeRegistration(mockToken, mockPassword).subscribe((response) => {
-      expect(response).toEqual(mockResponse);
-    });
-
-    const req = http.expectOne(`${service['url']}/complete-registration`);
-    expect(req.request.method).toBe('PATCH');
-    expect(req.request.body).toEqual({ token: mockToken, password: mockPassword });
-    req.flush(mockResponse);
-  });
-
   it('should call getById', () => {
     const mockId = '123';
     const mockResponse = {} as User;
@@ -88,4 +73,22 @@ describe('UsersRepoService', () => {
     expect(req.request.method).toBe('GET');
     req.flush(mockResponse);
   });
+
+  it('should call updateUser', () => {
+    const mockId = '123';
+    const mockToken = 'mock-token';
+    const mockFormData = new FormData();
+    mockFormData.append('name', 'Updated Name');
+    const mockResponse = {} as User;
+
+    service.updateUser(mockId, mockFormData, mockToken).subscribe((response) => {
+      expect(response).toEqual(mockResponse);
+    });
+
+    const req = http.expectOne(`${service['url']}/${mockId}`);
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.body).toBe(mockFormData);
+    expect(req.request.headers.get('Authorization')).toBe(`Bearer ${mockToken}`);
+    req.flush(mockResponse);
+  })
 });
