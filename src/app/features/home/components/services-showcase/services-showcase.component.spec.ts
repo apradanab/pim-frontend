@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ServicesShowcaseComponent } from './services-showcase.component';
-import { StateService } from '../../../../core/services/state.service';
+import { AppState, StateService } from '../../../../core/services/state.service';
 import { Service } from '../../../../models/service.model';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { signal } from '@angular/core';
@@ -33,14 +33,22 @@ describe('ServicesShowcaseComponent', () => {
     }
   ];
 
+  const mockAppState: AppState = {
+    authStatus: 'idle',
+    currentUser: null,
+    token: null,
+    error: null,
+    services: mockServices,
+    currentService: null
+  };
+
   beforeEach(async () => {
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
     mockStateService = {
-      state$: signal({
-        services: mockServices,
-        currentService: null
-      }),
-      loadServices: jasmine.createSpy('loadServices')
+      state$: signal(mockAppState),
+      loadServices: jasmine.createSpy('loadServices'),
+      currentToken: null,
+      isLoggedIn: jasmine.createSpy('isLoggedIn').and.returnValue(false)
     };
 
     await TestBed.configureTestingModule({
