@@ -121,13 +121,13 @@ import { ContactModalComponent } from "../contact-modal/contact-modal.component"
 
     .social-block {
       display: flex;
-      gap: 1.85rem;
+      gap: 1.5rem;
       justify-content: flex-end;
     }
 
     .social-block a {
       color: #2f2929;
-      font-size: 2.5rem;
+      font-size: 2rem;
       transition: color 0.3s;
     }
 
