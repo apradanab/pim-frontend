@@ -23,7 +23,7 @@ import { lastValueFrom } from 'rxjs';
             <form [formGroup]="form" (ngSubmit)="submit()">
               <h2>Completa tu registro</h2>
 
-              <div class="input-group">
+              <div class="form-group">
                 <label for="name">Nombre completo</label>
                 <input type="text" formControlName="name" required>
                 @if (form.controls.name.invalid && form.controls.name.touched) {
@@ -31,7 +31,7 @@ import { lastValueFrom } from 'rxjs';
                 }
               </div>
 
-              <div class="input-group">
+              <div class="form-group">
                 <label for="password">Contraseña</label>
                 <input type="password" formControlName="password" required>
                 @if (form.controls.password.invalid && form.controls.password.touched) {
@@ -39,14 +39,12 @@ import { lastValueFrom } from 'rxjs';
                 }
               </div>
 
-              <div class="input-group">
+              <div class="form-group">
                 <label for="avatar">Foto de perfil (opcional)</label>
-                <input
-                  type="file"
-                  (change)="handleFileChange($event)">
+                <input type="file" (change)="handleFileChange($event)">
               </div>
 
-              <button type="submit" [disabled]="form.invalid">Enviar</button>
+              <button type="submit" [disabled]="form.invalid" class="submit-btn">Enviar</button>
             </form>
           } @else {
             <div class="success">
@@ -62,20 +60,19 @@ import { lastValueFrom } from 'rxjs';
     .modal {
       position: fixed;
       top: 0;
-      left: 0;
       width: 100%;
       height: 100%;
       background: rgba(0,0,0,0.5);
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 1000;
+      z-index: 3;
     }
 
     .modal-box {
       background: white;
       padding: 2rem;
-      border-radius: 8px;
+      border-radius: 1rem;
       width: 90%;
       max-width: 400px;
       position: relative;
@@ -87,55 +84,74 @@ import { lastValueFrom } from 'rxjs';
       right: 1rem;
       background: none;
       border: none;
+      font-size: 1.5rem;
       cursor: pointer;
-      font-size: 1.2rem;
+      color: #2f2929;
     }
 
     h2, h3 {
-      margin-top: 0;
+      font-family: 'Caprasimo', cursive;
+      color: #2f2929;
+      margin-bottom: 1.5rem;
       text-align: center;
+      font-weight: 500;
     }
 
-    .input-group {
-      margin-bottom: 1rem;
+    .form-group {
+      margin-bottom: 1.5rem;
     }
 
     label {
       display: block;
+      font-family: 'Carlito', sans-serif;
       margin-bottom: 0.5rem;
-      font-weight: bold;
+      color: #2f2929;
     }
 
     input {
       width: 100%;
-      padding: 0.5rem;
+      padding: 0.75rem;
       border: 1px solid #ddd;
-      border-radius: 4px;
+      border-radius: 0.5rem;
+      font-family: 'Carlito', sans-serif;
+    }
+
+    input[type="file"] {
+      padding: 0.5rem;
     }
 
     .error {
       color: #f00;
       font-size: 0.8rem;
       margin-top: 0.3rem;
+      font-family: 'Carlito', sans-serif;
     }
 
-    button[type="submit"] {
+    .submit-btn {
       width: 100%;
-      padding: 0.75rem;
-      background: #f3552d;
+      padding: 1rem;
+      background-color: #f3552d;
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 2rem;
+      font-family: 'Carlito', sans-serif;
+      font-size: 1rem;
       cursor: pointer;
-      margin-top: 1rem;
+      transition: background-color 0.3s;
     }
 
-    button:disabled {
-      background: #ccc;
+    .submit-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      background-color: #e04a24;
     }
 
     .success {
       text-align: center;
+      padding: 2rem 0;
     }
 
     .success fa-icon {
@@ -155,7 +171,6 @@ export default class CompleteRegistrationComponent implements OnInit {
   faTimes = faTimes;
 
   showModal = signal(false);
-  showLoginModal = false;
   success = signal(false);
   file: File | null = null;
   registrationToken: string | null = null;

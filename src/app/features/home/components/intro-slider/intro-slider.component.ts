@@ -99,13 +99,13 @@ import { CloudinaryService } from '../../../../core/services/cloudinary.service'
   }
 
   .left-1 {
-    transform: scale(0.7) translateX(-80px);
+    transform: scale(0.75) translateX(-55px);
     opacity: 0.8;
     z-index: 2;
   }
 
   .left-2 {
-    transform: scale(0.5) translateX(-185px);
+    transform: scale(0.55) translateX(-135px);
     opacity: 0.6;
     z-index: 1;
   }
@@ -185,12 +185,12 @@ import { CloudinaryService } from '../../../../core/services/cloudinary.service'
     }
 
     .left-1 {
-      transform: scale(0.6) translateX(-35px);
+      transform: scale(0.6) translateX(-30px);
       right: 16%;
     }
 
     .left-2 {
-      transform: scale(0.4) translateX(-115px);
+      transform: scale(0.4) translateX(-110px);
       right: 18%;
     }
 
