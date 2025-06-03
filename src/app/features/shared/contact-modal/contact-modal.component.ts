@@ -135,6 +135,7 @@ Tienes derecho a acceder, rectificar y suprimir tus datos, así como otros derec
 
     .modal-title {
       font-family: 'Caprasimo', cursive;
+      font-weight: 500;
       color: #2f2929;
       margin-bottom: 1.5rem;
       text-align: center;

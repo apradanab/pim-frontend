@@ -97,6 +97,7 @@ import { StateService } from '../../../core/services/state.service';
 
     h2 {
       font-family: 'Caprasimo', cursive;
+      font-weight: 500;
       color: #2f2929;
       margin-bottom: 1.5rem;
       text-align: center;
