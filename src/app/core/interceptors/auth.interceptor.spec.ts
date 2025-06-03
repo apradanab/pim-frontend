@@ -4,12 +4,8 @@ import { authInterceptor } from './auth.interceptor';
 import { StateService } from '../services/state.service';
 import { Observable, of } from 'rxjs';
 
-type StateServiceMock = jasmine.SpyObj<StateService> & {
-  currentToken: string | null;
-};
-
 describe('authInterceptor', () => {
-  let stateServiceMock: StateServiceMock;
+  let stateServiceMock: jasmine.SpyObj<StateService>;
   let nextHandler: jasmine.Spy<HttpHandlerFn>;
   const mockRequest = new HttpRequest('GET', '/api/test');
 
@@ -17,10 +13,14 @@ describe('authInterceptor', () => {
     TestBed.runInInjectionContext(() => authInterceptor(req, next));
 
   beforeEach(() => {
-    stateServiceMock = {
-      ...jasmine.createSpyObj<StateService>('StateService', ['isLoggedIn']),
-      currentToken: null
-    } as StateServiceMock;
+    stateServiceMock = jasmine.createSpyObj<StateService>('StateService', ['isLoggedIn', 'authState']);
+
+    stateServiceMock.authState.and.returnValue({
+      status: 'idle',
+      currentUser: null,
+      token: null,
+      error: null
+    });
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     nextHandler = jasmine.createSpy('nextHandler').and.callFake((_req: HttpRequest<unknown>) => {
@@ -36,8 +36,13 @@ describe('authInterceptor', () => {
 
   it('should add Authorization header when token exists', () => {
     const testToken = 'test-token-123';
-    stateServiceMock.currentToken = testToken;
     stateServiceMock.isLoggedIn.and.returnValue(true);
+    stateServiceMock.authState.and.returnValue({
+      status: 'success',
+      currentUser: null,
+      token: testToken,
+      error: null
+    });
 
     interceptor(mockRequest, nextHandler);
 
@@ -47,8 +52,13 @@ describe('authInterceptor', () => {
   });
 
   it('should not modify request when no token exists', () => {
-    stateServiceMock.currentToken = null;
     stateServiceMock.isLoggedIn.and.returnValue(false);
+    stateServiceMock.authState.and.returnValue({
+      status: 'idle',
+      currentUser: null,
+      token: null,
+      error: null
+    });
 
     interceptor(mockRequest, nextHandler);
 
@@ -57,8 +67,14 @@ describe('authInterceptor', () => {
   });
 
   it('should pass through login and create requests without modification', () => {
-    stateServiceMock.currentToken = 'test-token';
+    const testToken = 'test-token';
     stateServiceMock.isLoggedIn.and.returnValue(true);
+    stateServiceMock.authState.and.returnValue({
+      status: 'success',
+      currentUser: null,
+      token: testToken,
+      error: null
+    });
 
     const loginRequest = new HttpRequest('POST', '/login', null, {
       headers: new HttpHeaders()
@@ -78,8 +94,13 @@ describe('authInterceptor', () => {
   });
 
   it('should pass through the request when not logged in', () => {
-    stateServiceMock.currentToken = null;
     stateServiceMock.isLoggedIn.and.returnValue(false);
+    stateServiceMock.authState.and.returnValue({
+      status: 'idle',
+      currentUser: null,
+      token: null,
+      error: null
+    });
 
     const result = interceptor(mockRequest, nextHandler);
 

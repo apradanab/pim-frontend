@@ -6,11 +6,14 @@ import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { Service } from '../../models/service.model';
 import { ApiError } from '../interceptors/error.interceptor';
+import { ResourcesRepoService } from './resources.repo.service';
+import { Resource } from '../../models/resource.model';
 
 describe('StateService', () => {
   let service: StateService;
-  let mockServicesRepo: jasmine.SpyObj<ServicesRepoService>;
   let mockUsersRepo: jasmine.SpyObj<UsersRepoService>;
+  let mockServicesRepo: jasmine.SpyObj<ServicesRepoService>;
+  let mockResourcesRepo: jasmine.SpyObj<ResourcesRepoService>;
   let mockRouter: jasmine.SpyObj<Router>;
 
   const mockToken = 'mock-token';
@@ -30,21 +33,35 @@ describe('StateService', () => {
     createdAt: new Date('2025-05-29T17:25:06Z'),
     updatedAt: new Date('2025-05-29T17:25:06Z')
   };
+  const mockResource: Resource = {
+    id: '1',
+    title: 'Test Resource',
+    description: 'Test Description',
+    content: 'Test Content',
+    image: 'http://test.com',
+    createdAt: new Date('2025-05-29T17:25:06Z'),
+    updatedAt: new Date('2025-05-29T17:25:06Z'),
+    serviceId: '1',
+  }
 
   beforeEach(() => {
+    mockUsersRepo = jasmine.createSpyObj('UsersRepoService', [
+      'login', 'getById'
+    ]);
     mockServicesRepo = jasmine.createSpyObj('ServicesRepoService', [
       'getServices', 'getServiceById', 'createService', 'updateService', 'deleteService'
     ]);
-    mockUsersRepo = jasmine.createSpyObj('UsersRepoService', [
-      'login', 'getById'
+    mockResourcesRepo = jasmine.createSpyObj('ResourcesRepoService', [
+      'getAllResources', 'getResourcesByServiceId', 'getResourceById'
     ]);
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
 
     TestBed.configureTestingModule({
       providers: [
         StateService,
-        { provide: ServicesRepoService, useValue: mockServicesRepo },
         { provide: UsersRepoService, useValue: mockUsersRepo },
+        { provide: ServicesRepoService, useValue: mockServicesRepo },
+        { provide: ResourcesRepoService, useValue: mockResourcesRepo },
         { provide: Router, useValue: mockRouter }
       ]
     });
@@ -68,18 +85,24 @@ describe('StateService', () => {
 
   describe('Initial State', () => {
     it('should initialize with empty state', () => {
-      const state = service.state$();
-      expect(state.currentUser).toBeNull();
-      expect(state.token).toBeNull();
-      expect(state.services).toEqual([]);
+      const state = service.state$;
+      expect(state.auth.currentUser).toBeNull();
+      expect(state.auth.token).toBeNull();
+      expect(state.services.list).toEqual([]);
+      expect(state.resources.list).toEqual([]);
     });
   });
 
   describe('Utility Methods', () => {
     it('should provide readonly state', () => {
-      const state = service.state$();
-      expect(state.authStatus).toBe('idle');
-      expect(state.currentUser).toBeNull();
+      const authState = service.authState();
+      const servicesState = service.servicesState();
+      const resourcesState = service.resourcesState();
+
+      expect(authState.status).toBe('idle');
+      expect(authState.currentUser).toBeNull();
+      expect(servicesState.list).toEqual([]);
+      expect(resourcesState.list).toEqual([]);
     });
   });
 
@@ -90,27 +113,28 @@ describe('StateService', () => {
       service.login('test@example.com', 'password');
       tick();
 
-      const state = service.state$();
-      expect(state.currentUser).toEqual(jasmine.objectContaining({
+      const authState = service.authState();
+      expect(authState.currentUser).toEqual(jasmine.objectContaining({
         id: '1',
         name: 'Test User',
         email: 'test@example.com'
       }));
-      expect(state.token).toBe(mockToken);
+      expect(authState.token).toBe(mockToken);
+      expect(authState.status).toBe('success');
       expect(localStorage.setItem).toHaveBeenCalledWith('token', mockToken);
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/']);
     }));
 
     it('should handle login error', fakeAsync(() => {
-      const error: ApiError = { status: 401, message: 'Unauthorized' };
+      const error: ApiError = { status: 401, message: 'Authentication required' };
       mockUsersRepo.login.and.returnValue(throwError(() => error));
 
-      service.login('fail@example.com', 'wrong');
+      service.login('fail@example.com', 'wrongpassword');
       tick();
 
-      const state = service.state$();
-      expect(state.authStatus).toBe('error');
-      expect(state.error).toBe('Unauthorized');
+      const authState = service.authState();
+      expect(authState.status).toBe('error');
+      expect(authState.error).toBe('Authentication required');
     }));
 
     it('should validate token on checkAuth', fakeAsync(() => {
@@ -119,12 +143,12 @@ describe('StateService', () => {
       service.checkAuth();
       tick();
 
-      const state = service.state$();
-      expect(state.currentUser).toEqual(jasmine.objectContaining({
+      const authState = service.authState();
+      expect(authState.currentUser).toEqual(jasmine.objectContaining({
         id: '1',
         name: 'Test User'
       }));
-      expect(state.token).toBe(mockToken);
+      expect(authState.token).toBe(mockToken);
     }));
 
     it('should logout when token is invalid', fakeAsync(() => {
@@ -134,21 +158,26 @@ describe('StateService', () => {
       service.checkAuth();
       tick();
 
-      const state = service.state$();
-      expect(state.currentUser).toBeNull();
-      expect(state.token).toBeNull();
+      const authState = service.authState();
+      expect(authState.currentUser).toBeNull();
+      expect(authState.token).toBeNull();
     }));
 
     it('should clear state on logout', fakeAsync(() => {
-      mockUsersRepo.login.and.returnValue(of({ token: mockToken }));
-      service.login('test@example.com', 'password');
-      tick();
-
       service.logout();
 
-      const state = service.state$();
-      expect(state.currentUser).toBeNull();
-      expect(state.token).toBeNull();
+      const { auth, services, resources } = service.state$;
+
+      expect(auth.currentUser).toBeNull();
+      expect(auth.token).toBeNull();
+      expect(auth.status).toBe('idle');
+
+      expect(services.list).toEqual([]);
+      expect(services.current).toBeNull();
+
+      expect(resources.list).toEqual([]);
+      expect(resources.current).toBeNull();
+
       expect(localStorage.removeItem).toHaveBeenCalledWith('token');
     }));
   });
@@ -160,21 +189,21 @@ describe('StateService', () => {
       service.loadServices();
       tick();
 
-      const state = service.state$();
-      expect(state.services.length).toBe(1);
-      expect(state.services[0]).toEqual(mockService);
+      const servicesState = service.servicesState();
+      expect(servicesState.list.length).toBe(1);
+      expect(servicesState.list[0]).toEqual(mockService);
     }));
 
     it('should handle loading error', fakeAsync(() => {
-      const error: ApiError = { status: 500, message: 'Server Error' };
+      const error: ApiError = { status: 500, message: 'Internal server error' };
       mockServicesRepo.getServices.and.returnValue(throwError(() => error));
 
       service.loadServices();
       tick();
 
-      const state = service.state$();
-      expect(state.services).toEqual([]);
-      expect(console.error).toHaveBeenCalledWith('Error loading services:', 'Server Error');
+      const servicesState = service.servicesState();
+      expect(servicesState.list).toEqual([]);
+      expect(servicesState.error).toBe('Internal server error');
     }));
 
     it('should load service by id', fakeAsync(() => {
@@ -183,8 +212,8 @@ describe('StateService', () => {
       service.loadServiceById('1');
       tick();
 
-      const state = service.state$();
-      expect(state.currentService).toEqual(mockService);
+      const servicesState = service.servicesState();
+      expect(servicesState.current).toEqual(mockService);
     }));
 
     it('should handle error when loading service by id', fakeAsync(() => {
@@ -194,9 +223,9 @@ describe('StateService', () => {
       service.loadServiceById('1');
       tick();
 
-      const state = service.state$();
-      expect(state.currentService).toBeNull();
-      expect(console.error).toHaveBeenCalledWith('Error loading service 1:', 'Not Found');
+      const servicesState = service.servicesState();
+      expect(servicesState.current).toBeNull();
+      expect(servicesState.error).toBe('Not Found');
     }));
 
     it('should create new service', fakeAsync(() => {
@@ -206,8 +235,8 @@ describe('StateService', () => {
       service.createService(newService);
       tick();
 
-      const state = service.state$();
-      expect(state.services).toContain(newService);
+      const serviceState = service.servicesState();
+      expect(serviceState.list).toContain(newService);
     }));
 
     it('should handle error when creating service', fakeAsync(() => {
@@ -220,12 +249,12 @@ describe('StateService', () => {
       expect(console.error).toHaveBeenCalledWith('Error creating service:', 'Bad Request');
     }));
 
-    it('should correctly update the specific service', fakeAsync(() => {
-      const initialService = { ...mockService, id: '1', title: 'Original' };
-      const anotherService = { ...mockService, id: '2', title: 'Another' };
+    it('should correctly update the specific service in list and set as current', fakeAsync(() => {
+      const initialService1 = { ...mockService, id: '1', title: 'Original 1' };
+      const initialService2 = { ...mockService, id: '2', title: 'Original 2' };
       const updatedService = { ...mockService, id: '1', title: 'Updated' };
 
-      mockServicesRepo.getServices.and.returnValue(of([initialService, anotherService]));
+      mockServicesRepo.getServices.and.returnValue(of([initialService1, initialService2]));
       service.loadServices();
       tick();
 
@@ -233,11 +262,14 @@ describe('StateService', () => {
       service.updateService('1', { title: 'Updated' });
       tick();
 
-      const state = service.state$();
-      expect(state.services.length).toBe(2);
-      expect(state.services.find(s => s.id === '1')?.title).toBe('Updated');
-      expect(state.services.find(s => s.id === '2')?.title).toBe('Another');
-      expect(state.currentService).toEqual(updatedService);
+      const servicesState = service.servicesState();
+      const updated = servicesState.list.find(s => s.id === '1');
+      const unchanged = servicesState.list.find(s => s.id === '2');
+
+      expect(servicesState.list.length).toBe(2);
+      expect(updated?.title).toBe('Updated');
+      expect(unchanged?.title).toBe('Original 2');
+      expect(servicesState.current).toEqual(updatedService);
     }));
 
     it('should handle error when updating service', fakeAsync(() => {
@@ -260,9 +292,9 @@ describe('StateService', () => {
       service.deleteService('1');
       tick();
 
-      const state = service.state$();
-      expect(state.services).toEqual([]);
-      expect(state.currentService).toBeNull();
+      const servicesState = service.servicesState();
+      expect(servicesState.list).toEqual([]);
+      expect(servicesState.current).toBeNull();
     }));
 
     it('should handle error when deleting service', fakeAsync(() => {
@@ -275,4 +307,76 @@ describe('StateService', () => {
       expect(console.error).toHaveBeenCalledWith('Error deleting service:', 'Forbidden');
     }));
   });
+
+  describe('Resources Management', () => {
+    it('should load all resources', fakeAsync(() => {
+      mockResourcesRepo.getAllResources.and.returnValue(of([mockResource]));
+
+      service.loadAllResources();
+      tick();
+
+      const resourcesState = service.resourcesState();
+      expect(resourcesState.list.length).toBe(1);
+      expect(resourcesState.list[0]).toEqual(mockResource);
+    }));
+
+    it('should handle error when loading all resources', fakeAsync(() => {
+      const error: ApiError = { status: 500, message: 'Server Error' };
+      mockResourcesRepo.getAllResources.and.returnValue(throwError(() => error));
+
+      service.loadAllResources();
+      tick();
+
+      const resourcesState = service.resourcesState();
+      expect(resourcesState.list).toEqual([]);
+      expect(resourcesState.error).toBe('Server Error');
+    }));
+
+    it('should load resources by service id', fakeAsync(() => {
+      mockResourcesRepo.getResourcesByServiceId.and.returnValue(of([mockResource]));
+
+      service.loadResourcesByServiceId('1');
+      tick();
+
+      const resourcesState = service.resourcesState();
+      expect(resourcesState.filtered.length).toBe(1);
+      expect(resourcesState.filtered[0]).toEqual(mockResource);
+    }));
+
+    it('should handle error when loading resources by service id', fakeAsync(() => {
+      const error: ApiError = { status: 404, message: 'Not Found' };
+      mockResourcesRepo.getResourcesByServiceId.and.returnValue(throwError(() => error));
+
+      service.loadResourcesByServiceId('1');
+      tick();
+
+      const resourcesState = service.resourcesState();
+      expect(resourcesState.filtered).toEqual([]);
+      expect(resourcesState.error).toBe('Not Found');
+    }));
+
+    it('should load resource by id', fakeAsync(() => {
+      mockResourcesRepo.getResourceById.and.returnValue(of(mockResource));
+
+      service.loadResourceById('1');
+      tick();
+
+      const resourcesState = service.resourcesState();
+      expect(resourcesState.current).toEqual(mockResource);
+    }));
+
+    it('should handle error when loading resource by id', fakeAsync(() => {
+      const error: ApiError = { status: 404, message: 'Not Found' };
+      mockResourcesRepo.getResourceById.and.returnValue(throwError(() => error));
+
+      service.loadResourceById('1');
+      tick();
+
+      const resourcesState = service.resourcesState();
+      expect(resourcesState.current).toBeNull();
+      expect(resourcesState.error).toBe('Not Found');
+    }));
+
+
+  })
 });

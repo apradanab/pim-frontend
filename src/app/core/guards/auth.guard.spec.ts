@@ -4,23 +4,22 @@ import { authGuard, adminGuard } from './auth.guard';
 import { StateService } from '../services/state.service';
 import { User } from '../../models/user.model';
 
-type StateServiceMock = jasmine.SpyObj<StateService> & {
-  currentUser: User | null;
-};
-
 describe('Auth Guards', () => {
-  let stateServiceMock: StateServiceMock;
+  let stateServiceMock: jasmine.SpyObj<StateService>;
   let routerMock: jasmine.SpyObj<Router>;
   const mockRoute = {} as ActivatedRouteSnapshot;
   const mockState = { url: '/protected' } as RouterStateSnapshot;
 
   beforeEach(() => {
-    stateServiceMock = {
-      ...jasmine.createSpyObj<StateService>('StateService', ['isLoggedIn']),
-      currentUser: null,
-    } as StateServiceMock;
-
+    stateServiceMock = jasmine.createSpyObj<StateService>('StateService', ['isLoggedIn', 'authState']);
     routerMock = jasmine.createSpyObj('Router', ['navigate']);
+
+    stateServiceMock.authState.and.returnValue({
+      status: 'idle',
+      currentUser: null,
+      token: null,
+      error: null
+    });
 
     TestBed.configureTestingModule({
       providers: [
@@ -71,14 +70,24 @@ describe('Auth Guards', () => {
 
     it('should allow access when user is admin', () => {
       stateServiceMock.isLoggedIn.and.returnValue(true);
-      stateServiceMock.currentUser = adminUser;
+      stateServiceMock.authState.and.returnValue({
+        status: 'success',
+        currentUser: adminUser,
+        token: 'mock-token',
+        error: null
+      });
       expect(executeGuard(mockRoute, mockState)).toBeTrue();
       expect(routerMock.navigate).not.toHaveBeenCalled();
     });
 
     it('should redirect when user is not admin', () => {
       stateServiceMock.isLoggedIn.and.returnValue(true);
-      stateServiceMock.currentUser = regularUser;
+      stateServiceMock.authState.and.returnValue({
+        status: 'success',
+        currentUser: regularUser,
+        token: 'mock-token',
+        error: null
+      });
       expect(executeGuard(mockRoute, mockState)).toBeFalse();
       expect(routerMock.navigate).toHaveBeenCalledWith(['/'], {
         queryParams: { returnUrl: mockState.url },
@@ -87,7 +96,12 @@ describe('Auth Guards', () => {
 
     it('should redirect when user is not logged in', () => {
       stateServiceMock.isLoggedIn.and.returnValue(false);
-      stateServiceMock.currentUser = null;
+      stateServiceMock.authState.and.returnValue({
+        status: 'idle',
+        currentUser: null,
+        token: null,
+        error: null
+      });
       expect(executeGuard(mockRoute, mockState)).toBeFalse();
       expect(routerMock.navigate).toHaveBeenCalledWith(['/'], {
         queryParams: { returnUrl: mockState.url },

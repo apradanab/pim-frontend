@@ -23,9 +23,3 @@ export interface ResourcesState {
   current: Resource | null;
   error: string | null;
 }
-
-export interface AppState {
-  auth: AuthState;
-  services: ServicesState;
-  resources: ResourcesState;
-}

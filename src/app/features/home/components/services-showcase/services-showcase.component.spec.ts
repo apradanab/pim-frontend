@@ -1,16 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ServicesShowcaseComponent } from './services-showcase.component';
-import { AppState, StateService } from '../../../../core/services/state.service';
+import { StateService } from '../../../../core/services/state.service';
 import { Service } from '../../../../models/service.model';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { CloudinaryService } from '../../../../core/services/cloudinary.service';
 
 describe('ServicesShowcaseComponent', () => {
   let component: ServicesShowcaseComponent;
   let fixture: ComponentFixture<ServicesShowcaseComponent>;
-  let mockStateService: Partial<StateService>;
-  let mockRouter: jasmine.SpyObj<Router>
+  let mockStateService: jasmine.SpyObj<StateService>;
+  let mockRouter: jasmine.SpyObj<Router>;
+  let mockCloudinaryService: jasmine.SpyObj<CloudinaryService>;
 
   const mockServices: Service[] = [
     {
@@ -33,29 +34,33 @@ describe('ServicesShowcaseComponent', () => {
     }
   ];
 
-  const mockAppState: AppState = {
-    authStatus: 'idle',
-    currentUser: null,
-    token: null,
-    error: null,
-    services: mockServices,
-    currentService: null
-  };
-
   beforeEach(async () => {
+    mockStateService = jasmine.createSpyObj('StateService', ['loadServices'], {
+      state$: {
+        services: {
+          list: mockServices
+        }
+      },
+      servicesState: jasmine.createSpy().and.returnValue({
+        list: mockServices,
+        current: null,
+        error: null
+      })
+    });
+
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
-    mockStateService = {
-      state$: signal(mockAppState),
-      loadServices: jasmine.createSpy('loadServices'),
-      currentToken: null,
-      isLoggedIn: jasmine.createSpy('isLoggedIn').and.returnValue(false)
-    };
+    mockCloudinaryService = jasmine.createSpyObj('CloudinaryService', [], {
+      svg: {
+        circleStar: 'mock-circle-star-path'
+      }
+    });
 
     await TestBed.configureTestingModule({
       imports: [ServicesShowcaseComponent, FontAwesomeModule],
       providers: [
         { provide: StateService, useValue: mockStateService },
-        { provide: Router, useValue: mockRouter}
+        { provide: Router, useValue: mockRouter },
+        { provide: CloudinaryService, useValue: mockCloudinaryService }
       ]
     }).compileComponents();
 
@@ -98,5 +103,19 @@ describe('ServicesShowcaseComponent', () => {
   it('should navigate to correct service by index', () => {
     component.navigateToServiceByIndex(0);
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/servicios', 'terapia-individual']);
+
+    component.navigateToServiceByIndex(1);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/servicios', 'grupo-de-madres']);
+
+    component.navigateToServiceByIndex(2);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/servicios', 'terapia-pedagogica']);
+  });
+
+  it('should get services from state', () => {
+    expect(component.services).toEqual(mockServices);
+  });
+
+  it('should have cloudinary circleStar icon', () => {
+    expect(component.circleStar).toBe('mock-circle-star-path');
   });
 });

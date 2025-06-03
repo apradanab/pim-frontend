@@ -12,7 +12,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   if (stateService.isLoggedIn()) {
     const authReq = req.clone({
       setHeaders: {
-        Authorization: `Bearer ${stateService.currentToken}`
+        Authorization: `Bearer ${stateService.authState().token}`
       }
     });
     return next(authReq);
