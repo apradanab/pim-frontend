@@ -5,17 +5,8 @@ import { UsersRepoService } from './users.repo.service';
 import { Router } from '@angular/router';
 import { User } from '../../models/user.model';
 import { ApiError } from '../interceptors/error.interceptor';
-
-type AuthStatus = 'idle' | 'loading' | 'success' | 'error';
-
-export interface AppState {
-  authStatus: AuthStatus;
-  currentUser: User | null;
-  token: string | null;
-  error: string | null;
-  services: Service[];
-  currentService: Service | null;
-}
+import { ResourcesRepoService } from './resources.repo.service';
+import { AuthState, ServicesState, ResourcesState } from '../../models/state.model';
 
 @Injectable({
   providedIn: 'root'
@@ -24,53 +15,76 @@ export class StateService {
   private readonly router = inject(Router);
   private readonly usersRepo = inject(UsersRepoService);
   private readonly servicesRepo = inject(ServicesRepoService);
+  private readonly resourcesRepo = inject(ResourcesRepoService);
 
-  #state = signal<AppState>({
-    authStatus: 'idle',
+  #authState = signal<AuthState>({
+    status: 'idle',
     currentUser: null,
     token: null,
-    error: null,
-    services: [],
-    currentService: null
+    error: null
   });
 
-  authStatus = this.#state().authStatus;
-  currentUser = this.#state().currentUser;
-  currentToken = this.#state().token;
-  currentServices = this.#state().services;
-  currentService = this.#state().currentService;
+  #servicesState = signal<ServicesState>({
+    list: [],
+    current: null,
+    error: null
+  })
+
+  #resourcesState = signal<ResourcesState>({
+    list: [],
+    filtered: [],
+    current: null,
+    error: null
+  })
+
+  authState = this.#authState.asReadonly();
+  servicesState = this.#servicesState.asReadonly();
+  resourcesState = this.#resourcesState.asReadonly();
 
   isLoggedIn() {
-    return !!this.currentToken;
+    return !!this.#authState().token;
   }
 
   get state$() {
-    return this.#state.asReadonly();
+    return {
+      auth: this.#authState(),
+      services: this.#servicesState(),
+      resources: this.#resourcesState()
+    };
   }
 
   // Authentication Methods
   login = (email: string, password: string) => {
-    this.#state.update(state => ({ ...state, authStatus: 'loading', error: null }));
+    this.#authState.update(state => ({ ...state, status: 'loading', error: null }));
 
     this.usersRepo.login({ email, password }).subscribe({
       next: ({ token }) => this.#handleLoginSuccess(token),
-      error: (error: ApiError) => this.#state.update(s =>({
+      error: (error: ApiError) => this.#authState.update(s =>({
         ...s,
-        authStatus: 'error',
+        status: 'error',
         error: error.message
       }))
     });
   }
 
   logout = () => {
-    this.#state.set({
-      authStatus: 'idle',
+    this.#authState.set({
+      status: 'idle',
       currentUser: null,
       token: null,
-      error: null,
-      services: [],
-      currentService: null,
+      error: null
     });
+    this.#servicesState.set({
+      list: [],
+      current: null,
+      error: null
+    });
+    this.#resourcesState.set({
+      list: [],
+      filtered: [],
+      current: null,
+      error: null
+    })
     localStorage.removeItem('token');
     this.router.navigate(['/']);
   }
@@ -93,13 +107,11 @@ export class StateService {
       approved: payload.approved
     };
 
-    this.#state.set({
-      authStatus: 'success',
+    this.#authState.set({
+      status: 'success',
       currentUser: user,
       token,
       error: null,
-      services: this.#state().services,
-      currentService: this.#state().currentService
     })
 
     localStorage.setItem('token', token);
@@ -117,13 +129,11 @@ export class StateService {
         approved: payload.approved
       };
 
-      this.#state.set({
-        authStatus: 'success',
+      this.#authState.set({
+        status: 'success',
         currentUser: user,
         token,
         error: null,
-        services: this.#state().services,
-        currentService: this.#state().currentService
       })
     } catch {
       this.logout();
@@ -133,32 +143,38 @@ export class StateService {
   // Services Methods
   loadServices = () => {
     this.servicesRepo.getServices().subscribe({
-      next: (services) => this.#state.update(s => ({ ...s, services })),
-      error: (err: ApiError) => {
-        this.#state.update(s => ({ ...s, services: [] }));
-        console.error('Error loading services:', err.message);
-      }
+      next: (services) => this.#servicesState.update(s => ({
+        ...s,
+        list: services
+      })),
+      error: (err: ApiError) => this.#servicesState.update(s => ({
+        ...s,
+        list: [],
+        error: err.message
+      }))
     });
   }
 
   loadServiceById = (id: string) => {
     this.servicesRepo.getServiceById(id).subscribe({
-      next: (service) => this.#state.update(s => ({ ...s, currentService: service })),
-      error: (err: ApiError) => {
-        this.#state.update(s => ({ ...s, currentService: null }));
-        console.error(`Error loading service ${id}:`, err.message);
-      }
+      next: (service) => this.#servicesState.update(s => ({
+        ...s,
+        current: service
+      })),
+      error: (err: ApiError) => this.#servicesState.update(s => ({
+        ...s,
+        current: null,
+        error: err.message
+      }))
     });
   }
 
   createService = (service: Service) => {
     return this.servicesRepo.createService(service).subscribe({
-      next: (newService) => {
-        this.#state.update(s => ({
+      next: (newService) => this.#servicesState.update(s => ({
           ...s,
-          services: [...s.services, newService]
-        }));
-      },
+          list: [...s.list, newService]
+        })),
       error: (err: ApiError) => {
         console.error('Error creating service:', err.message);
       }
@@ -167,15 +183,11 @@ export class StateService {
 
   updateService = (id: string, service: Partial<Service>) => {
     return this.servicesRepo.updateService(id, service).subscribe({
-      next: (updatedService) => {
-        this.#state.update(s => ({
+      next: (updatedService) => this.#servicesState.update(s => ({
           ...s,
-          services: s.services.map(svc =>
-            svc.id === id ? updatedService : svc
-          ),
-          currentService: updatedService
-        }));
-      },
+          list: s.list.map(svc => svc.id === id ? updatedService : svc),
+          current: updatedService
+        })),
       error: (err: ApiError) => {
         console.error('Error updating service:', err.message);
       }
@@ -184,16 +196,57 @@ export class StateService {
 
   deleteService = (id: string) => {
     return this.servicesRepo.deleteService(id).subscribe({
-      next: () => {
-        this.#state.update(s => ({
+      next: () => this.#servicesState.update(s => ({
           ...s,
-          services: s.services.filter(svc => svc.id !== id),
-          currentService: null
-        }));
-      },
+          list: s.list.filter(svc => svc.id !== id),
+          current: null
+        })),
       error: (err: ApiError) => {
         console.error('Error deleting service:', err.message);
       }
+    });
+  }
+
+  // Resources Methods
+  loadAllResources = () => {
+    this.resourcesRepo.getAllResources().subscribe({
+      next: (resources) => this.#resourcesState.update(s => ({
+        ...s,
+        list: resources
+      })),
+      error: (err: ApiError) => this.#resourcesState.update(s => ({
+        ...s,
+        list: [],
+        error: err.message
+      }))
+    });
+  }
+
+  loadResourcesByServiceId = (serviceId: string) => {
+    this.resourcesRepo.getResourcesByServiceId(serviceId).subscribe({
+      next: (resources) => this.#resourcesState.update(s => ({
+        ...s,
+        filtered: resources
+      })),
+      error: (err: ApiError) => this.#resourcesState.update(s => ({
+        ...s,
+        filtered: [],
+        error: err.message
+      }))
+    });
+  }
+
+  loadResourceById = (id: string) => {
+    this.resourcesRepo.getResourceById(id).subscribe({
+      next: (resource) => this.#resourcesState.update(s => ({
+        ...s,
+        current: resource
+      })),
+      error: (err: ApiError) => this.#resourcesState.update(s => ({
+        ...s,
+        current: null,
+        error: err.message
+      }))
     });
   }
 }
