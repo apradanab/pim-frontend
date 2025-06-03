@@ -237,7 +237,7 @@ export class ServicesTabsComponent implements OnInit {
   ];
 
   get services() {
-    return this.stateService.state$().services;
+    return this.stateService.state$.services.list;
   }
 
   ngOnInit() {
