@@ -25,7 +25,7 @@ import { CloudinaryService } from '../../../../core/services/cloudinary.service'
         <img [src]="curvedLoopLine" width="200" height="53" alt="decoration-line" class="decoration-line" loading="lazy" >
 
         <h2 class="text-left">Psicóloga</h2>
-        <h3 class="text-right">Profesional</h3>
+        <h3 class="text-right">profesional</h3>
     </div>
 
     <div class="bento-box bento-box-2">

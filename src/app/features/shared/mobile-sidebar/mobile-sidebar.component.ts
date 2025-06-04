@@ -37,6 +37,7 @@ import { LoginModalComponent } from '../login-modal/login-modal.component';
   styles: `
   .sidebar {
       position: fixed;
+      top: 90px;
       width: 50%;
       height: 232px;
       background-color: #ebece9;

@@ -50,13 +50,13 @@ import { ActivatedRoute, Router } from '@angular/router';
       font-family: 'Carlito', sans-serif;
       width: 100%;
       padding: 2rem 8.4vw;
-      padding-top: 150px;
+      padding-top: 65px;
       background-color: #fcfcf9;
     }
 
     .grid-background {
       position: absolute;
-      top: 30px;
+      top: 0px;
       left: 50%;
       transform: translateX(-50%);
       width: 83%;
@@ -171,13 +171,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 
     @media (max-width: 768px) {
       .services-tabs {
-        padding-top: 37px;
+        padding-top: 120px;
         padding-bottom: 1rem;
       }
 
       .grid-background {
         height: 150px;
-        top: 0px;
+        top: 85px;
         background-size: calc(100% / 10) calc(100% / 4);
       }
 
