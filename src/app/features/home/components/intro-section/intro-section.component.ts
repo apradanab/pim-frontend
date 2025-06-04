@@ -9,7 +9,7 @@ import { ContactModalComponent } from "../../../shared/contact-modal/contact-mod
     <div class="intro-section">
       <div class="grid-background"></div>
       <div class="content">
-        <h1>Niños y Familias</h1>
+        <h1>Niños y familias</h1>
         <h2>creciendo juntos y unidos</h2>
         <p>
           En nuestro gabinete de psicología infantil en Montcada, Barcelona, ofrecemos un espacio de apoyo y orientación para el bienestar emocional y el crecimiento de los mas pequeños y sus familias.
@@ -29,8 +29,7 @@ import { ContactModalComponent } from "../../../shared/contact-modal/contact-mod
   .intro-section {
     position: relative;
     text-align: center;
-    padding: 0 40px 60px;
-    padding-top: 150px;
+    padding: 60px 40px;
     background: #fcfcf9;
     display: flex;
     justify-content: center;
@@ -38,7 +37,7 @@ import { ContactModalComponent } from "../../../shared/contact-modal/contact-mod
 
   .grid-background {
     position: absolute;
-    top: 90px;
+    top: 0px;
     left: 50%;
     transform: translateX(-50%);
     width: 83%;
@@ -107,11 +106,11 @@ import { ContactModalComponent } from "../../../shared/contact-modal/contact-mod
 
   @media(max-width: 768px) {
     .intro-section {
-      padding-top: 30px;
+      padding-top: 110px;
     }
 
     .grid-background {
-      top: 0px;
+      top: 80px;
       height: 225px;
       background-size: calc(100% / 10) calc(100% / 6);
     }
