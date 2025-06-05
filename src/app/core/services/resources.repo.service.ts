@@ -22,4 +22,8 @@ export class ResourcesRepoService {
   getResourcesByServiceId(serviceId: string): Observable<Resource[]> {
     return this.http.get<Resource[]>(`${this.url}/service/${serviceId}`);
   }
+
+  createResource(resource: Resource): Observable<Resource> {
+    return this.http.post<Resource>(this.url, resource);
+  }
 }
