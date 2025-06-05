@@ -162,10 +162,10 @@ import { lastValueFrom } from 'rxjs';
   `]
 })
 export default class CompleteRegistrationComponent implements OnInit {
-  private repo = inject(UsersRepoService);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  private fb = inject(FormBuilder);
+  private readonly repo = inject(UsersRepoService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly fb = inject(FormBuilder);
 
   faCircleCheck = faCircleCheck;
   faTimes = faTimes;

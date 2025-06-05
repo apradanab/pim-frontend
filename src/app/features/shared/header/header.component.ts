@@ -83,7 +83,6 @@ import { LoginModalComponent } from "../login-modal/login-modal.component";
     padding: 0 120px;
     background-color: #ebece9;
     height: 90px;
-    position: fixed;
     width: 100%;
     z-index: 2;
     border-bottom: 2px solid #b3b3b3;
@@ -168,7 +167,7 @@ import { LoginModalComponent } from "../login-modal/login-modal.component";
   @media(max-width: 768px) {
     .header {
       padding: 0 30px;
-      position: relative;
+      position: fixed;
     }
 
     .logo-icon {
