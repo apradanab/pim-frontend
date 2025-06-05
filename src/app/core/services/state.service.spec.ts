@@ -52,7 +52,7 @@ describe('StateService', () => {
       'getServices', 'getServiceById', 'createService', 'updateService', 'deleteService'
     ]);
     mockResourcesRepo = jasmine.createSpyObj('ResourcesRepoService', [
-      'getAllResources', 'getResourcesByServiceId', 'getResourceById'
+      'getAllResources', 'getResourcesByServiceId', 'getResourceById', 'createResource'
     ]);
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
 
@@ -377,6 +377,24 @@ describe('StateService', () => {
       expect(resourcesState.error).toBe('Not Found');
     }));
 
+    it('should create new resource', fakeAsync(() => {
+      const newResource: Resource = { ...mockResource, id: '2' };
+      mockResourcesRepo.createResource.and.returnValue(of(newResource));
 
+      service.createResource(newResource);
+      tick();
+
+      expect(service.resourcesState().list).toContain(newResource);
+    }));
+
+    it('should handle error when creating resource', fakeAsync(() => {
+      const error: ApiError = { status: 400, message: 'Bad Request' };
+      mockResourcesRepo.createResource.and.returnValue(throwError(() => error));
+
+      service.createResource(mockResource);
+      tick();
+
+      expect(console.error).toHaveBeenCalledWith('Error creating resource:', 'Bad Request');
+    }));
   })
 });

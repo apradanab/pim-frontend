@@ -73,4 +73,17 @@ describe('ResourcesRepoService', () => {
     expect(req.request.method).toBe('GET');
     req.flush(mockResources);
   });
+
+  it('should create a new resource', () => {
+    const newResource: Resource = { ...mockResource, id: '2' };
+
+    service.createResource(newResource).subscribe(resource => {
+      expect(resource).toEqual(newResource);
+    });
+
+    const req = httpTestingController.expectOne(service['url']);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual(newResource);
+    req.flush(newResource);
+  });
 });

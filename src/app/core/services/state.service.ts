@@ -7,6 +7,7 @@ import { User } from '../../models/user.model';
 import { ApiError } from '../interceptors/error.interceptor';
 import { ResourcesRepoService } from './resources.repo.service';
 import { AuthState, ServicesState, ResourcesState } from '../../models/state.model';
+import { Resource } from '../../models/resource.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,20 +18,20 @@ export class StateService {
   private readonly servicesRepo = inject(ServicesRepoService);
   private readonly resourcesRepo = inject(ResourcesRepoService);
 
-  #authState = signal<AuthState>({
+  readonly #authState = signal<AuthState>({
     status: 'idle',
     currentUser: null,
     token: null,
     error: null
   });
 
-  #servicesState = signal<ServicesState>({
+  readonly #servicesState = signal<ServicesState>({
     list: [],
     current: null,
     error: null
   })
 
-  #resourcesState = signal<ResourcesState>({
+  readonly #resourcesState = signal<ResourcesState>({
     list: [],
     filtered: [],
     current: null,
@@ -247,6 +248,18 @@ export class StateService {
         current: null,
         error: err.message
       }))
+    });
+  }
+
+  createResource = (resource: Resource) => {
+    return this.resourcesRepo.createResource(resource).subscribe({
+      next: (newResource) => this.#resourcesState.update(r => ({
+        ...r,
+        list: [...r.list, newResource]
+      })),
+      error: (err: ApiError) => {
+        console.error('Error creating resource:', err.message);
+      }
     });
   }
 }
