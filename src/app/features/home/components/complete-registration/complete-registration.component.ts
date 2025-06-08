@@ -1,7 +1,6 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, effect } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 import { UsersRepoService } from '../../../../core/services/users.repo.service';
 import { faCircleCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -10,7 +9,7 @@ import { lastValueFrom } from 'rxjs';
 @Component({
   selector: 'pim-complete-registration',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FontAwesomeModule],
+  imports: [ ReactiveFormsModule, FontAwesomeModule],
   template: `
     @if (showModal()) {
       <div class="modal">
@@ -161,7 +160,7 @@ import { lastValueFrom } from 'rxjs';
     }
   `]
 })
-export default class CompleteRegistrationComponent implements OnInit {
+export default class CompleteRegistrationComponent {
   private readonly repo = inject(UsersRepoService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -180,13 +179,15 @@ export default class CompleteRegistrationComponent implements OnInit {
     password: ['', [Validators.required, Validators.minLength(8)]]
   });
 
-  ngOnInit() {
-    this.registrationToken = this.route.snapshot.queryParamMap.get('token');
+  constructor() {
+    effect(() => {
+      this.registrationToken = this.route.snapshot.queryParamMap.get('token');
 
-    if (this.registrationToken) {
-      this.showModal.set(true);
-      this.router.navigate([], { queryParams: { token: null } });
-    }
+      if (this.registrationToken) {
+        this.showModal.set(true);
+        this.router.navigate([], { queryParams: { token: null } });
+      }
+    }, { allowSignalWrites: true });
   }
 
   async submit() {
