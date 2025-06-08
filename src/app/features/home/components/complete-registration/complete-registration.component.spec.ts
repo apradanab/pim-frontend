@@ -29,6 +29,12 @@ describe('CompleteRegistrationComponent', () => {
     password: 'password123'
   };
 
+  const createComponent = () => {
+    fixture = TestBed.createComponent(CompleteRegistrationComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  }
+
   beforeEach(async () => {
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
     mockUsersRepoService = jasmine.createSpyObj('UsersRepoService', ['updateUser']);
@@ -57,10 +63,12 @@ describe('CompleteRegistrationComponent', () => {
   });
 
   it('should create', () => {
+    createComponent();
     expect(component).toBeTruthy();
   });
 
   it('should initialize form with required fields', () => {
+    createComponent();
     expect(component.form).toBeDefined();
     expect(component.form.controls['name']).toBeDefined();
     expect(component.form.controls['password']).toBeDefined();
@@ -70,18 +78,19 @@ describe('CompleteRegistrationComponent', () => {
 
   it('should show modal when token is present', () => {
     mockActivatedRoute.snapshot.queryParamMap.get.and.returnValue('test-token');
-    component.ngOnInit();
+    createComponent();
     expect(component.showModal()).toBeTrue();
     expect(mockRouter.navigate).toHaveBeenCalledWith([], { queryParams: { token: null } });
   });
 
   it('should not show modal when token is not present', () => {
     mockActivatedRoute.snapshot.queryParamMap.get.and.returnValue(null);
-    component.ngOnInit();
+    createComponent();
     expect(component.showModal()).toBeFalse();
   });
 
   it('should handle file change', () => {
+    createComponent();
     const mockFile = new File([''], 'test.png', { type: 'image/png' });
     const mockEvent = {
       target: {
@@ -94,18 +103,21 @@ describe('CompleteRegistrationComponent', () => {
   });
 
   it('should close modal', () => {
+    createComponent();
     component.showModal.set(true);
     component.closeModal();
     expect(component.showModal()).toBeFalse();
   });
 
   it('should not submit if form is invalid', () => {
+    createComponent();
     component.form.setValue({ name: '', password: '' });
     component.submit();
     expect(mockUsersRepoService.updateUser).not.toHaveBeenCalled();
   });
 
   it('should submit form when valid and set success', async () => {
+    createComponent();
     const mockPayload = { id: '123' };
     const validToken = `header.${btoa(JSON.stringify(mockPayload))}.signature`;
     component.registrationToken = validToken;
@@ -131,6 +143,7 @@ describe('CompleteRegistrationComponent', () => {
   });
 
   it('should log error when registration fails', async () => {
+    createComponent();
     const mockPayload = { id: '123' };
     const validToken = `header.${btoa(JSON.stringify(mockPayload))}.signature`;
     component.registrationToken = validToken;
@@ -150,6 +163,7 @@ describe('CompleteRegistrationComponent', () => {
   });
 
   it('should include avatar file when submitting if file exists', async () => {
+    createComponent();
     const mockPayload = { id: '123' };
     const validToken = `header.${btoa(JSON.stringify(mockPayload))}.signature`;
     component.registrationToken = validToken;
@@ -171,6 +185,7 @@ describe('CompleteRegistrationComponent', () => {
   });
 
   it('should not include avatar when no file is selected', async () => {
+    createComponent();
     const mockPayload = { id: '123' };
     const validToken = `header.${btoa(JSON.stringify(mockPayload))}.signature`;
     component.registrationToken = validToken;
