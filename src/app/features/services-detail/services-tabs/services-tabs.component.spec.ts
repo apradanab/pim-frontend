@@ -1,72 +1,87 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { ServicesTabsComponent } from './services-tabs.component';
 import { StateService } from '../../../core/services/state.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { of } from 'rxjs';
+import { ParamMap } from '@angular/router';
 
-describe('ServicesTabsComponent', () => {
+describe('ServicesTabsComponent (effect-based)', () => {
+  let fixture: ComponentFixture<ServicesTabsComponent>;
   let component: ServicesTabsComponent;
   let mockRouter: jasmine.SpyObj<Router>;
+  let mockStateService: jasmine.SpyObj<StateService>;
 
   beforeEach(() => {
-    mockRouter = jasmine.createSpyObj('Router', ['navigate']);
+    mockRouter = jasmine.createSpyObj<Router>('Router', ['navigate']);
+    mockStateService = jasmine.createSpyObj<StateService>('StateService', ['loadServices']);
+
+    Object.defineProperty(mockStateService, 'state$', {
+      get: () => ({
+        services: {
+          list: [
+            { id: '1', title: 'Terapia Individual', content: '' },
+            { id: '2', title: 'Grupo de Madres', content: '' }
+          ]
+        }
+      }),
+      configurable: true
+    });
 
     TestBed.configureTestingModule({
       imports: [ServicesTabsComponent],
       providers: [
-        {
-          provide: StateService,
-          useValue: {
-            state$: () => ({
-              services: [{ id: '1', title: 'Test', content: '' }]
-            }),
-            loadServices: jasmine.createSpy()
-          }
-        },
+        { provide: Router, useValue: mockRouter },
+        { provide: StateService, useValue: mockStateService },
         {
           provide: ActivatedRoute,
           useValue: {
-            paramMap: of({ get: () => 'terapia-individual' })
+            paramMap: of(
+              convertToParamMap({ serviceType: 'grupo-de-madres' }) as ParamMap
+            )
           }
-        },
-        { provide: Router, useValue: mockRouter }
+        }
       ]
     });
 
-    component = TestBed.createComponent(ServicesTabsComponent).componentInstance;
+    fixture = TestBed.createComponent(ServicesTabsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should load services on init', () => {
-    const stateService = TestBed.inject(StateService);
-    component.ngOnInit();
-    expect(stateService.loadServices).toHaveBeenCalled();
+  it('should call loadServices on effect init', () => {
+    expect(mockStateService.loadServices).toHaveBeenCalled();
+  });
+
+  it('should activate tab based on paramMap', fakeAsync(() => {
+    tick();
+    expect(component.activeTab()).toBe(1);
+  }));
+
+  it('should navigate to correct tab', () => {
+    component.navigateToTab(0);
+    expect(component.activeTab()).toBe(0);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/servicios', 'terapia-individual']);
   });
 
   describe('cleanContent()', () => {
-    it('should handle empty content', () => {
+    it('should return empty string for empty content', () => {
       expect(component.cleanContent('')).toBe('');
     });
 
-    it('should keep allowed tags', () => {
-      expect(component.cleanContent('<b>test</b>')).toBe('<b>test</b>');
+    it('should allow <b> tags', () => {
+      expect(component.cleanContent('<b>hola</b>')).toBe('<b>hola</b>');
     });
 
-    it('should remove dangerous tags', () => {
+    it('should remove <script> tags', () => {
       expect(component.cleanContent('<script>alert(1)</script>')).toBe('');
     });
   });
 
-  it('should navigate when changing tabs', () => {
-    component.navigateToTab(0);
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/servicios', 'terapia-individual']);
-    expect(component.activeTab()).toBe(0);
-  });
-
-  it('should return default style for invalid index', () => {
+  it('should return default style if index is out of bounds', () => {
     expect(component.getServiceStyle(100)).toEqual({
       bgColor: '#fea087',
       tags: ['de 3 a 20 años', 'pide cita', 'consulta horarios']

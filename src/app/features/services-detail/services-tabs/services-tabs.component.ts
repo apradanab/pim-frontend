@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, effect } from '@angular/core';
 import { StateService } from '../../../core/services/state.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
@@ -14,7 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
       <div class="grid-background"></div>
 
       <div class="tabs-header">
-        @for (service of services; track service.id; let i = $index) {
+        @for (service of services(); track service.id; let i = $index) {
           <button class="tab-button"
                   [class.active]="activeTab() === i"
                   (click)="navigateToTab(i)"
@@ -32,11 +32,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 
       <div class="tab-content-wrapper" [style.border-top-color]="getServiceStyle(activeTab()).bgColor">
         <div class="tab-content">
-          @if (services[activeTab()]) {
+          @if (services()[activeTab()]) {
             <div class="service-detail">
-              <h3>{{ services[activeTab()].title }}</h3>
-              <p class="description">{{ services[activeTab()].description }}</p>
-              <div class="content" [innerHTML]="cleanContent(services[activeTab()].content)"></div>
+              <h3>{{ services()[activeTab()].title }}</h3>
+              <p class="description">{{ services()[activeTab()].description }}</p>
+              <div class="content" [innerHTML]="cleanContent(services()[activeTab()].content)"></div>
             </div>
           }
         </div>
@@ -213,7 +213,7 @@ import { ActivatedRoute, Router } from '@angular/router';
     }
   `
 })
-export class ServicesTabsComponent implements OnInit {
+export class ServicesTabsComponent {
   private readonly stateService = inject(StateService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -236,12 +236,11 @@ export class ServicesTabsComponent implements OnInit {
     }
   ];
 
-  get services() {
-    return this.stateService.state$.services.list;
-  }
+  services = signal(this.stateService.state$.services.list);
 
-  ngOnInit() {
+  constructor() {
     this.stateService.loadServices();
+
     this.route.paramMap.subscribe(params => {
       const serviceType = params.get('serviceType');
       const tabIndex = this.servicesConfig.findIndex(config => config.route === serviceType);
@@ -249,6 +248,11 @@ export class ServicesTabsComponent implements OnInit {
         this.activeTab.set(tabIndex);
       }
     });
+
+    effect(() => {
+      const list = this.stateService.state$.services.list;
+      this.services.set(list);
+    }, { allowSignalWrites: true });
   }
 
   navigateToTab(index: number) {
