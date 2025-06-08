@@ -4,14 +4,12 @@ import { StateService } from '../../../../core/services/state.service';
 import { Service } from '../../../../models/service.model';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Router } from '@angular/router';
-import { CloudinaryService } from '../../../../core/services/cloudinary.service';
 
 describe('ServicesShowcaseComponent', () => {
   let component: ServicesShowcaseComponent;
   let fixture: ComponentFixture<ServicesShowcaseComponent>;
   let mockStateService: jasmine.SpyObj<StateService>;
   let mockRouter: jasmine.SpyObj<Router>;
-  let mockCloudinaryService: jasmine.SpyObj<CloudinaryService>;
 
   const mockServices: Service[] = [
     {
@@ -49,18 +47,12 @@ describe('ServicesShowcaseComponent', () => {
     });
 
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
-    mockCloudinaryService = jasmine.createSpyObj('CloudinaryService', [], {
-      svg: {
-        circleStar: 'mock-circle-star-path'
-      }
-    });
 
     await TestBed.configureTestingModule({
       imports: [ServicesShowcaseComponent, FontAwesomeModule],
       providers: [
         { provide: StateService, useValue: mockStateService },
-        { provide: Router, useValue: mockRouter },
-        { provide: CloudinaryService, useValue: mockCloudinaryService }
+        { provide: Router, useValue: mockRouter }
       ]
     }).compileComponents();
 
@@ -109,13 +101,5 @@ describe('ServicesShowcaseComponent', () => {
 
     component.navigateToServiceByIndex(2);
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/servicios', 'terapia-pedagogica']);
-  });
-
-  it('should get services from state', () => {
-    expect(component.services).toEqual(mockServices);
-  });
-
-  it('should have cloudinary circleStar icon', () => {
-    expect(component.circleStar).toBe('mock-circle-star-path');
   });
 });

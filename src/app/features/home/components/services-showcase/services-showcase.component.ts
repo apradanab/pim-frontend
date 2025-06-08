@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { StateService } from '../../../../core/services/state.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
@@ -27,7 +27,7 @@ import { Router } from '@angular/router';
       </div>
 
       <div class="services-grid">
-        @for (service of services; track service.id; let i = $index) {
+        @for (service of services(); track service.id; let i = $index) {
           <div class="service-box" [style.background]="getServiceStyle(i).bgColor">
             <div class="service-header">
               <h3>{{ service.description }}</h3>
@@ -297,7 +297,7 @@ import { Router } from '@angular/router';
     }
   `
 })
-export class ServicesShowcaseComponent implements OnInit {
+export class ServicesShowcaseComponent {
   private readonly stateService = inject(StateService);
   private readonly router = inject(Router);
 
@@ -310,12 +310,15 @@ export class ServicesShowcaseComponent implements OnInit {
     { bgColor: '#b7a8ed', tags: ['personalizada' ,'apoyo educativo'] }
   ];
 
-  get services() {
-    return this.stateService.state$.services.list;
-  }
+  services = signal(this.stateService.state$.services.list);
 
-  ngOnInit() {
+  constructor() {
     this.stateService.loadServices();
+
+    effect(() => {
+      const list = this.stateService.state$.services.list;
+      this.services.set(list);
+    }, { allowSignalWrites: true });
   }
 
   getServiceStyle(index: number): ServiceStyle {
