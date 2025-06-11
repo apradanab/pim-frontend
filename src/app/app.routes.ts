@@ -12,5 +12,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/services-detail/services-detail.component'),
     title: 'Terapias especializadas'
   },
+  {
+    path: 'consejos',
+    loadComponent: () => import('./features/advices-detail/advices-detail.component'),
+    title: 'Consejos profesionales'
+  },
   { path: '**', redirectTo: 'home', title: 'Redirección'}
 ];
