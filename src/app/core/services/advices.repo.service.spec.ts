@@ -1,16 +1,16 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { ResourcesRepoService } from './resources.repo.service';
-import { Resource } from '../../models/resource.model';
+import { AdvicesRepoService } from './advices.repo.service';
+import { Advice } from '../../models/advice.model';
 
-describe('ResourcesRepoService', () => {
-  let service: ResourcesRepoService;
+describe('AdvicesRepoService', () => {
+  let service: AdvicesRepoService;
   let httpTestingController: HttpTestingController;
 
-  const mockResource: Resource = {
+  const mockAdvice: Advice = {
     id: '1',
-    title: 'Test Resource',
+    title: 'Test Advice',
     description: 'Test Description',
     content: 'Test Content',
     image: 'http://test.com',
@@ -22,13 +22,13 @@ describe('ResourcesRepoService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        ResourcesRepoService,
+        AdvicesRepoService,
         provideHttpClient(),
         provideHttpClientTesting()
       ]
     });
 
-    service = TestBed.inject(ResourcesRepoService);
+    service = TestBed.inject(AdvicesRepoService);
     httpTestingController = TestBed.inject(HttpTestingController);
   });
 
@@ -40,50 +40,50 @@ describe('ResourcesRepoService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should get all resources', () => {
-    const mockResources: Resource[] = [mockResource];
+  it('should get all advices', () => {
+    const mockAdvices: Advice[] = [mockAdvice];
 
-    service.getAllResources().subscribe(resources => {
-      expect(resources).toEqual(mockResources);
+    service.getAllAdvices().subscribe(advices => {
+      expect(advices).toEqual(mockAdvices);
     });
 
     const req = httpTestingController.expectOne(service['url']);
     expect(req.request.method).toBe('GET');
-    req.flush(mockResources);
+    req.flush(mockAdvices);
   });
 
-  it('should get resource by id', () => {
-    service.getResourceById('1').subscribe(resource => {
-      expect(resource).toEqual(mockResource);
+  it('should get advice by id', () => {
+    service.getAdviceById('1').subscribe(advice => {
+      expect(advice).toEqual(mockAdvice);
     });
 
     const req = httpTestingController.expectOne(`${service['url']}/1`);
     expect(req.request.method).toBe('GET');
-    req.flush(mockResource);
+    req.flush(mockAdvice);
   });
 
-  it('should get resources by service id', () => {
-    const mockResources: Resource[] = [mockResource];
+  it('should get advices by service id', () => {
+    const mockAdvices: Advice[] = [mockAdvice];
 
-    service.getResourcesByServiceId('1').subscribe(resources => {
-      expect(resources).toEqual(mockResources);
+    service.getAdvicesByServiceId('1').subscribe(advices => {
+      expect(advices).toEqual(mockAdvices);
     });
 
     const req = httpTestingController.expectOne(`${service['url']}/service/1`);
     expect(req.request.method).toBe('GET');
-    req.flush(mockResources);
+    req.flush(mockAdvices);
   });
 
-  it('should create a new resource', () => {
-    const newResource: Resource = { ...mockResource, id: '2' };
+  it('should create a new advice', () => {
+    const newAdvice: Advice = { ...mockAdvice, id: '2' };
 
-    service.createResource(newResource).subscribe(resource => {
-      expect(resource).toEqual(newResource);
+    service.createAdvice(newAdvice).subscribe(advice => {
+      expect(advice).toEqual(newAdvice);
     });
 
     const req = httpTestingController.expectOne(service['url']);
     expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual(newResource);
-    req.flush(newResource);
+    expect(req.request.body).toEqual(newAdvice);
+    req.flush(newAdvice);
   });
 });

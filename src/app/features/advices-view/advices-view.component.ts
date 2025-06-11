@@ -4,7 +4,7 @@ import { GridSectionComponent } from "../shared/grid-section/grid-section.compon
 import { HeaderComponent } from "../shared/header/header.component";
 
 @Component({
-  selector: 'pim-advices-detail',
+  selector: 'pim-advices-view',
   standalone: true,
   imports: [
     HeaderComponent,
@@ -24,6 +24,6 @@ import { HeaderComponent } from "../shared/header/header.component";
   `,
   styles: ``
 })
-export default class AdvicesDetailComponent {
+export default class AdvicesViewComponent {
 
 }

@@ -26,7 +26,7 @@ import { ContactModalComponent } from "../contact-modal/contact-modal.component"
               tabindex="0"
             >Servicios
             </a>
-            <a href="#recursos">Recursos</a>
+            <a href="#recursos">Consejos</a>
             <a href="#horarios">Horarios</a>
           </div>
           <div class="links-column">

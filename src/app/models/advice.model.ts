@@ -1,4 +1,4 @@
-export type Resource = {
+export type Advice = {
   id: string;
   title: string;
   description: string;
