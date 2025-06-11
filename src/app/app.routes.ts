@@ -14,7 +14,7 @@ export const routes: Routes = [
   },
   {
     path: 'consejos',
-    loadComponent: () => import('./features/advices-detail/advices-detail.component'),
+    loadComponent: () => import('./features/advices-view/advices-view.component'),
     title: 'Consejos profesionales'
   },
   { path: '**', redirectTo: 'home', title: 'Redirección'}

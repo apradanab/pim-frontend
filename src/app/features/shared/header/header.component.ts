@@ -34,7 +34,7 @@ import { LoginModalComponent } from "../login-modal/login-modal.component";
           tabindex="0"
         >Servicios
         </a>
-        <a class="nav-option" href="#recursos">Recursos</a>
+        <a class="nav-option" href="#recursos">Consejos</a>
         <a class="nav-option"
           (click)="openContactModal()"
           (keyup.enter)="openContactModal()"

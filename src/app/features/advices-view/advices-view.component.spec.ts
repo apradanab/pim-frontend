@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import  AdvicesDetailComponent  from './advices-detail.component';
+import  AdvicesViewComponent  from './advices-view.component';
 import { provideRouter } from '@angular/router';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 
-describe('AdvicesDetailComponent', () => {
-  let component: AdvicesDetailComponent;
-  let fixture: ComponentFixture<AdvicesDetailComponent>;
+describe('AdvicesViewComponent', () => {
+  let component: AdvicesViewComponent;
+  let fixture: ComponentFixture<AdvicesViewComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdvicesDetailComponent],
+      imports: [AdvicesViewComponent],
       providers: [
         provideRouter([]),
         provideHttpClient(),
@@ -19,7 +19,7 @@ describe('AdvicesDetailComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AdvicesDetailComponent);
+    fixture = TestBed.createComponent(AdvicesViewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

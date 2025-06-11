@@ -3,11 +3,11 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CloudinaryService } from '../../../../core/services/cloudinary.service';
 
 @Component({
-  selector: 'pim-resources-showcase',
+  selector: 'pim-advices-showcase',
   standalone: true,
   imports: [FontAwesomeModule],
   template: `
-    <div class="resources-showcase">
+    <div class="advices-showcase">
       <div class="info-section">
         <h2 class="title">Explora nuestros consejos profesionales</h2>
         <p class="description">
@@ -49,7 +49,7 @@ import { CloudinaryService } from '../../../../core/services/cloudinary.service'
     </div>
   `,
   styles: `
-    .resources-showcase {
+    .advices-showcase {
       display: flex;
       padding: 4rem 8.4vw 2.5rem;
       gap: 2rem;
@@ -234,7 +234,7 @@ import { CloudinaryService } from '../../../../core/services/cloudinary.service'
     }
 
     @media (max-width: 768px) {
-      .resources-showcase {
+      .advices-showcase {
         flex-direction: column;
         padding: 1rem 8.4vw;
         gap: 1rem;
@@ -318,7 +318,7 @@ import { CloudinaryService } from '../../../../core/services/cloudinary.service'
     }
   `
 })
-export class ResourcesShowcaseComponent {
+export class AdvicesShowcaseComponent {
   private readonly cloudinary = inject(CloudinaryService);
   readonly backgroundImage = this.cloudinary.images.background;
   readonly iconShapes = this.cloudinary.svg.shapes;

@@ -5,9 +5,9 @@ import { UsersRepoService } from './users.repo.service';
 import { Router } from '@angular/router';
 import { User } from '../../models/user.model';
 import { ApiError } from '../interceptors/error.interceptor';
-import { ResourcesRepoService } from './resources.repo.service';
-import { AuthState, ServicesState, ResourcesState } from '../../models/state.model';
-import { Resource } from '../../models/resource.model';
+import { AdvicesRepoService } from './advices.repo.service';
+import { AuthState, ServicesState, AdviceState } from '../../models/state.model';
+import { Advice } from '../../models/advice.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class StateService {
   private readonly router = inject(Router);
   private readonly usersRepo = inject(UsersRepoService);
   private readonly servicesRepo = inject(ServicesRepoService);
-  private readonly resourcesRepo = inject(ResourcesRepoService);
+  private readonly advicesRepo = inject(AdvicesRepoService);
 
   readonly #authState = signal<AuthState>({
     status: 'idle',
@@ -31,7 +31,7 @@ export class StateService {
     error: null
   })
 
-  readonly #resourcesState = signal<ResourcesState>({
+  readonly #adviceState = signal<AdviceState>({
     list: [],
     filtered: [],
     current: null,
@@ -40,7 +40,7 @@ export class StateService {
 
   authState = this.#authState.asReadonly();
   servicesState = this.#servicesState.asReadonly();
-  resourcesState = this.#resourcesState.asReadonly();
+  advicesState = this.#adviceState.asReadonly();
 
   isLoggedIn() {
     return !!this.#authState().token;
@@ -50,7 +50,7 @@ export class StateService {
     return {
       auth: this.#authState(),
       services: this.#servicesState(),
-      resources: this.#resourcesState()
+      advices: this.#adviceState()
     };
   }
 
@@ -80,7 +80,7 @@ export class StateService {
       current: null,
       error: null
     });
-    this.#resourcesState.set({
+    this.#adviceState.set({
       list: [],
       filtered: [],
       current: null,
@@ -208,14 +208,14 @@ export class StateService {
     });
   }
 
-  // Resources Methods
-  loadAllResources = () => {
-    this.resourcesRepo.getAllResources().subscribe({
-      next: (resources) => this.#resourcesState.update(s => ({
+  // Advices Methods
+  loadAllAdvices = () => {
+    this.advicesRepo.getAllAdvices().subscribe({
+      next: (advices) => this.#adviceState.update(s => ({
         ...s,
-        list: resources
+        list: advices
       })),
-      error: (err: ApiError) => this.#resourcesState.update(s => ({
+      error: (err: ApiError) => this.#adviceState.update(s => ({
         ...s,
         list: [],
         error: err.message
@@ -223,13 +223,13 @@ export class StateService {
     });
   }
 
-  loadResourcesByServiceId = (serviceId: string) => {
-    this.resourcesRepo.getResourcesByServiceId(serviceId).subscribe({
-      next: (resources) => this.#resourcesState.update(s => ({
+  loadAdvicesByServiceId = (serviceId: string) => {
+    this.advicesRepo.getAdvicesByServiceId(serviceId).subscribe({
+      next: (advices) => this.#adviceState.update(s => ({
         ...s,
-        filtered: resources
+        filtered: advices
       })),
-      error: (err: ApiError) => this.#resourcesState.update(s => ({
+      error: (err: ApiError) => this.#adviceState.update(s => ({
         ...s,
         filtered: [],
         error: err.message
@@ -237,13 +237,13 @@ export class StateService {
     });
   }
 
-  loadResourceById = (id: string) => {
-    this.resourcesRepo.getResourceById(id).subscribe({
-      next: (resource) => this.#resourcesState.update(s => ({
+  loadAdviceById = (id: string) => {
+    this.advicesRepo.getAdviceById(id).subscribe({
+      next: (advice) => this.#adviceState.update(s => ({
         ...s,
-        current: resource
+        current: advice
       })),
-      error: (err: ApiError) => this.#resourcesState.update(s => ({
+      error: (err: ApiError) => this.#adviceState.update(s => ({
         ...s,
         current: null,
         error: err.message
@@ -251,14 +251,14 @@ export class StateService {
     });
   }
 
-  createResource = (resource: Resource) => {
-    return this.resourcesRepo.createResource(resource).subscribe({
-      next: (newResource) => this.#resourcesState.update(r => ({
+  createAdvice = (advice: Advice) => {
+    return this.advicesRepo.createAdvice(advice).subscribe({
+      next: (newAdvice) => this.#adviceState.update(r => ({
         ...r,
-        list: [...r.list, newResource]
+        list: [...r.list, newAdvice]
       })),
       error: (err: ApiError) => {
-        console.error('Error creating resource:', err.message);
+        console.error('Error creating advice:', err.message);
       }
     });
   }

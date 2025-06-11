@@ -1,6 +1,6 @@
 import { User } from "./user.model";
 import { Service } from "./service.model";
-import { Resource } from "./resource.model";
+import { Advice } from "./advice.model";
 
 export type AuthStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -17,9 +17,9 @@ export interface ServicesState {
   error: string | null;
 }
 
-export interface ResourcesState {
-  list: Resource[];
-  filtered: Resource[];
-  current: Resource | null;
+export interface AdviceState {
+  list: Advice[];
+  filtered: Advice[];
+  current: Advice | null;
   error: string | null;
 }

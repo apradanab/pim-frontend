@@ -5,7 +5,7 @@ import { HeroSectionComponent } from './components/hero-section/hero-section.com
 import CompleteRegistrationComponent from './components/complete-registration/complete-registration.component';
 import { AboutMeComponent } from './components/about-me/about-me.component';
 import { ServicesShowcaseComponent } from "./components/services-showcase/services-showcase.component";
-import { ResourcesShowcaseComponent } from "./components/resources-showcase/resources-showcase.component";
+import { AdvicesShowcaseComponent } from "./components/advices-showcase/advices-showcase.component";
 import { GridSectionComponent } from "../shared/grid-section/grid-section.component";
 import { FooterComponent } from "../shared/footer/footer.component";
 
@@ -19,7 +19,7 @@ import { FooterComponent } from "../shared/footer/footer.component";
     CompleteRegistrationComponent,
     AboutMeComponent,
     ServicesShowcaseComponent,
-    ResourcesShowcaseComponent,
+    AdvicesShowcaseComponent,
     GridSectionComponent,
     FooterComponent
   ],
@@ -33,7 +33,7 @@ import { FooterComponent } from "../shared/footer/footer.component";
         logoColor="purple"
         sectionTitle="Descubre lo que necesitas saber">
       </pim-grid-section>
-      <pim-resources-showcase></pim-resources-showcase>
+      <pim-advices-showcase></pim-advices-showcase>
       <pim-grid-section
         logoColor="green"
         sectionTitle="Únete a nuestra comunidad"

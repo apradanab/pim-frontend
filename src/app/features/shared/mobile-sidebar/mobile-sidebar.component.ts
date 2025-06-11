@@ -21,7 +21,7 @@ import { LoginModalComponent } from '../login-modal/login-modal.component';
           tabindex="0"
           >Servicios
         </a>
-        <a href="#">Recursos</a>
+        <a href="#">Consejos</a>
         <a aria-label="Ver en Google Maps"
           (click)="openGoogleMaps()"
           (keyup.enter)="openGoogleMaps()"
