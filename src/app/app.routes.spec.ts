@@ -16,13 +16,13 @@ describe('App Routes', () => {
     expect(homeComponent).toBeDefined();
   });
 
-  it('should lazy load ServicesDetailComponent on /servicios/:serviceType', async () => {
-    const servicesDetailRoute = routes.find(route => route.path == 'servicios/:serviceType');
-    expect(servicesDetailRoute).toBeDefined();
-    expect(servicesDetailRoute?.loadComponent).toBeDefined();
+  it('should lazy load TherapiesDetailComponent on /terapias/:therapyType', async () => {
+    const therapiesDetailRoute = routes.find(route => route.path == 'terapias/:therapyType');
+    expect(therapiesDetailRoute).toBeDefined();
+    expect(therapiesDetailRoute?.loadComponent).toBeDefined();
 
-    const servicesDetailComponent = await servicesDetailRoute!.loadComponent!();
-    expect (servicesDetailComponent).toBeDefined();
+    const therapiesDetailComponent = await therapiesDetailRoute!.loadComponent!();
+    expect (therapiesDetailComponent).toBeDefined();
   });
 
   it('should lazy load AdvicesDetailComponent on /consejos', async () => {

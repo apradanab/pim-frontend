@@ -2,16 +2,16 @@ import { Component, effect, inject, signal } from '@angular/core';
 import { StateService } from '../../../../core/services/state.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { ServiceStyle } from '../../../../models/service.model';
+import { TherapyStyle } from '../../../../models/therapy.model';
 import { CloudinaryService } from '../../../../core/services/cloudinary.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'pim-services-showcase',
+  selector: 'pim-therapies-showcase',
   standalone: true,
   imports: [FontAwesomeModule],
   template: `
-    <div class="services-showcase">
+    <div class="therapies-showcase">
       <div class="header-section">
         <div class="title-section">
           <h2>Terapias que impulsan el cambio</h2>
@@ -19,40 +19,40 @@ import { Router } from '@angular/router';
         </div>
           <p class="description">Ofrecemos soluciones psicológicas centradas en el bienestar de los niños y la mejora de las relaciones familiares</p>
           <button class="cta-button"
-                  (click)="navigateToServices()"
-                  (keyup.enter)="navigateToServices()"
+                  (click)="navigateToTherapies()"
+                  (keyup.enter)="navigateToTherapies()"
                   tabindex="0"
                   >Saber más
           </button>
       </div>
 
-      <div class="services-grid">
-        @for (service of services(); track service.id; let i = $index) {
-          <div class="service-box" [style.background]="getServiceStyle(i).bgColor">
-            <div class="service-header">
-              <h3>{{ service.description }}</h3>
-              <button class="service-button"
-                      (click)="navigateToServiceByIndex($index)"
-                      (keyup.enter)="navigateToServiceByIndex($index)">
+      <div class="therapies-grid">
+        @for (therapy of therapies(); track therapy.id; let i = $index) {
+          <div class="therapy-box" [style.background]="getTherapyStyle(i).bgColor">
+            <div class="therapy-header">
+              <h3>{{ therapy.description }}</h3>
+              <button class="therapy-button"
+                      (click)="navigateToTherapyByIndex($index)"
+                      (keyup.enter)="navigateToTherapyByIndex($index)">
                 <fa-icon [icon]="faArrowRight" />
               </button>
             </div>
             <div class="tags">
-              @for (tag of getServiceStyle(i).tags; track tag; let tagIndex = $index) {
+              @for (tag of getTherapyStyle(i).tags; track tag; let tagIndex = $index) {
                 <span class="tag tag-{{tagIndex + 1}} tag-pos-{{i}}-{{tagIndex}}">{{ tag }}</span>
               }
             </div>
-            <img [src]="service.image"
-                [alt]="service.title"
+            <img [src]="therapy.image"
+                [alt]="therapy.title"
                 loading="lazy"
-                [class]="'service-image service-image-' + (i + 1)">
+                [class]="'therapy-image therapy-image-' + (i + 1)">
           </div>
         }
       </div>
     </div>
   `,
   styles: `
-    .services-showcase {
+    .therapies-showcase {
       font-family: 'Carlito', sans-serif;
       width: 100%;
       padding: 1.5rem 8.4vw;
@@ -112,34 +112,34 @@ import { Router } from '@angular/router';
       box-shadow: inset 0px 6px 2px #aa3e22;
     }
 
-    .services-grid {
+    .therapies-grid {
       display: grid;
       gap: 1.5rem;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       padding-bottom: 1rem;
     }
 
-    .service-box {
+    .therapy-box {
       padding: 2rem 0.8rem 0.8rem 0.8rem;
       border-radius: 1.5rem;
       color: #2f2929;
       transition: transform 0.3s ease;
     }
 
-    .service-header {
+    .therapy-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1rem;
     }
 
-    .service-header h3 {
+    .therapy-header h3 {
       font: 400 1.75rem/1.2 'Caprasimo', sans-serif;
       max-width: 270px;
       max-height: 100px;
     }
 
-    .service-button {
+    .therapy-button {
       background: white;
       border: none;
       width: 50px;
@@ -154,12 +154,12 @@ import { Router } from '@angular/router';
       transition: all 0.3s ease;
     }
 
-    .service-button fa-icon {
+    .therapy-button fa-icon {
       color: black;
       font-size: 1.15rem;
     }
 
-    .service-button fa-icon:hover {
+    .therapy-button fa-icon:hover {
       transition: transform 0.5s ease;
       transform: translateX(5px);
     }
@@ -186,28 +186,28 @@ import { Router } from '@angular/router';
     .tag-pos-2-0 { top: 210px; left: 170px; }
     .tag-pos-2-1 { top: 160px; left: 40px; }
 
-    .service-image {
+    .therapy-image {
       width: 100%;
       height: 300px;
       object-fit: cover;
     }
 
-    .service-image-1 {
+    .therapy-image-1 {
       border-radius: 9rem 2rem 1rem 1rem;
       clip-path: polygon(100% 5%, 94% 0, 10% 17%, 0% 23%, 0% 100%, 100% 100%);
     }
 
-    .service-image-2 {
+    .therapy-image-2 {
       border-radius: 1rem;
     }
 
-    .service-image-3 {
+    .therapy-image-3 {
       border-radius: 2rem 9rem 1rem 1rem;
       clip-path: polygon(0 5%, 6% 0, 90% 17%, 100% 23%, 100% 100%, 0 100%);
     }
 
     @media (max-width: 768px) {
-      .services-showcase {
+      .therapies-showcase {
         padding: 0 8.4vw;
         overflow: hidden;
       }
@@ -243,7 +243,7 @@ import { Router } from '@angular/router';
         padding: 18px 50px;
       }
 
-      .services-grid {
+      .therapies-grid {
         display: flex;
         overflow-x: auto;
         scroll-snap-type: x mandatory;
@@ -255,28 +255,28 @@ import { Router } from '@angular/router';
         margin-right: -8.4vw;
       }
 
-      .services-grid::-webkit-scrollbar {
+      .therapies-grid::-webkit-scrollbar {
         display: none;
       }
 
-      .service-box {
+      .therapy-box {
         flex: 0 0 85%;
         scroll-snap-align: start;
         max-width: 280px;
       }
 
-      .service-header h3 {
+      .therapy-header h3 {
         font-size: 1.4rem;
         max-width: 220px;
       }
 
-      .service-button {
+      .therapy-button {
         width: 35px;
         height: 35px;
         top: 10px;
       }
 
-      .service-button fa-icon {
+      .therapy-button fa-icon {
         font-size: 0.9rem;
       }
 
@@ -291,45 +291,45 @@ import { Router } from '@angular/router';
       .tag-pos-2-0 { top: 180px; left: 130px; }
       .tag-pos-2-1 { top: 135px; left: 20px; }
 
-      .service-image {
+      .therapy-image {
         height: 250px;
       }
     }
   `
 })
-export class ServicesShowcaseComponent {
+export class TherapiesShowcaseComponent {
   private readonly stateService = inject(StateService);
   private readonly router = inject(Router);
 
   readonly circleStar = inject(CloudinaryService).svg.circleStar;
   faArrowRight = faArrowRight;
 
-  serviceStyles: ServiceStyle[] = [
+  therapyStyles: TherapyStyle[] = [
     { bgColor: '#fea087', tags: ['de 3 a 20 años', 'pide cita', 'consulta horarios'] },
     { bgColor: '#e0f15e', tags: ['grupos abiertos'] },
     { bgColor: '#b7a8ed', tags: ['personalizada' ,'apoyo educativo'] }
   ];
 
-  services = signal(this.stateService.state$.services.list);
+  therapies = signal(this.stateService.state$.therapies.list);
 
   constructor() {
-    this.stateService.loadServices();
+    this.stateService.loadTherapies();
 
     effect(() => {
-      const list = this.stateService.state$.services.list;
-      this.services.set(list);
+      const list = this.stateService.state$.therapies.list;
+      this.therapies.set(list);
     }, { allowSignalWrites: true });
   }
 
-  getServiceStyle(index: number): ServiceStyle {
-    return this.serviceStyles[index % this.serviceStyles.length];
+  getTherapyStyle(index: number): TherapyStyle {
+    return this.therapyStyles[index % this.therapyStyles.length];
   }
 
-  navigateToServices() {
+  navigateToTherapies() {
     this.router.navigate(['/servicios/terapia-individual'])
   }
 
-  navigateToServiceByIndex(index: number) {
+  navigateToTherapyByIndex(index: number) {
     const routes = ['terapia-individual', 'grupo-de-madres', 'terapia-pedagogica'];
     this.router.navigate(['/servicios', routes[index]]);
   }

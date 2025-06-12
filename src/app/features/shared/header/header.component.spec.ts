@@ -40,9 +40,9 @@ describe('HeaderComponent', () => {
       expect(router.navigate).toHaveBeenCalledWith(['/home']);
     });
 
-    it('should call router.navigate with /servicios/terapia-individual when navigateToServicesDetail is called', () => {
-      component.navigateToServicesDetail();
-      expect(router.navigate).toHaveBeenCalledWith(['/servicios/terapia-individual']);
+    it('should call router.navigate with /terapias/terapia-individual when navigateToTherapiesView is called', () => {
+      component.navigateToTherapiesView();
+      expect(router.navigate).toHaveBeenCalledWith(['/terapias/terapia-individual']);
     });
   });
 

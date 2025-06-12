@@ -8,8 +8,8 @@ export const routes: Routes = [
     title: 'Psicología infantojuvenil Montcada - Inicio'
   },
   {
-    path: 'servicios/:serviceType',
-    loadComponent: () => import('./features/services-detail/services-detail.component'),
+    path: 'terapias/:therapyType',
+    loadComponent: () => import('./features/therapies-view/therapies-view.component'),
     title: 'Terapias especializadas'
   },
   {

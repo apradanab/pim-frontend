@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import  ServicesDetailComponent  from './services-detail.component';
+import  TherapiesViewComponent  from './therapies-view.component';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { StateService } from '../../core/services/state.service';
 import { provideHttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 
-describe('ServicesDetailComponent', () => {
-  let component: ServicesDetailComponent;
-  let fixture: ComponentFixture<ServicesDetailComponent>;
+describe('TherapiesViewComponent', () => {
+  let component: TherapiesViewComponent;
+  let fixture: ComponentFixture<TherapiesViewComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ServicesDetailComponent],
+      imports: [TherapiesViewComponent],
       providers: [
         StateService,
         provideHttpClient(),
@@ -26,7 +26,7 @@ describe('ServicesDetailComponent', () => {
       ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ServicesDetailComponent);
+    fixture = TestBed.createComponent(TherapiesViewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

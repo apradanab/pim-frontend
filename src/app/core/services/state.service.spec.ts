@@ -1,10 +1,10 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { StateService } from './state.service';
-import { ServicesRepoService } from './services.repo.service';
+import { TherapiesRepoService } from './therapies.repo.service';
 import { UsersRepoService } from './users.repo.service';
 import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
-import { Service } from '../../models/service.model';
+import { Therapy } from '../../models/therapy.model';
 import { ApiError } from '../interceptors/error.interceptor';
 import { AdvicesRepoService } from './advices.repo.service';
 import { Advice } from '../../models/advice.model';
@@ -12,7 +12,7 @@ import { Advice } from '../../models/advice.model';
 describe('StateService', () => {
   let service: StateService;
   let mockUsersRepo: jasmine.SpyObj<UsersRepoService>;
-  let mockServicesRepo: jasmine.SpyObj<ServicesRepoService>;
+  let mockTherapiesRepo: jasmine.SpyObj<TherapiesRepoService>;
   let mockAdvicesRepo: jasmine.SpyObj<AdvicesRepoService>;
   let mockRouter: jasmine.SpyObj<Router>;
 
@@ -24,9 +24,9 @@ describe('StateService', () => {
     role: 'ADMIN',
     approved: true
   };
-  const mockService: Service = {
+  const mockTherapy: Therapy = {
     id: '1',
-    title: 'Test Service',
+    title: 'Test Therapy',
     description: 'Test Description',
     content: 'Test Content',
     image: 'test-image.jpg',
@@ -48,11 +48,11 @@ describe('StateService', () => {
     mockUsersRepo = jasmine.createSpyObj('UsersRepoService', [
       'login', 'getById'
     ]);
-    mockServicesRepo = jasmine.createSpyObj('ServicesRepoService', [
-      'getServices', 'getServiceById', 'createService', 'updateService', 'deleteService'
+    mockTherapiesRepo = jasmine.createSpyObj('TherapiesRepoService', [
+      'getTherapies', 'getTherapyById', 'createTherapy', 'updateTherapy', 'deleteTherapy'
     ]);
     mockAdvicesRepo = jasmine.createSpyObj('AdvicesRepoService', [
-      'getAllAdvices', 'getAdvicesByServiceId', 'getAdviceById', 'createAdvice'
+      'getAllAdvices', 'getAdvicesByTherapyId', 'getAdviceById', 'createAdvice'
     ]);
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
 
@@ -60,7 +60,7 @@ describe('StateService', () => {
       providers: [
         StateService,
         { provide: UsersRepoService, useValue: mockUsersRepo },
-        { provide: ServicesRepoService, useValue: mockServicesRepo },
+        { provide: TherapiesRepoService, useValue: mockTherapiesRepo },
         { provide: AdvicesRepoService, useValue: mockAdvicesRepo },
         { provide: Router, useValue: mockRouter }
       ]
@@ -88,7 +88,7 @@ describe('StateService', () => {
       const state = service.state$;
       expect(state.auth.currentUser).toBeNull();
       expect(state.auth.token).toBeNull();
-      expect(state.services.list).toEqual([]);
+      expect(state.therapies.list).toEqual([]);
       expect(state.advices.list).toEqual([]);
     });
   });
@@ -96,7 +96,7 @@ describe('StateService', () => {
   describe('Utility Methods', () => {
     it('should provide readonly state', () => {
       const authState = service.authState();
-      const servicesState = service.servicesState();
+      const servicesState = service.therapiesState();
       const advicesState = service.advicesState();
 
       expect(authState.status).toBe('idle');
@@ -166,7 +166,7 @@ describe('StateService', () => {
     it('should clear state on logout', fakeAsync(() => {
       service.logout();
 
-      const { auth, services, advices: advices } = service.state$;
+      const { auth, therapies: services, advices: advices } = service.state$;
 
       expect(auth.currentUser).toBeNull();
       expect(auth.token).toBeNull();
@@ -182,129 +182,129 @@ describe('StateService', () => {
     }));
   });
 
-  describe('Services Management', () => {
-    it('should load services', fakeAsync(() => {
-      mockServicesRepo.getServices.and.returnValue(of([mockService]));
+  describe('Therapies Management', () => {
+    it('should load therapies', fakeAsync(() => {
+      mockTherapiesRepo.getTherapies.and.returnValue(of([mockTherapy]));
 
-      service.loadServices();
+      service.loadTherapies();
       tick();
 
-      const servicesState = service.servicesState();
-      expect(servicesState.list.length).toBe(1);
-      expect(servicesState.list[0]).toEqual(mockService);
+      const therapyState = service.therapiesState();
+      expect(therapyState.list.length).toBe(1);
+      expect(therapyState.list[0]).toEqual(mockTherapy);
     }));
 
     it('should handle loading error', fakeAsync(() => {
       const error: ApiError = { status: 500, message: 'Internal server error' };
-      mockServicesRepo.getServices.and.returnValue(throwError(() => error));
+      mockTherapiesRepo.getTherapies.and.returnValue(throwError(() => error));
 
-      service.loadServices();
+      service.loadTherapies();
       tick();
 
-      const servicesState = service.servicesState();
-      expect(servicesState.list).toEqual([]);
-      expect(servicesState.error).toBe('Internal server error');
+      const therapyState = service.therapiesState();
+      expect(therapyState.list).toEqual([]);
+      expect(therapyState.error).toBe('Internal server error');
     }));
 
-    it('should load service by id', fakeAsync(() => {
-      mockServicesRepo.getServiceById.and.returnValue(of(mockService));
+    it('should load therapy by id', fakeAsync(() => {
+      mockTherapiesRepo.getTherapyById.and.returnValue(of(mockTherapy));
 
-      service.loadServiceById('1');
+      service.loadTherapyById('1');
       tick();
 
-      const servicesState = service.servicesState();
-      expect(servicesState.current).toEqual(mockService);
+      const therapyState = service.therapiesState();
+      expect(therapyState.current).toEqual(mockTherapy);
     }));
 
-    it('should handle error when loading service by id', fakeAsync(() => {
+    it('should handle error when loading therapy by id', fakeAsync(() => {
       const error: ApiError = { status: 404, message: 'Not Found' };
-      mockServicesRepo.getServiceById.and.returnValue(throwError(() => error));
+      mockTherapiesRepo.getTherapyById.and.returnValue(throwError(() => error));
 
-      service.loadServiceById('1');
+      service.loadTherapyById('1');
       tick();
 
-      const servicesState = service.servicesState();
-      expect(servicesState.current).toBeNull();
-      expect(servicesState.error).toBe('Not Found');
+      const therapyState = service.therapiesState();
+      expect(therapyState.current).toBeNull();
+      expect(therapyState.error).toBe('Not Found');
     }));
 
-    it('should create new service', fakeAsync(() => {
-      const newService: Service = { ...mockService, id: '2' };
-      mockServicesRepo.createService.and.returnValue(of(newService));
+    it('should create new therapy', fakeAsync(() => {
+      const newTherapy: Therapy = { ...mockTherapy, id: '2' };
+      mockTherapiesRepo.createTherapy.and.returnValue(of(newTherapy));
 
-      service.createService(newService);
+      service.createTherapy(newTherapy);
       tick();
 
-      const serviceState = service.servicesState();
-      expect(serviceState.list).toContain(newService);
+      const therapyState = service.therapiesState();
+      expect(therapyState.list).toContain(newTherapy);
     }));
 
-    it('should handle error when creating service', fakeAsync(() => {
+    it('should handle error when creating therapy', fakeAsync(() => {
       const error: ApiError = { status: 400, message: 'Bad Request' };
-      mockServicesRepo.createService.and.returnValue(throwError(() => error));
+      mockTherapiesRepo.createTherapy.and.returnValue(throwError(() => error));
 
-      service.createService(mockService);
+      service.createTherapy(mockTherapy);
       tick();
 
-      expect(console.error).toHaveBeenCalledWith('Error creating service:', 'Bad Request');
+      expect(console.error).toHaveBeenCalledWith('Error creating therapy:', 'Bad Request');
     }));
 
-    it('should correctly update the specific service in list and set as current', fakeAsync(() => {
-      const initialService1 = { ...mockService, id: '1', title: 'Original 1' };
-      const initialService2 = { ...mockService, id: '2', title: 'Original 2' };
-      const updatedService = { ...mockService, id: '1', title: 'Updated' };
+    it('should correctly update the specific therapy in list and set as current', fakeAsync(() => {
+      const initialTherapy1 = { ...mockTherapy, id: '1', title: 'Original 1' };
+      const initialTherapy2 = { ...mockTherapy, id: '2', title: 'Original 2' };
+      const updatedTherapy = { ...mockTherapy, id: '1', title: 'Updated' };
 
-      mockServicesRepo.getServices.and.returnValue(of([initialService1, initialService2]));
-      service.loadServices();
+      mockTherapiesRepo.getTherapies.and.returnValue(of([initialTherapy1, initialTherapy2]));
+      service.loadTherapies();
       tick();
 
-      mockServicesRepo.updateService.and.returnValue(of(updatedService));
-      service.updateService('1', { title: 'Updated' });
+      mockTherapiesRepo.updateTherapy.and.returnValue(of(updatedTherapy));
+      service.updateTherapy('1', { title: 'Updated' });
       tick();
 
-      const servicesState = service.servicesState();
-      const updated = servicesState.list.find(s => s.id === '1');
-      const unchanged = servicesState.list.find(s => s.id === '2');
+      const therapyState = service.therapiesState();
+      const updated = therapyState.list.find(s => s.id === '1');
+      const unchanged = therapyState.list.find(s => s.id === '2');
 
-      expect(servicesState.list.length).toBe(2);
+      expect(therapyState.list.length).toBe(2);
       expect(updated?.title).toBe('Updated');
       expect(unchanged?.title).toBe('Original 2');
-      expect(servicesState.current).toEqual(updatedService);
+      expect(therapyState.current).toEqual(updatedTherapy);
     }));
 
-    it('should handle error when updating service', fakeAsync(() => {
+    it('should handle error when updating therapy', fakeAsync(() => {
       const error: ApiError = { status: 404, message: 'Not Found' };
-      mockServicesRepo.updateService.and.returnValue(throwError(() => error));
+      mockTherapiesRepo.updateTherapy.and.returnValue(throwError(() => error));
 
-      service.updateService('1', { title: 'Updated' });
+      service.updateTherapy('1', { title: 'Updated' });
       tick();
 
-      expect(console.error).toHaveBeenCalledWith('Error updating service:', 'Not Found');
+      expect(console.error).toHaveBeenCalledWith('Error updating therapy:', 'Not Found');
     }));
 
-    it('should delete service', fakeAsync(() => {
-      mockServicesRepo.getServices.and.returnValue(of([mockService]));
-      service.loadServices();
+    it('should delete therapy', fakeAsync(() => {
+      mockTherapiesRepo.getTherapies.and.returnValue(of([mockTherapy]));
+      service.loadTherapies();
       tick();
 
-      mockServicesRepo.deleteService.and.returnValue(of(undefined));
+      mockTherapiesRepo.deleteTherapy.and.returnValue(of(undefined));
 
-      service.deleteService('1');
+      service.deleteTherapy('1');
       tick();
 
-      const servicesState = service.servicesState();
-      expect(servicesState.list).toEqual([]);
-      expect(servicesState.current).toBeNull();
+      const TherapyState = service.therapiesState();
+      expect(TherapyState.list).toEqual([]);
+      expect(TherapyState.current).toBeNull();
     }));
 
-    it('should handle error when deleting service', fakeAsync(() => {
+    it('should handle error when deleting therapy', fakeAsync(() => {
       const error: ApiError = { status: 403, message: 'Forbidden' };
-      mockServicesRepo.deleteService.and.returnValue(throwError(() => error));
+      mockTherapiesRepo.deleteTherapy.and.returnValue(throwError(() => error));
 
-      service.deleteService('1');
+      service.deleteTherapy('1');
       tick();
 
-      expect(console.error).toHaveBeenCalledWith('Error deleting service:', 'Forbidden');
+      expect(console.error).toHaveBeenCalledWith('Error deleting therapy:', 'Forbidden');
     }));
   });
 
@@ -327,32 +327,32 @@ describe('StateService', () => {
       service.loadAllAdvices();
       tick();
 
-      const advicesState = service.advicesState();
-      expect(advicesState.list).toEqual([]);
-      expect(advicesState.error).toBe('Server Error');
+      const adviceState = service.advicesState();
+      expect(adviceState.list).toEqual([]);
+      expect(adviceState.error).toBe('Server Error');
     }));
 
-    it('should load advices by service id', fakeAsync(() => {
-      mockAdvicesRepo.getAdvicesByServiceId.and.returnValue(of([mockAdvice]));
+    it('should load advices by therapy id', fakeAsync(() => {
+      mockAdvicesRepo.getAdvicesByTherapyId.and.returnValue(of([mockAdvice]));
 
-      service.loadAdvicesByServiceId('1');
+      service.loadAdvicesByTherapyId('1');
       tick();
 
-      const advicesState = service.advicesState();
-      expect(advicesState.filtered.length).toBe(1);
-      expect(advicesState.filtered[0]).toEqual(mockAdvice);
+      const adviceState = service.advicesState();
+      expect(adviceState.filtered.length).toBe(1);
+      expect(adviceState.filtered[0]).toEqual(mockAdvice);
     }));
 
-    it('should handle error when loading advices by service id', fakeAsync(() => {
+    it('should handle error when loading advices by therapy id', fakeAsync(() => {
       const error: ApiError = { status: 404, message: 'Not Found' };
-      mockAdvicesRepo.getAdvicesByServiceId.and.returnValue(throwError(() => error));
+      mockAdvicesRepo.getAdvicesByTherapyId.and.returnValue(throwError(() => error));
 
-      service.loadAdvicesByServiceId('1');
+      service.loadAdvicesByTherapyId('1');
       tick();
 
-      const advicesState = service.advicesState();
-      expect(advicesState.filtered).toEqual([]);
-      expect(advicesState.error).toBe('Not Found');
+      const adviceState = service.advicesState();
+      expect(adviceState.filtered).toEqual([]);
+      expect(adviceState.error).toBe('Not Found');
     }));
 
     it('should load advice by id', fakeAsync(() => {
@@ -361,8 +361,8 @@ describe('StateService', () => {
       service.loadAdviceById('1');
       tick();
 
-      const advicesState = service.advicesState();
-      expect(advicesState.current).toEqual(mockAdvice);
+      const adviceState = service.advicesState();
+      expect(adviceState.current).toEqual(mockAdvice);
     }));
 
     it('should handle error when loading advice by id', fakeAsync(() => {
@@ -372,9 +372,9 @@ describe('StateService', () => {
       service.loadAdviceById('1');
       tick();
 
-      const advicesState = service.advicesState();
-      expect(advicesState.current).toBeNull();
-      expect(advicesState.error).toBe('Not Found');
+      const adviceState = service.advicesState();
+      expect(adviceState.current).toBeNull();
+      expect(adviceState.error).toBe('Not Found');
     }));
 
     it('should create new advice', fakeAsync(() => {

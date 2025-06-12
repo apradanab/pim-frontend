@@ -1,5 +1,5 @@
 import { User } from "./user.model";
-import { Service } from "./service.model";
+import { Therapy } from "./therapy.model";
 import { Advice } from "./advice.model";
 
 export type AuthStatus = 'idle' | 'loading' | 'success' | 'error';
@@ -11,9 +11,9 @@ export interface AuthState {
   error: string | null;
 }
 
-export interface ServicesState {
-  list: Service[];
-  current: Service | null;
+export interface TherapyState {
+  list: Therapy[];
+  current: Therapy | null;
   error: string | null;
 }
 

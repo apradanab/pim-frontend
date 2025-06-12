@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ServicesShowcaseComponent } from './services-showcase.component';
+import { TherapiesShowcaseComponent } from './therapies-showcase.component';
 import { StateService } from '../../../../core/services/state.service';
-import { Service } from '../../../../models/service.model';
+import { Therapy } from '../../../../models/therapy.model';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Router } from '@angular/router';
 
-describe('ServicesShowcaseComponent', () => {
-  let component: ServicesShowcaseComponent;
-  let fixture: ComponentFixture<ServicesShowcaseComponent>;
+describe('TherapiesShowcaseComponent', () => {
+  let component: TherapiesShowcaseComponent;
+  let fixture: ComponentFixture<TherapiesShowcaseComponent>;
   let mockStateService: jasmine.SpyObj<StateService>;
   let mockRouter: jasmine.SpyObj<Router>;
 
-  const mockServices: Service[] = [
+  const mockTherapies: Therapy[] = [
     {
       id: '1',
       title: 'Terapia 1',
@@ -33,14 +33,14 @@ describe('ServicesShowcaseComponent', () => {
   ];
 
   beforeEach(async () => {
-    mockStateService = jasmine.createSpyObj('StateService', ['loadServices'], {
+    mockStateService = jasmine.createSpyObj('StateService', ['loadTherapies'], {
       state$: {
-        services: {
-          list: mockServices
+        therapies: {
+          list: mockTherapies
         }
       },
-      servicesState: jasmine.createSpy().and.returnValue({
-        list: mockServices,
+      therapiesState: jasmine.createSpy().and.returnValue({
+        list: mockTherapies,
         current: null,
         error: null
       })
@@ -49,14 +49,14 @@ describe('ServicesShowcaseComponent', () => {
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
-      imports: [ServicesShowcaseComponent, FontAwesomeModule],
+      imports: [TherapiesShowcaseComponent, FontAwesomeModule],
       providers: [
         { provide: StateService, useValue: mockStateService },
         { provide: Router, useValue: mockRouter }
       ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ServicesShowcaseComponent);
+    fixture = TestBed.createComponent(TherapiesShowcaseComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -65,21 +65,21 @@ describe('ServicesShowcaseComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call loadServices on init', () => {
-    expect(mockStateService.loadServices).toHaveBeenCalled();
+  it('should call loadTherapies on init', () => {
+    expect(mockStateService.loadTherapies).toHaveBeenCalled();
   });
 
-  it('should have correct service styles', () => {
-    expect(component.serviceStyles.length).toBe(3);
-    expect(component.serviceStyles[0].bgColor).toBe('#fea087');
-    expect(component.serviceStyles[1].tags).toContain('grupos abiertos');
+  it('should have correct therapy styles', () => {
+    expect(component.therapyStyles.length).toBe(3);
+    expect(component.therapyStyles[0].bgColor).toBe('#fea087');
+    expect(component.therapyStyles[1].tags).toContain('grupos abiertos');
   });
 
   it('should apply correct styles based on index', () => {
-    const style1 = component.getServiceStyle(0);
-    const style2 = component.getServiceStyle(1);
-    const style3 = component.getServiceStyle(2);
-    const style4 = component.getServiceStyle(3);
+    const style1 = component.getTherapyStyle(0);
+    const style2 = component.getTherapyStyle(1);
+    const style3 = component.getTherapyStyle(2);
+    const style4 = component.getTherapyStyle(3);
 
     expect(style1.bgColor).toBe('#fea087');
     expect(style2.bgColor).toBe('#e0f15e');
@@ -88,18 +88,18 @@ describe('ServicesShowcaseComponent', () => {
   });
 
   it('should navigate to terapia-individual', () => {
-    component.navigateToServices();
+    component.navigateToTherapies();
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/servicios/terapia-individual']);
   });
 
-  it('should navigate to correct service by index', () => {
-    component.navigateToServiceByIndex(0);
+  it('should navigate to correct therapy by index', () => {
+    component.navigateToTherapyByIndex(0);
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/servicios', 'terapia-individual']);
 
-    component.navigateToServiceByIndex(1);
+    component.navigateToTherapyByIndex(1);
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/servicios', 'grupo-de-madres']);
 
-    component.navigateToServiceByIndex(2);
+    component.navigateToTherapyByIndex(2);
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/servicios', 'terapia-pedagogica']);
   });
 });
