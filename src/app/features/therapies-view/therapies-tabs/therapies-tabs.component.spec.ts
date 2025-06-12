@@ -1,23 +1,23 @@
 import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
-import { ServicesTabsComponent } from './services-tabs.component';
+import { TherapiesTabsComponent } from './therapies-tabs.component';
 import { StateService } from '../../../core/services/state.service';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { ParamMap } from '@angular/router';
 
-describe('ServicesTabsComponent (effect-based)', () => {
-  let fixture: ComponentFixture<ServicesTabsComponent>;
-  let component: ServicesTabsComponent;
+describe('TherapiesTabsComponent (effect-based)', () => {
+  let fixture: ComponentFixture<TherapiesTabsComponent>;
+  let component: TherapiesTabsComponent;
   let mockRouter: jasmine.SpyObj<Router>;
   let mockStateService: jasmine.SpyObj<StateService>;
 
   beforeEach(() => {
     mockRouter = jasmine.createSpyObj<Router>('Router', ['navigate']);
-    mockStateService = jasmine.createSpyObj<StateService>('StateService', ['loadServices']);
+    mockStateService = jasmine.createSpyObj<StateService>('StateService', ['loadTherapies']);
 
     Object.defineProperty(mockStateService, 'state$', {
       get: () => ({
-        services: {
+        therapies: {
           list: [
             { id: '1', title: 'Terapia Individual', content: '' },
             { id: '2', title: 'Grupo de Madres', content: '' }
@@ -28,7 +28,7 @@ describe('ServicesTabsComponent (effect-based)', () => {
     });
 
     TestBed.configureTestingModule({
-      imports: [ServicesTabsComponent],
+      imports: [TherapiesTabsComponent],
       providers: [
         { provide: Router, useValue: mockRouter },
         { provide: StateService, useValue: mockStateService },
@@ -36,14 +36,14 @@ describe('ServicesTabsComponent (effect-based)', () => {
           provide: ActivatedRoute,
           useValue: {
             paramMap: of(
-              convertToParamMap({ serviceType: 'grupo-de-madres' }) as ParamMap
+              convertToParamMap({ therapyType: 'grupo-de-madres' }) as ParamMap
             )
           }
         }
       ]
     });
 
-    fixture = TestBed.createComponent(ServicesTabsComponent);
+    fixture = TestBed.createComponent(TherapiesTabsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -52,8 +52,8 @@ describe('ServicesTabsComponent (effect-based)', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call loadServices on effect init', () => {
-    expect(mockStateService.loadServices).toHaveBeenCalled();
+  it('should call loadTherapies on effect init', () => {
+    expect(mockStateService.loadTherapies).toHaveBeenCalled();
   });
 
   it('should activate tab based on paramMap', fakeAsync(() => {
@@ -82,7 +82,7 @@ describe('ServicesTabsComponent (effect-based)', () => {
   });
 
   it('should return default style if index is out of bounds', () => {
-    expect(component.getServiceStyle(100)).toEqual({
+    expect(component.getTherapyStyle(100)).toEqual({
       bgColor: '#fea087',
       tags: ['de 3 a 20 años', 'pide cita', 'consulta horarios']
     });

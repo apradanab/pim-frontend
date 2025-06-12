@@ -26,9 +26,9 @@ describe('FooterComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call router.navigate with /servicios/terapia-individual when navigateToServicesDetail is called', () => {
-    component.navigateToServicesDetail();
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/servicios/terapia-individual']);
+  it('should call router.navigate with /terapias/terapia-individual when navigateToTherapiesView is called', () => {
+    component.navigateToTherapiesView();
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/terapias/terapia-individual']);
   });
 
   describe('Modal', () => {

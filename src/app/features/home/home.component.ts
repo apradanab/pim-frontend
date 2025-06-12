@@ -4,7 +4,7 @@ import { IntroSectionComponent } from './components/intro-section/intro-section.
 import { HeroSectionComponent } from './components/hero-section/hero-section.component';
 import CompleteRegistrationComponent from './components/complete-registration/complete-registration.component';
 import { AboutMeComponent } from './components/about-me/about-me.component';
-import { ServicesShowcaseComponent } from "./components/services-showcase/services-showcase.component";
+import { TherapiesShowcaseComponent } from "./components/therapies-showcase/therapies-showcase.component";
 import { AdvicesShowcaseComponent } from "./components/advices-showcase/advices-showcase.component";
 import { GridSectionComponent } from "../shared/grid-section/grid-section.component";
 import { FooterComponent } from "../shared/footer/footer.component";
@@ -18,7 +18,7 @@ import { FooterComponent } from "../shared/footer/footer.component";
     HeroSectionComponent,
     CompleteRegistrationComponent,
     AboutMeComponent,
-    ServicesShowcaseComponent,
+    TherapiesShowcaseComponent,
     AdvicesShowcaseComponent,
     GridSectionComponent,
     FooterComponent
@@ -28,7 +28,7 @@ import { FooterComponent } from "../shared/footer/footer.component";
       <pim-intro-section></pim-intro-section>
       <pim-hero-section></pim-hero-section>
       <pim-about-me></pim-about-me>
-      <pim-services-showcase></pim-services-showcase>
+      <pim-therapies-showcase></pim-therapies-showcase>
       <pim-grid-section
         logoColor="purple"
         sectionTitle="Descubre lo que necesitas saber">

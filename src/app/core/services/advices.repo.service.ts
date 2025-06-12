@@ -19,8 +19,8 @@ export class AdvicesRepoService {
     return this.http.get<Advice>(`${this.url}/${id}`);
   }
 
-  getAdvicesByServiceId(serviceId: string): Observable<Advice[]> {
-    return this.http.get<Advice[]>(`${this.url}/service/${serviceId}`);
+  getAdvicesByTherapyId(therapyId: string): Observable<Advice[]> {
+    return this.http.get<Advice[]>(`${this.url}/service/${therapyId}`);
   }
 
   createAdvice(resource: Advice): Observable<Advice> {

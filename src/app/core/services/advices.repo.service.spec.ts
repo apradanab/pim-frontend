@@ -62,10 +62,10 @@ describe('AdvicesRepoService', () => {
     req.flush(mockAdvice);
   });
 
-  it('should get advices by service id', () => {
+  it('should get advices by therapy id', () => {
     const mockAdvices: Advice[] = [mockAdvice];
 
-    service.getAdvicesByServiceId('1').subscribe(advices => {
+    service.getAdvicesByTherapyId('1').subscribe(advices => {
       expect(advices).toEqual(mockAdvices);
     });
 

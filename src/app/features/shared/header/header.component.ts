@@ -29,10 +29,10 @@ import { LoginModalComponent } from "../login-modal/login-modal.component";
 
       <nav class="nav-options">
         <a class="nav-option"
-          (click)="navigateToServicesDetail()"
-          (keyup.enter)="navigateToServicesDetail()"
+          (click)="navigateToTherapiesView()"
+          (keyup.enter)="navigateToTherapiesView()"
           tabindex="0"
-        >Servicios
+        >Terapias
         </a>
         <a class="nav-option" href="#recursos">Consejos</a>
         <a class="nav-option"
@@ -227,8 +227,8 @@ export class HeaderComponent  {
     this.router.navigate(['/home'])
   }
 
-  navigateToServicesDetail() {
-    this.router.navigate(['/servicios/terapia-individual']);
+  navigateToTherapiesView() {
+    this.router.navigate(['/terapias/terapia-individual']);
   }
 
   toggleSidebar() {

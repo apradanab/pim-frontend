@@ -1,14 +1,14 @@
 import { TestBed } from '@angular/core/testing';
-import { ServicesRepoService } from './services.repo.service';
+import { TherapiesRepoService } from './therapies.repo.service';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { Service } from '../../models/service.model';
+import { Therapy } from '../../models/therapy.model';
 
-describe('ServicesRepoService', () => {
-  let service: ServicesRepoService;
+describe('TherapiesRepoService', () => {
+  let service: TherapiesRepoService;
   let httpTestingController: HttpTestingController;
 
-  const mockServices: Service[] = [
+  const mockTherapies: Therapy[] = [
     {
       id: '1',
       title: 'Terapia 1',
@@ -20,7 +20,7 @@ describe('ServicesRepoService', () => {
     }
   ];
 
-  const newService: Service = {
+  const newTherapy: Therapy = {
     id: '2',
     title: 'Nueva Terapia',
     description: 'Nueva Descripción',
@@ -37,7 +37,7 @@ describe('ServicesRepoService', () => {
         provideHttpClientTesting()
       ]
     });
-    service = TestBed.inject(ServicesRepoService);
+    service = TestBed.inject(TherapiesRepoService);
     httpTestingController = TestBed.inject(HttpTestingController);
   });
 
@@ -45,60 +45,60 @@ describe('ServicesRepoService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should fetch services', () => {
-    service.getServices().subscribe(services => {
-      expect(services).toEqual(mockServices);
+  it('should get all therapies', () => {
+    service.getTherapies().subscribe(therapies => {
+      expect(therapies).toEqual(mockTherapies);
     });
 
     const req = httpTestingController.expectOne(service['url']);
     expect(req.request.method).toBe('GET');
-    req.flush(mockServices);
+    req.flush(mockTherapies);
   });
 
-  it('should fetch service by id', () => {
-    const serviceId = '1';
-    service.getServiceById(serviceId).subscribe(service => {
-      expect(service).toEqual(mockServices[0]);
+  it('should get therapy by id', () => {
+    const therapyId = '1';
+    service.getTherapyById(therapyId).subscribe(therapy => {
+      expect(therapy).toEqual(mockTherapies[0]);
     });
 
-    const req = httpTestingController.expectOne(`${service['url']}/${serviceId}`);
+    const req = httpTestingController.expectOne(`${service['url']}/${therapyId}`);
     expect(req.request.method).toBe('GET');
-    req.flush(mockServices[0]);
+    req.flush(mockTherapies[0]);
   });
 
-  it('should create a new service', () => {
-    service.createService(newService).subscribe(service => {
-      expect(service).toEqual(newService);
+  it('should create a new therapy', () => {
+    service.createTherapy(newTherapy).subscribe(therapy => {
+      expect(therapy).toEqual(newTherapy);
     });
 
     const req = httpTestingController.expectOne(service['url']);
     expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual(newService);
-    req.flush(newService);
+    expect(req.request.body).toEqual(newTherapy);
+    req.flush(newTherapy);
   });
 
-  it('should update a service', () => {
-    const serviceId = '1';
+  it('should update a therapy', () => {
+    const therapyId = '1';
     const updatedData = { title: 'Terapia Actualizada' };
 
-    service.updateService(serviceId, updatedData).subscribe(service => {
-      expect(service.title).toBe('Terapia Actualizada');
+    service.updateTherapy(therapyId, updatedData).subscribe(therapy => {
+      expect(therapy.title).toBe('Terapia Actualizada');
     });
 
-    const req = httpTestingController.expectOne(`${service['url']}/${serviceId}`);
+    const req = httpTestingController.expectOne(`${service['url']}/${therapyId}`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.body).toEqual(updatedData);
-    req.flush({...mockServices[0], ...updatedData});
+    req.flush({...mockTherapies[0], ...updatedData});
   });
 
-  it('should delete a service', () => {
-    const serviceId = '1';
+  it('should delete a therapy', () => {
+    const therapyId = '1';
 
-    service.deleteService(serviceId).subscribe(response => {
+    service.deleteTherapy(therapyId).subscribe(response => {
       expect(response).toBeNull();
     });
 
-    const req = httpTestingController.expectOne(`${service['url']}/${serviceId}`);
+    const req = httpTestingController.expectOne(`${service['url']}/${therapyId}`);
     expect(req.request.method).toBe('DELETE');
     req.flush(null, { status: 204, statusText: 'No Content' });
   });

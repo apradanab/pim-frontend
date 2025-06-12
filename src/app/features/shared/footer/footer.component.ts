@@ -21,10 +21,10 @@ import { ContactModalComponent } from "../contact-modal/contact-modal.component"
 
         <div class="footer-block links-block">
           <div class="links-column">
-            <a (click)="navigateToServicesDetail()"
-              (keyup.enter)="navigateToServicesDetail()"
+            <a (click)="navigateToTherapiesView()"
+              (keyup.enter)="navigateToTherapiesView()"
               tabindex="0"
-            >Servicios
+            >Terapias
             </a>
             <a href="#recursos">Consejos</a>
             <a href="#horarios">Horarios</a>
@@ -197,8 +197,8 @@ export class FooterComponent {
   faFacebook = faFacebook;
   faLinkedin = faLinkedin;
 
-  navigateToServicesDetail() {
-    this.router.navigate(['/servicios/terapia-individual']);
+  navigateToTherapiesView() {
+    this.router.navigate(['/terapias/terapia-individual']);
   }
 
   openContactModal() {

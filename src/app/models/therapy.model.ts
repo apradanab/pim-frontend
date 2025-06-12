@@ -1,4 +1,4 @@
-export type Service = {
+export type Therapy = {
   id: string;
   title: string;
   description: string;
@@ -8,7 +8,7 @@ export type Service = {
   updatedAt: Date;
 };
 
-export type ServiceStyle = {
+export type TherapyStyle = {
   bgColor: string;
   tags: string[];
 };

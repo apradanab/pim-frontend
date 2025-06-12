@@ -1,12 +1,12 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { ServicesRepoService } from './services.repo.service';
-import { Service } from '../../models/service.model';
+import { TherapiesRepoService } from './therapies.repo.service';
+import { Therapy } from '../../models/therapy.model';
 import { UsersRepoService } from './users.repo.service';
 import { Router } from '@angular/router';
 import { User } from '../../models/user.model';
 import { ApiError } from '../interceptors/error.interceptor';
 import { AdvicesRepoService } from './advices.repo.service';
-import { AuthState, ServicesState, AdviceState } from '../../models/state.model';
+import { AuthState, TherapyState, AdviceState } from '../../models/state.model';
 import { Advice } from '../../models/advice.model';
 
 @Injectable({
@@ -15,7 +15,7 @@ import { Advice } from '../../models/advice.model';
 export class StateService {
   private readonly router = inject(Router);
   private readonly usersRepo = inject(UsersRepoService);
-  private readonly servicesRepo = inject(ServicesRepoService);
+  private readonly therapiesRepo = inject(TherapiesRepoService);
   private readonly advicesRepo = inject(AdvicesRepoService);
 
   readonly #authState = signal<AuthState>({
@@ -25,7 +25,7 @@ export class StateService {
     error: null
   });
 
-  readonly #servicesState = signal<ServicesState>({
+  readonly #therapyState = signal<TherapyState>({
     list: [],
     current: null,
     error: null
@@ -39,7 +39,7 @@ export class StateService {
   })
 
   authState = this.#authState.asReadonly();
-  servicesState = this.#servicesState.asReadonly();
+  therapiesState = this.#therapyState.asReadonly();
   advicesState = this.#adviceState.asReadonly();
 
   isLoggedIn() {
@@ -49,7 +49,7 @@ export class StateService {
   get state$() {
     return {
       auth: this.#authState(),
-      services: this.#servicesState(),
+      therapies: this.#therapyState(),
       advices: this.#adviceState()
     };
   }
@@ -75,7 +75,7 @@ export class StateService {
       token: null,
       error: null
     });
-    this.#servicesState.set({
+    this.#therapyState.set({
       list: [],
       current: null,
       error: null
@@ -141,14 +141,14 @@ export class StateService {
     }
   }
 
-  // Services Methods
-  loadServices = () => {
-    this.servicesRepo.getServices().subscribe({
-      next: (services) => this.#servicesState.update(s => ({
+  // Therapies Methods
+  loadTherapies = () => {
+    this.therapiesRepo.getTherapies().subscribe({
+      next: (therapies) => this.#therapyState.update(s => ({
         ...s,
-        list: services
+        list: therapies
       })),
-      error: (err: ApiError) => this.#servicesState.update(s => ({
+      error: (err: ApiError) => this.#therapyState.update(s => ({
         ...s,
         list: [],
         error: err.message
@@ -156,13 +156,13 @@ export class StateService {
     });
   }
 
-  loadServiceById = (id: string) => {
-    this.servicesRepo.getServiceById(id).subscribe({
-      next: (service) => this.#servicesState.update(s => ({
+  loadTherapyById = (id: string) => {
+    this.therapiesRepo.getTherapyById(id).subscribe({
+      next: (therapy) => this.#therapyState.update(s => ({
         ...s,
-        current: service
+        current: therapy
       })),
-      error: (err: ApiError) => this.#servicesState.update(s => ({
+      error: (err: ApiError) => this.#therapyState.update(s => ({
         ...s,
         current: null,
         error: err.message
@@ -170,40 +170,40 @@ export class StateService {
     });
   }
 
-  createService = (service: Service) => {
-    return this.servicesRepo.createService(service).subscribe({
-      next: (newService) => this.#servicesState.update(s => ({
+  createTherapy = (therapy: Therapy) => {
+    return this.therapiesRepo.createTherapy(therapy).subscribe({
+      next: (newTherapy) => this.#therapyState.update(s => ({
           ...s,
-          list: [...s.list, newService]
+          list: [...s.list, newTherapy]
         })),
       error: (err: ApiError) => {
-        console.error('Error creating service:', err.message);
+        console.error('Error creating therapy:', err.message);
       }
     });
   }
 
-  updateService = (id: string, service: Partial<Service>) => {
-    return this.servicesRepo.updateService(id, service).subscribe({
-      next: (updatedService) => this.#servicesState.update(s => ({
+  updateTherapy = (id: string, therapy: Partial<Therapy>) => {
+    return this.therapiesRepo.updateTherapy(id, therapy).subscribe({
+      next: (updatedTherapy) => this.#therapyState.update(s => ({
           ...s,
-          list: s.list.map(svc => svc.id === id ? updatedService : svc),
-          current: updatedService
+          list: s.list.map(svc => svc.id === id ? updatedTherapy : svc),
+          current: updatedTherapy
         })),
       error: (err: ApiError) => {
-        console.error('Error updating service:', err.message);
+        console.error('Error updating therapy:', err.message);
       }
     });
   }
 
-  deleteService = (id: string) => {
-    return this.servicesRepo.deleteService(id).subscribe({
-      next: () => this.#servicesState.update(s => ({
+  deleteTherapy = (id: string) => {
+    return this.therapiesRepo.deleteTherapy(id).subscribe({
+      next: () => this.#therapyState.update(s => ({
           ...s,
           list: s.list.filter(svc => svc.id !== id),
           current: null
         })),
       error: (err: ApiError) => {
-        console.error('Error deleting service:', err.message);
+        console.error('Error deleting therapy:', err.message);
       }
     });
   }
@@ -223,8 +223,8 @@ export class StateService {
     });
   }
 
-  loadAdvicesByServiceId = (serviceId: string) => {
-    this.advicesRepo.getAdvicesByServiceId(serviceId).subscribe({
+  loadAdvicesByTherapyId = (therapyId: string) => {
+    this.advicesRepo.getAdvicesByTherapyId(therapyId).subscribe({
       next: (advices) => this.#adviceState.update(s => ({
         ...s,
         filtered: advices

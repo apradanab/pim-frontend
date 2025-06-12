@@ -2,21 +2,21 @@ import { Component } from '@angular/core';
 import { HeaderComponent } from "../shared/header/header.component";
 import { GridSectionComponent } from "../shared/grid-section/grid-section.component";
 import { FooterComponent } from "../shared/footer/footer.component";
-import { ServicesTabsComponent } from "./services-tabs/services-tabs.component";
+import { TherapiesTabsComponent } from "./therapies-tabs/therapies-tabs.component";
 
 
 @Component({
-  selector: 'pim-services-detail',
+  selector: 'pim-therapies-view',
   standalone: true,
   imports: [
     HeaderComponent,
-    ServicesTabsComponent,
+    TherapiesTabsComponent,
     GridSectionComponent,
     FooterComponent
   ],
   template: `
     <pim-header></pim-header>
-    <pim-services-tabs></pim-services-tabs>
+    <pim-therapies-tabs></pim-therapies-tabs>
     <pim-grid-section
       logoColor="green"
       sectionTitle="Únete a nuestra comunidad"
@@ -28,6 +28,6 @@ import { ServicesTabsComponent } from "./services-tabs/services-tabs.component";
   `,
   styles: ``
 })
-export default class ServicesDetailComponent {
+export default class TherapiesViewComponent {
 
 }
