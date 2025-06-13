@@ -34,18 +34,25 @@ import { LoginModalComponent } from "../login-modal/login-modal.component";
           tabindex="0"
         >Terapias
         </a>
-        <a class="nav-option" href="#recursos">Consejos</a>
+        <a class="nav-option"
+          (click)="navigateToAdvicesView()"
+          (keyup.enter)="navigateToAdvicesView()"
+          tabindex="0"
+        >Consejos
+        </a>
         <a class="nav-option"
           (click)="openContactModal()"
           (keyup.enter)="openContactModal()"
           tabindex="0"
-        >Conecta conmigo</a>
+        >Conecta conmigo
+        </a>
         <a class="nav-option"
           aria-label="Ver en Google Maps"
           (click)="openGoogleMaps()"
           (keyup.enter)="openGoogleMaps()"
           tabindex="0"
-        >Nuestro centro</a>
+        >Nuestro centro
+        </a>
       </nav>
 
       <div class="login-container">
@@ -229,6 +236,10 @@ export class HeaderComponent  {
 
   navigateToTherapiesView() {
     this.router.navigate(['/terapias/terapia-individual']);
+  }
+
+  navigateToAdvicesView() {
+    this.router.navigate(['/consejos'])
   }
 
   toggleSidebar() {
