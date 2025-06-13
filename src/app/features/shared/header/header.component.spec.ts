@@ -44,6 +44,11 @@ describe('HeaderComponent', () => {
       component.navigateToTherapiesView();
       expect(router.navigate).toHaveBeenCalledWith(['/terapias/terapia-individual']);
     });
+
+    it('should call router.navigate with /consejos when navigateToAdvicesView is called', () => {
+      component.navigateToAdvicesView();
+      expect(router.navigate).toHaveBeenCalledWith(['/consejos']);
+    })
   });
 
   describe('Sidebar', () => {

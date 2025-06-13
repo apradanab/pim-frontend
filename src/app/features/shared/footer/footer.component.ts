@@ -26,7 +26,11 @@ import { ContactModalComponent } from "../contact-modal/contact-modal.component"
               tabindex="0"
             >Terapias
             </a>
-            <a href="#recursos">Consejos</a>
+            <a (click)="navigateToAdvicesView()"
+              (keyup.enter)="navigateToAdvicesView()"
+              tabindex="0"
+            >Consejos
+            </a>
             <a href="#horarios">Horarios</a>
           </div>
           <div class="links-column">
@@ -199,6 +203,10 @@ export class FooterComponent {
 
   navigateToTherapiesView() {
     this.router.navigate(['/terapias/terapia-individual']);
+  }
+
+  navigateToAdvicesView() {
+    this.router.navigate(['/consejos']);
   }
 
   openContactModal() {

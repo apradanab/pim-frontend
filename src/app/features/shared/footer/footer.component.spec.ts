@@ -31,6 +31,11 @@ describe('FooterComponent', () => {
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/terapias/terapia-individual']);
   });
 
+  it('should call router.navigate with /consejos when navigateToAdvicesView is called', () => {
+    component.navigateToAdvicesView();
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/consejos']);
+  })
+
   describe('Modal', () => {
     it('should open contact modal', () => {
       expect(component.showContactModal).toBeFalse();
