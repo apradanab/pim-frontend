@@ -89,17 +89,17 @@ describe('TherapiesShowcaseComponent', () => {
 
   it('should navigate to terapia-individual', () => {
     component.navigateToTherapies();
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/servicios/terapia-individual']);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/terapias/terapia-individual']);
   });
 
   it('should navigate to correct therapy by index', () => {
     component.navigateToTherapyByIndex(0);
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/servicios', 'terapia-individual']);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/terapias', 'terapia-individual']);
 
     component.navigateToTherapyByIndex(1);
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/servicios', 'grupo-de-madres']);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/terapias', 'grupo-de-madres']);
 
     component.navigateToTherapyByIndex(2);
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/servicios', 'terapia-pedagogica']);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/terapias', 'terapia-pedagogica']);
   });
 });

@@ -326,11 +326,11 @@ export class TherapiesShowcaseComponent {
   }
 
   navigateToTherapies() {
-    this.router.navigate(['/servicios/terapia-individual'])
+    this.router.navigate(['/terapias/terapia-individual'])
   }
 
   navigateToTherapyByIndex(index: number) {
     const routes = ['terapia-individual', 'grupo-de-madres', 'terapia-pedagogica'];
-    this.router.navigate(['/servicios', routes[index]]);
+    this.router.navigate(['/terapias', routes[index]]);
   }
 }

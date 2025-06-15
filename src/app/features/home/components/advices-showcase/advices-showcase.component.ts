@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CloudinaryService } from '../../../../core/services/cloudinary.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'pim-advices-showcase',
@@ -13,7 +14,12 @@ import { CloudinaryService } from '../../../../core/services/cloudinary.service'
         <p class="description">
           Encuentra material especializado que ofrecemos en la web, para abordar temas clave del desarrollo emocional y familiar.
         </p>
-        <button class="cta-button">Ver todos</button>
+        <button class="cta-button"
+                (click)="navigateToAdvices()"
+                (keyup.enter)="navigateToAdvices()"
+                tabindex="0"
+                >Ver todos
+        </button>
       </div>
 
       <div class="bento-section">
@@ -319,9 +325,15 @@ import { CloudinaryService } from '../../../../core/services/cloudinary.service'
   `
 })
 export class AdvicesShowcaseComponent {
+  private readonly router = inject(Router);
   private readonly cloudinary = inject(CloudinaryService);
+
   readonly backgroundImage = this.cloudinary.images.background;
   readonly iconShapes = this.cloudinary.svg.shapes;
   readonly iconTriangle = this.cloudinary.svg.iconTriangle;
   readonly together = this.cloudinary.svg.together;
+
+  navigateToAdvices() {
+    this.router.navigate(['/consejos'])
+  }
 }
