@@ -204,4 +204,16 @@ describe('CompleteRegistrationComponent', () => {
     const formData = mockUsersRepoService.updateUser.calls.mostRecent().args[1] as FormData;
     expect(formData.get('avatar')).toBeNull();
   });
+
+  it('should open login modal', () => {
+    expect(component.showLoginModal).toBeFalse();
+    component.openLoginModal();
+    expect(component.showLoginModal).toBeTrue();
+  });
+
+  it('should close login modal', () => {
+    component.showLoginModal = true;
+    component.closeLoginModal();
+    expect(component.showLoginModal).toBeFalse();
+  });
 });

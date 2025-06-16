@@ -61,12 +61,10 @@ import { Router } from '@angular/router';
 
     .header-section {
       display: flex;
-      justify-content: flex-start;
-      margin-bottom: 3rem;
-      align-items: center;
-      gap: 1.5rem;
-      flex-wrap: wrap;
       justify-content: center;
+      margin-bottom: 3rem;
+      align-items: flex-end;
+      gap: 1.5rem;
     }
 
     .title-section {
@@ -74,10 +72,10 @@ import { Router } from '@angular/router';
     }
 
     .title-section h2 {
-      font: 400 4rem/1 'Caprasimo', cursive;
+      font: 400 3.5rem/1 'Caprasimo', cursive;
       margin: 0;
       color: #2f2929;
-      width: 650px;
+      width: 600px;
     }
 
     .icon {
@@ -100,7 +98,7 @@ import { Router } from '@angular/router';
       font-size: 1.15rem;
       color: white;
       border: none;
-      padding: 20px 55px;
+      padding: 20px 70px;
       border-radius: 30px;
       box-shadow: inset 0px -5px 2px #b64022;
       cursor: pointer;
@@ -208,15 +206,17 @@ import { Router } from '@angular/router';
 
     @media (max-width: 768px) {
       .therapies-showcase {
-        padding: 0 8.4vw;
+        padding: 0;
         overflow: hidden;
       }
 
       .header-section {
         position: relative;
-        margin-bottom: 0.75rem;
-        justify-content: flex-start;
-        padding: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0.2rem 8.4vw 1rem 8.4vw;
+        margin: 0rem 1rem;
+        gap: 1rem;
       }
 
       .title-section h2 {
@@ -225,9 +225,9 @@ import { Router } from '@angular/router';
       }
 
       .icon {
-        width: 33px;
-        right: -2px;
-        bottom: 35px;
+        width: 35px;
+        right: -10px;
+        bottom: 40px;
       }
 
       .description {
@@ -238,7 +238,7 @@ import { Router } from '@angular/router';
       .cta-button {
         font-size: 1rem;
         position: absolute;
-        right: 18px;
+        right: 48px;
         bottom: 18px;
         padding: 18px 50px;
       }
@@ -248,11 +248,8 @@ import { Router } from '@angular/router';
         overflow-x: auto;
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
-        grid-template-columns: unset;
-        scrollbar-width: none;
         gap: 1rem;
-        padding-right: 8.4vw;
-        margin-right: -8.4vw;
+        padding: 1rem 8.4vw;
       }
 
       .therapies-grid::-webkit-scrollbar {
@@ -261,7 +258,6 @@ import { Router } from '@angular/router';
 
       .therapy-box {
         flex: 0 0 85%;
-        scroll-snap-align: start;
         max-width: 280px;
       }
 
