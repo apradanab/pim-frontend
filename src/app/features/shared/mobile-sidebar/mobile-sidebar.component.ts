@@ -23,9 +23,9 @@ import { LoginModalComponent } from '../login-modal/login-modal.component';
           >Terapias
         </a>
         <a (click)="navigateToAdvices()"
-           (keyup.enter)="navigateToAdvices()"
-           tabindex="0"
-           >Consejos
+          (keyup.enter)="navigateToAdvices()"
+          tabindex="0"
+          >Consejos
         </a>
         <a aria-label="Ver en Google Maps"
           (click)="openGoogleMaps()"
