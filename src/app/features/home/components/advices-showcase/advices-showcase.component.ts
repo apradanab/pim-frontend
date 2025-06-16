@@ -58,7 +58,6 @@ import { Router } from '@angular/router';
     .advices-showcase {
       display: flex;
       padding: 4rem 8.4vw 2.5rem;
-      gap: 2rem;
       background-color: #fcfcf9;
       font-family: 'Carlito', sans-serif;
     }
@@ -80,10 +79,9 @@ import { Router } from '@angular/router';
     }
 
     .description {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       color: #9e9e9b;
-      margin: 0;
-      max-width: 350px;
+      max-width: 360px;
     }
 
     .cta-button {
@@ -242,7 +240,7 @@ import { Router } from '@angular/router';
     @media (max-width: 768px) {
       .advices-showcase {
         flex-direction: column;
-        padding: 1rem 8.4vw;
+        padding: 1.5rem 8.4vw 1rem 8.4vw;
         gap: 1rem;
       }
 

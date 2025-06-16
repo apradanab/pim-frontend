@@ -257,7 +257,7 @@ export class TherapiesTabsComponent {
 
   navigateToTab(index: number) {
     this.activeTab.set(index);
-    this.router.navigate(['/servicios', this.therapiesConfig[index].route]);
+    this.router.navigate(['/terapias', this.therapiesConfig[index].route]);
   }
 
   cleanContent(content: string) {

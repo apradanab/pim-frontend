@@ -5,11 +5,12 @@ import { UsersRepoService } from '../../../../core/services/users.repo.service';
 import { faCircleCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { lastValueFrom } from 'rxjs';
+import { LoginModalComponent } from "../../../shared/login-modal/login-modal.component";
 
 @Component({
   selector: 'pim-complete-registration',
   standalone: true,
-  imports: [ ReactiveFormsModule, FontAwesomeModule],
+  imports: [ReactiveFormsModule, FontAwesomeModule, LoginModalComponent],
   template: `
     @if (showModal()) {
       <div class="modal">
@@ -49,10 +50,22 @@ import { lastValueFrom } from 'rxjs';
             <div class="success">
               <fa-icon [icon]="faCircleCheck" />
               <h3>¡Registro completado!</h3>
+
+                <div class="login-container">
+                <button class="login-button"
+                        (click)="openLoginModal()"
+                        (keyup.enter)="openLoginModal()"
+                        tabindex="0"
+                >Iniciar sesión</button>
+              </div>
             </div>
           }
         </div>
       </div>
+
+      @if (showLoginModal) {
+        <pim-login-modal (modalClosed)="closeLoginModal()"></pim-login-modal>
+      }
     }
   `,
   styles: [`
@@ -151,12 +164,51 @@ import { lastValueFrom } from 'rxjs';
     .success {
       text-align: center;
       padding: 2rem 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .success fa-icon {
       color: #4CAF50;
       font-size: 3rem;
       margin-bottom: 1rem;
+    }
+
+    .login-container {
+      background-color: #2f2929;
+      border-radius: 30px;
+      padding: 5px 10px;
+      width: 170px;
+    }
+
+    .login-button {
+      font-family: 'Carlito', sans-serif;
+      font-size: 1.06rem;
+      color: #f2f8fa;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 6px 14px;
+    }
+
+    .login-container:active {
+      background-color: transparent;
+      border: 2px solid black;
+      background-color: #f2f8fa;
+      padding : 3px 8px;
+      border-color: #17475f;
+    }
+
+    .login-button:active {
+      color: #17475f;
+      transition: all 0.15s ease;
+    }
+
+    @media (max-width: 768px) {
+      .modal-box {
+        max-width: 350px;
+      }
     }
   `]
 })
@@ -171,6 +223,7 @@ export default class CompleteRegistrationComponent {
 
   showModal = signal(false);
   success = signal(false);
+  showLoginModal = false;
   file: File | null = null;
   registrationToken: string | null = null;
 
@@ -217,5 +270,13 @@ export default class CompleteRegistrationComponent {
 
   closeModal() {
     this.showModal.set(false);
+  }
+
+  openLoginModal() {
+    this.showLoginModal = true;
+  }
+
+  closeLoginModal() {
+    this.showLoginModal = false;
   }
 }

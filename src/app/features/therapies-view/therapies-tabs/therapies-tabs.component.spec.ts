@@ -64,7 +64,7 @@ describe('TherapiesTabsComponent (effect-based)', () => {
   it('should navigate to correct tab', () => {
     component.navigateToTab(0);
     expect(component.activeTab()).toBe(0);
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/servicios', 'terapia-individual']);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/terapias', 'terapia-individual']);
   });
 
   describe('cleanContent()', () => {

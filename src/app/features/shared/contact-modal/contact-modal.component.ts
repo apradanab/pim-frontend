@@ -115,7 +115,7 @@ Tienes derecho a acceder, rectificar y suprimir tus datos, así como otros derec
       background-color: white;
       padding: 2rem;
       border-radius: 1rem;
-      width: 90%;
+      width: 100%;
       max-width: 500px;
       max-height: 90vh;
       overflow-y: auto;
@@ -232,6 +232,7 @@ Tienes derecho a acceder, rectificar y suprimir tus datos, así como otros derec
       font-family: 'Caprasimo', cursive;
       color: #2f2929;
       margin-bottom: 1rem;
+      font-weight: 500;
     }
 
     .privacy-text {
@@ -248,6 +249,16 @@ Tienes derecho a acceder, rectificar y suprimir tus datos, así como otros derec
       border-radius: 2rem;
       font-family: 'Carlito', sans-serif;
       cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .modal-content {
+        max-width: 400px;
+      }
+
+      .privacy-content {
+        max-width: 450px;
+      }
     }
   `
 })

@@ -15,18 +15,24 @@ import { LoginModalComponent } from '../login-modal/login-modal.component';
         <a (click)="openLoginModal()"
           (keyup.enter)="openLoginModal()"
           tabindex="0"
-        >Iniciar sesión</a>
-        <a (click)="navigateToServicesDetail()"
-          (keyup.enter)="navigateToServicesDetail()"
-          tabindex="0"
-          >Servicios
+          >Iniciar sesión
         </a>
-        <a href="#">Consejos</a>
+        <a (click)="navigateToTherapies()"
+          (keyup.enter)="navigateToTherapies()"
+          tabindex="0"
+          >Terapias
+        </a>
+        <a (click)="navigateToAdvices()"
+           (keyup.enter)="navigateToAdvices()"
+           tabindex="0"
+           >Consejos
+        </a>
         <a aria-label="Ver en Google Maps"
           (click)="openGoogleMaps()"
           (keyup.enter)="openGoogleMaps()"
           tabindex="0"
-        >Nuestro centro</a>
+          >Nuestro centro
+        </a>
       </div>
     </div>
 
@@ -75,8 +81,12 @@ export class MobileSidebarComponent {
   showLoginModal = false;
   readonly router = inject(Router);
 
-  navigateToServicesDetail() {
-    this.router.navigate(['/servicios/terapia-individual']);
+  navigateToTherapies() {
+    this.router.navigate(['/terapias/terapia-individual']);
+  }
+
+  navigateToAdvices() {
+    this.router.navigate(['/consejos']);
   }
 
   openLoginModal() {

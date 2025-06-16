@@ -37,9 +37,14 @@ describe('MobileSidebarComponent', () => {
     expect(component.showLoginModal).toBeFalse();
   });
 
-  it('should call router.navigate with /servicios/terapia-individual when navigateToServicesDetail is called', () => {
-    component.navigateToServicesDetail();
-    expect(router.navigate).toHaveBeenCalledWith(['/servicios/terapia-individual']);
+  it('should call router.navigate with /terapias/terapia-individual when navigateToTherapies is called', () => {
+    component.navigateToTherapies();
+    expect(router.navigate).toHaveBeenCalledWith(['/terapias/terapia-individual']);
+  });
+
+  it('should call router.navigate with /consejos when navigateToAdvices is called', () => {
+    component.navigateToAdvices();
+    expect(router.navigate).toHaveBeenCalledWith(['/consejos']);
   });
 
   it('should open Google Maps in new tab when openGoogleMaps is called', () => {
