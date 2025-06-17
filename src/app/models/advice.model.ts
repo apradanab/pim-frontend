@@ -4,7 +4,7 @@ export type Advice = {
   description: string;
   content: string;
   image: string;
-  serviceId: string;
+  therapyId: string;
   createdAt: Date;
   updatedAt: Date;
 }

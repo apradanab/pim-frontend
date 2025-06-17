@@ -14,7 +14,7 @@ describe('AdvicesListComponent', () => {
       description: 'Descripción 1',
       content: '<p>Contenido 1</p>',
       image: 'image1.jpg',
-      serviceId: '1',
+      therapyId: '1',
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -24,7 +24,7 @@ describe('AdvicesListComponent', () => {
       description: 'Descripción 2',
       content: '<p>Contenido 2</p>',
       image: 'image2.jpg',
-      serviceId: '1',
+      therapyId: '1',
       createdAt: new Date(),
       updatedAt: new Date()
     }
