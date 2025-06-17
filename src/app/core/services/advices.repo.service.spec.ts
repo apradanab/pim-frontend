@@ -16,7 +16,7 @@ describe('AdvicesRepoService', () => {
     image: 'http://test.com',
     createdAt: new Date(),
     updatedAt: new Date(),
-    serviceId: '1'
+    therapyId: '1'
   };
 
   beforeEach(() => {

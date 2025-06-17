@@ -41,7 +41,7 @@ describe('StateService', () => {
     image: 'http://test.com',
     createdAt: new Date('2025-05-29T17:25:06Z'),
     updatedAt: new Date('2025-05-29T17:25:06Z'),
-    serviceId: '1',
+    therapyId: '1',
   }
 
   beforeEach(() => {
