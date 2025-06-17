@@ -69,7 +69,7 @@ describe('AdvicesRepoService', () => {
       expect(advices).toEqual(mockAdvices);
     });
 
-    const req = httpTestingController.expectOne(`${service['url']}/service/1`);
+    const req = httpTestingController.expectOne(`${service['url']}/therapy/1`);
     expect(req.request.method).toBe('GET');
     req.flush(mockAdvices);
   });

@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 })
 export class TherapiesRepoService {
   private readonly http = inject(HttpClient);
-  private readonly url = `${environment.apiUrl}/services`;
+  private readonly url = `${environment.apiUrl}/therapies`;
 
   getTherapies(): Observable<Therapy[]> {
     return this.http.get<Therapy[]>(this.url)

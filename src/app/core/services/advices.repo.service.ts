@@ -9,7 +9,7 @@ import { Advice } from '../../models/advice.model';
 })
 export class AdvicesRepoService {
   private readonly http = inject(HttpClient);
-  private readonly url = `${environment.apiUrl}/resources`;
+  private readonly url = `${environment.apiUrl}/advices`;
 
   getAllAdvices(): Observable<Advice[]> {
     return this.http.get<Advice[]>(this.url);
@@ -20,7 +20,7 @@ export class AdvicesRepoService {
   }
 
   getAdvicesByTherapyId(therapyId: string): Observable<Advice[]> {
-    return this.http.get<Advice[]>(`${this.url}/service/${therapyId}`);
+    return this.http.get<Advice[]>(`${this.url}/therapy/${therapyId}`);
   }
 
   createAdvice(resource: Advice): Observable<Advice> {
