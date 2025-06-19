@@ -96,7 +96,7 @@ import { ContactModalComponent } from "../contact-modal/contact-modal.component"
     }
 
     .footer-description {
-      color: #968484;
+      color:rgba(128, 104, 104, 0.56);
       line-height: 1.2;
       margin-bottom: 0.5rem;
     }
@@ -114,7 +114,7 @@ import { ContactModalComponent } from "../contact-modal/contact-modal.component"
     }
 
     .links-column a {
-      color: #2f2929;
+      color: #514545;
       text-decoration: none;
       transition: color 0.3s;
     }
@@ -130,7 +130,7 @@ import { ContactModalComponent } from "../contact-modal/contact-modal.component"
     }
 
     .social-block a {
-      color: #2f2929;
+      color:rgba(81, 69, 69, 0.8);
       font-size: 2rem;
       transition: color 0.3s;
     }
@@ -148,11 +148,11 @@ import { ContactModalComponent } from "../contact-modal/contact-modal.component"
     .footer-line {
       width: 100%;
       height: 1px;
-      background-color: #2f2929;;
+      background-color: #514545;
     }
 
     .copyright {
-      color: #968484;
+      color:rgba(128, 104, 104, 0.56);
       font-size: 0.9rem;
       margin-bottom: 0.5rem;
     }
