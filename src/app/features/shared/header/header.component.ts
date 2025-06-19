@@ -6,13 +6,12 @@ import { CloudinaryService } from '../../../core/services/cloudinary.service';
 import { Router } from '@angular/router';
 import { ContactModalComponent } from '../contact-modal/contact-modal.component';
 import { StateService } from '../../../core/services/state.service';
-import { CommonModule } from '@angular/common';
 import { LoginModalComponent } from "../login-modal/login-modal.component";
 
 @Component({
   selector: 'pim-header',
   standalone: true,
-  imports: [FontAwesomeModule, MobileSidebarComponent, ContactModalComponent, CommonModule, LoginModalComponent],
+  imports: [FontAwesomeModule, MobileSidebarComponent, ContactModalComponent, LoginModalComponent],
   template: `
     <header class="header">
       <div class="logo"
@@ -66,10 +65,13 @@ import { LoginModalComponent } from "../login-modal/login-modal.component";
       <button class="burger-menu"
               (click)="toggleSidebar()"
               aria-label="Toggle sidebar"
-      >
-        <fa-icon [icon]="sidebarActive ? faXmark : faBars"></fa-icon>
+              [attr.aria-expanded]="sidebarActive">
+        <svg class="burger-icon" viewBox="0 0 24 24">
+          <path class="burger-line top" [class.active]="sidebarActive" d="M4 12h16c0.6 0 1 0.4 1 1s-0.4 1-1 1H4c-0.6 0-1-0.4-1-1s0.4-1 1-1z"/>
+          <path class="burger-line middle" [class.active]="sidebarActive" d="M4 12h16c0.6 0 1 0.4 1 1s-0.4 1-1 1H4c-0.6 0-1-0.4-1-1s0.4-1 1-1z"/>
+          <path class="burger-line bottom" [class.active]="sidebarActive" d="M4 12h16c0.6 0 1 0.4 1 1s-0.4 1-1 1H4c-0.6 0-1-0.4-1-1s0.4-1 1-1z"/>
+        </svg>
       </button>
-
     </header>
 
     <pim-mobile-sidebar [active]="sidebarActive"></pim-mobile-sidebar>
@@ -102,8 +104,8 @@ import { LoginModalComponent } from "../login-modal/login-modal.component";
   }
 
   .logo-icon {
-    width: 80px;
-    height: 80px;
+    width: 76px;
+    height: 76px;
     margin-right: 16px;
     cursor: pointer;
   }
@@ -112,7 +114,7 @@ import { LoginModalComponent } from "../login-modal/login-modal.component";
     display: flex;
     flex-direction: column;
     font: bold 1.3rem / 1.2 'Carlito', sans-serif;
-    color: #17475f;
+    color:rgba(81, 69, 69, 0.8);
   }
 
   .nav-options {
@@ -125,7 +127,7 @@ import { LoginModalComponent } from "../login-modal/login-modal.component";
   .nav-option {
     font-size: 1.06rem;
     font-family: 'Carlito', sans-serif;
-    color: #2f2929;
+    color: #514545;
     text-decoration: none;
     transition: background-color 0.15s ease, transform 0.1s ease;
     border-radius: 30px;
@@ -139,7 +141,7 @@ import { LoginModalComponent } from "../login-modal/login-modal.component";
   }
 
   .login-container {
-    background-color: #2f2929;
+    background-color:rgba(81, 69, 69, 0.8);
     border-radius: 30px;
     padding: 5px 10px;
   }
@@ -155,20 +157,20 @@ import { LoginModalComponent } from "../login-modal/login-modal.component";
   }
 
   .login-container:active {
-    background-color: transparent;
-    border: 2px solid black;
-    background-color: #f2f8fa;
+    color: #17999b;
+    box-shadow: inset 0 0 10px 8px rgba(23, 153, 155, 0.3);
+    background-color: rgba(27, 188, 191, 0.08);
+    border: 2.5px solid black;
     padding : 3px 8px;
-    border-color: #17475f;
+    border-color: #17999b;
   }
 
   .login-button:active {
-    color: #17475f;
-    transition: all 0.15s ease;
+    color: #17999b;
   }
 
   .burger-menu {
-  display: none;
+    display: none;
   }
 
   @media(max-width: 768px) {
@@ -178,8 +180,8 @@ import { LoginModalComponent } from "../login-modal/login-modal.component";
     }
 
     .logo-icon {
-      width: 78px;
-      height: 78px;
+      width: 72px;
+      height: 72px;
     }
 
     .logo-text {
@@ -195,25 +197,54 @@ import { LoginModalComponent } from "../login-modal/login-modal.component";
     }
 
     .burger-menu {
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       min-width: 45px;
       min-height: 53px;
-      font-size: 1.85rem;
-      color: #f2f8fa;
-      background-color: #2f2929;
+      background-color:rgba(81, 69, 69, 0.8);
+      border: none;
       border-radius: 10px;
-      border: 2px solid transparent;
-      transition:
-        background-color 0.2s ease,
-        transform 0.2s ease,
-        border-color 0.2s ease,
-        color 0.2s ease;
+      box-shadow: inset 0px -3px 2px #514545;
+      transition: all 0.5s ease;
+
+      &:active {
+        background-color:rgba(81, 69, 69, 0.92);
+        box-shadow: inset 0px 4px 2px #514545;
+      }
     }
 
-    .burger-menu:active {
-      background-color: #f2f8fa;
-      border-color: #2f2929;
-      color: #2f2929;
+    .burger-icon {
+      width: 30px;
+      height: 30px;
+
+      .burger-line {
+        fill: none;
+        stroke: #f2f8fa;
+        stroke-width: 2.6;
+        transform-origin: center;
+        transition: all 0.5s ease;
+
+        &.top {
+          transform: translateY(-9px);
+        }
+
+        &.bottom {
+          transform: translateY(9px);
+        }
+
+        &.active.top {
+          transform: translateX(0px) rotate(48deg);
+        }
+
+        &.active.middle {
+          opacity: 0;
+        }
+
+        &.active.bottom {
+          transform: translateX(-1px) rotate(-48deg);
+        }
+      }
     }
   }
   `

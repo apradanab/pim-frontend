@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { CloudinaryService } from '../../../../core/services/cloudinary.service';
 
 @Component({
@@ -33,7 +33,7 @@ import { CloudinaryService } from '../../../../core/services/cloudinary.service'
                 (keyup.enter)="openGoogleMaps()"
                 tabindex="0"
         >
-          <fa-icon [icon]="faArrowRight" class="icon"></fa-icon>
+          <fa-icon [icon]="faChevron" class="icon"></fa-icon>
         </button>
       </div>
       <img [src]="starFlower" width="200" height="200" alt="Overlay image" class="overlay-image" />
@@ -122,8 +122,8 @@ import { CloudinaryService } from '../../../../core/services/cloudinary.service'
       position: absolute;
       top: -25px;
       right: -35px;
-      width: 90px;
-      height: 90px;
+      width: 80px;
+      height: 80px;
       transform: rotate(25deg);
     }
     @media (max-width: 768px) {
@@ -157,8 +157,8 @@ import { CloudinaryService } from '../../../../core/services/cloudinary.service'
       .overlay-image {
         top: -20px;
         right: -25px;
-        width: 65px;
-        height: 65px;
+        width: 60px;
+        height: 60px;
       }
     }
   `
@@ -166,7 +166,7 @@ import { CloudinaryService } from '../../../../core/services/cloudinary.service'
 export class TourVideoComponent {
   cloudinary = inject(CloudinaryService);
   starFlower = this.cloudinary.svg.starFlower;
-  faArrowRight = faArrowRight;
+  faChevron = faChevronRight;
 
   openGoogleMaps() {
     const address = encodeURIComponent('Calle París 1, Montcada, Barcelona, 08110');

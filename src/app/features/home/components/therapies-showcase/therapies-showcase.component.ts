@@ -1,7 +1,7 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { StateService } from '../../../../core/services/state.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { TherapyStyle } from '../../../../models/therapy.model';
 import { CloudinaryService } from '../../../../core/services/cloudinary.service';
 import { Router } from '@angular/router';
@@ -34,7 +34,7 @@ import { Router } from '@angular/router';
               <button class="therapy-button"
                       (click)="navigateToTherapyByIndex($index)"
                       (keyup.enter)="navigateToTherapyByIndex($index)">
-                <fa-icon [icon]="faArrowRight" />
+                <fa-icon [icon]="faChevron" />
               </button>
             </div>
             <div class="tags">
@@ -298,7 +298,7 @@ export class TherapiesShowcaseComponent {
   private readonly router = inject(Router);
 
   readonly circleStar = inject(CloudinaryService).svg.circleStar;
-  faArrowRight = faArrowRight;
+  faChevron = faChevronRight;
 
   therapyStyles: TherapyStyle[] = [
     { bgColor: '#fea087', tags: ['de 3 a 20 años', 'pide cita', 'consulta horarios'] },
