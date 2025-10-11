@@ -9,14 +9,16 @@ describe('AdvicesRepoService', () => {
   let httpTestingController: HttpTestingController;
 
   const mockAdvice: Advice = {
-    id: '1',
+    adviceId: '1',
+    therapyId: '1',
     title: 'Test Advice',
     description: 'Test Description',
     content: 'Test Content',
-    image: 'http://test.com',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    therapyId: '1'
+    image: {
+      key: 'test-key',
+      url: 'http://test.com'
+    },
+    createdAt: '2024-01-01T00:00:00.000Z'
   };
 
   beforeEach(() => {
@@ -75,7 +77,7 @@ describe('AdvicesRepoService', () => {
   });
 
   it('should create a new advice', () => {
-    const newAdvice: Advice = { ...mockAdvice, id: '2' };
+    const newAdvice: Advice = { ...mockAdvice, adviceId: '2' };
 
     service.createAdvice(newAdvice).subscribe(advice => {
       expect(advice).toEqual(newAdvice);
