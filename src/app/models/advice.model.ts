@@ -1,10 +1,14 @@
 export type Advice = {
-  id: string;
+  adviceId: string;
+  therapyId: string;
   title: string;
   description: string;
   content: string;
-  image: string;
-  therapyId: string;
-  createdAt: Date;
-  updatedAt: Date;
+  image: {
+    key: string;
+    url: string;
+    size?: number;
+    contentType?: string;
+  };
+  createdAt: string;
 }

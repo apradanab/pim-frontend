@@ -1,11 +1,16 @@
 export type Therapy = {
-  id: string;
+  therapyId: string;
   title: string;
   description: string;
   content: string;
-  image: string;
-  createdAt: Date;
-  updatedAt: Date;
+  image?: {
+    key: string;
+    url: string;
+    size?: number;
+    contentType?: string;
+  };
+  maxParticipants: number;
+  createdAt: string;
 };
 
 export type TherapyStyle = {
