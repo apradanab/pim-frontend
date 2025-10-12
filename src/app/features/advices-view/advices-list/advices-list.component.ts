@@ -1,6 +1,6 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { StateService } from '../../../core/services/state.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import DOMPurify from 'dompurify';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -19,18 +19,18 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
       </div>
 
       <div class="advices-grid">
-        @for (advice of advices(); track advice.id; let i = $index) {
+        @for (advice of advices(); track advice.adviceId; let i = $index) {
           <div class="advice-card"
-              [class.expanded]="expandedCard() === advice.id"
-              (click)="toggleCard(advice.id)"
-              (keyup.enter)="toggleCard(advice.id)"
+              [class.expanded]="expandedCard() === advice.adviceId"
+              (click)="toggleCard(advice.adviceId)"
+              (keyup.enter)="toggleCard(advice.adviceId)"
               tabindex="0">
             <div class="card-content">
               <img [src]="advice.image" alt="{{advice.title}}" class="card-image">
               <h3>{{ advice.title }}</h3>
               <p class="description">{{ advice.description }}</p>
 
-              @if (expandedCard() === advice.id) {
+              @if (expandedCard() === advice.adviceId) {
                 <div class="expanded-content" [innerHTML]="cleanContent(advice.content)"></div>
                 <button class="close-btn" (click)="closeCard($event)">
                   <fa-icon [icon]="faArrowRight" [class.rotated]="true"></fa-icon>
@@ -197,6 +197,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 export class AdvicesListComponent {
   private readonly stateService = inject(StateService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   faArrowRight = faArrowRight;
   expandedCard = signal<string | null>(null);
@@ -204,6 +205,16 @@ export class AdvicesListComponent {
 
   constructor() {
     this.stateService.loadAllAdvices();
+
+    // Manejo de parámetros con effect
+    effect(() => {
+      const params = this.route.snapshot.params;
+      const adviceId = params['adviceId'];
+      if (adviceId) {
+        this.expandedCard.set(adviceId);
+        this.scrollToExpandedCard();
+      }
+    }, { allowSignalWrites: true });
 
     effect(() => {
       const list = this.stateService.state$.advices.list;
@@ -214,19 +225,31 @@ export class AdvicesListComponent {
   toggleCard(id: string) {
     if(this.expandedCard() === id) {
       this.expandedCard.set(null);
+      this.router.navigate(['/consejos']);
     } else {
       this.expandedCard.set(id);
+      this.router.navigate(['/consejos', id]);
     }
   }
 
   closeCard(event: Event) {
     event.stopPropagation();
     this.expandedCard.set(null);
+    this.router.navigate(['/consejos']);
+  }
+
+  private scrollToExpandedCard() {
+    setTimeout(() => {
+      const expandedElement = document.querySelector('.advice-card.expanded');
+      if (expandedElement) {
+        expandedElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }, 100);
   }
 
   cleanContent(content: string) {
     return DOMPurify.sanitize(content || '', {
-      ALLOWED_TAGS: ['b', 'br'],
+      ALLOWED_TAGS: ['b', 'br', 'p', 'ul', 'li', 'strong'],
       ALLOWED_ATTR: []
     });
   }
