@@ -3,6 +3,7 @@ import { TherapiesRepoService } from './therapies.repo.service';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Therapy } from '../../models/therapy.model';
+import { environment } from '../../../environments/environment.development';
 
 describe('TherapiesRepoService', () => {
   let service: TherapiesRepoService;
@@ -10,24 +11,30 @@ describe('TherapiesRepoService', () => {
 
   const mockTherapies: Therapy[] = [
     {
-      id: '1',
+      therapyId: '1',
       title: 'Terapia 1',
       description: 'Descripción 1',
       content: 'Contenido 1',
-      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg==',
-      createdAt: new Date(),
-      updatedAt: new Date()
+      maxParticipants: 1,
+      image: {
+        key: 'test-key',
+        url: 'http://test.com'
+      },
+      createdAt: '2024-01-01T00:00:00.000Z',
     }
   ];
 
   const newTherapy: Therapy = {
-    id: '2',
+    therapyId: '2',
     title: 'Nueva Terapia',
     description: 'Nueva Descripción',
     content: 'Nuevo Contenido',
-    image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAEBgIA5qKO1AAAAABJRU5ErkJggg==',
-    createdAt: new Date(),
-    updatedAt: new Date()
+    maxParticipants: 5,
+    image: {
+      key: 'test-key',
+      url: 'http://test.com'
+    },
+    createdAt: '2024-01-01T00:00:00.000Z',
   };
 
   beforeEach(() => {
@@ -50,7 +57,7 @@ describe('TherapiesRepoService', () => {
       expect(therapies).toEqual(mockTherapies);
     });
 
-    const req = httpTestingController.expectOne(service['url']);
+    const req = httpTestingController.expectOne(`${environment.apiUrl}/therapies`);
     expect(req.request.method).toBe('GET');
     req.flush(mockTherapies);
   });
@@ -61,7 +68,7 @@ describe('TherapiesRepoService', () => {
       expect(therapy).toEqual(mockTherapies[0]);
     });
 
-    const req = httpTestingController.expectOne(`${service['url']}/${therapyId}`);
+    const req = httpTestingController.expectOne(`${environment.apiUrl}/therapies/${therapyId}`);
     expect(req.request.method).toBe('GET');
     req.flush(mockTherapies[0]);
   });
@@ -71,7 +78,7 @@ describe('TherapiesRepoService', () => {
       expect(therapy).toEqual(newTherapy);
     });
 
-    const req = httpTestingController.expectOne(service['url']);
+    const req = httpTestingController.expectOne(`${environment.apiUrl}/therapies`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(newTherapy);
     req.flush(newTherapy);
@@ -85,7 +92,7 @@ describe('TherapiesRepoService', () => {
       expect(therapy.title).toBe('Terapia Actualizada');
     });
 
-    const req = httpTestingController.expectOne(`${service['url']}/${therapyId}`);
+    const req = httpTestingController.expectOne(`${environment.apiUrl}/therapies/${therapyId}`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.body).toEqual(updatedData);
     req.flush({...mockTherapies[0], ...updatedData});
@@ -98,7 +105,7 @@ describe('TherapiesRepoService', () => {
       expect(response).toBeNull();
     });
 
-    const req = httpTestingController.expectOne(`${service['url']}/${therapyId}`);
+    const req = httpTestingController.expectOne(`${environment.apiUrl}/therapies/${therapyId}`);
     expect(req.request.method).toBe('DELETE');
     req.flush(null, { status: 204, statusText: 'No Content' });
   });
