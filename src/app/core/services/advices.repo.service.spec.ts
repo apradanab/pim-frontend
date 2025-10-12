@@ -71,7 +71,7 @@ describe('AdvicesRepoService', () => {
       expect(advices).toEqual(mockAdvices);
     });
 
-    const req = httpTestingController.expectOne(`${service['url']}/therapy/1`);
+    const req = httpTestingController.expectOne(`${service['therapiesUrl']}/1/advices`);
     expect(req.request.method).toBe('GET');
     req.flush(mockAdvices);
   });
@@ -83,7 +83,7 @@ describe('AdvicesRepoService', () => {
       expect(advice).toEqual(newAdvice);
     });
 
-    const req = httpTestingController.expectOne(service['url']);
+    const req = httpTestingController.expectOne(`${service['therapiesUrl']}/1/advices`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(newAdvice);
     req.flush(newAdvice);
