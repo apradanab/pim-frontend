@@ -25,23 +25,28 @@ describe('StateService', () => {
     approved: true
   };
   const mockTherapy: Therapy = {
-    id: '1',
+    therapyId: '1',
     title: 'Test Therapy',
     description: 'Test Description',
     content: 'Test Content',
-    image: 'test-image.jpg',
-    createdAt: new Date('2025-05-29T17:25:06Z'),
-    updatedAt: new Date('2025-05-29T17:25:06Z')
+    maxParticipants: 1,
+    image: {
+      key: 'test-key',
+      url: 'http://test.com'
+    },
+    createdAt: '2024-01-01T00:00:00.000Z'
   };
   const mockAdvice: Advice = {
-    id: '1',
+    adviceId: '1',
+    therapyId: '1',
     title: 'Test Advice',
     description: 'Test Description',
     content: 'Test Content',
-    image: 'http://test.com',
-    createdAt: new Date('2025-05-29T17:25:06Z'),
-    updatedAt: new Date('2025-05-29T17:25:06Z'),
-    therapyId: '1',
+    image: {
+      key: 'test-key',
+      url: 'http://test.com'
+    },
+    createdAt: '2024-01-01T00:00:00.000Z',
   }
 
   beforeEach(() => {
@@ -229,7 +234,7 @@ describe('StateService', () => {
     }));
 
     it('should create new therapy', fakeAsync(() => {
-      const newTherapy: Therapy = { ...mockTherapy, id: '2' };
+      const newTherapy: Therapy = { ...mockTherapy, therapyId: '2' };
       mockTherapiesRepo.createTherapy.and.returnValue(of(newTherapy));
 
       service.createTherapy(newTherapy);
@@ -250,9 +255,9 @@ describe('StateService', () => {
     }));
 
     it('should correctly update the specific therapy in list and set as current', fakeAsync(() => {
-      const initialTherapy1 = { ...mockTherapy, id: '1', title: 'Original 1' };
-      const initialTherapy2 = { ...mockTherapy, id: '2', title: 'Original 2' };
-      const updatedTherapy = { ...mockTherapy, id: '1', title: 'Updated' };
+      const initialTherapy1 = { ...mockTherapy, therapyId: '1', title: 'Original 1' };
+      const initialTherapy2 = { ...mockTherapy, therapyId: '2', title: 'Original 2' };
+      const updatedTherapy = { ...mockTherapy, therapyId: '1', title: 'Updated' };
 
       mockTherapiesRepo.getTherapies.and.returnValue(of([initialTherapy1, initialTherapy2]));
       service.loadTherapies();
@@ -263,8 +268,8 @@ describe('StateService', () => {
       tick();
 
       const therapyState = service.therapiesState();
-      const updated = therapyState.list.find(s => s.id === '1');
-      const unchanged = therapyState.list.find(s => s.id === '2');
+      const updated = therapyState.list.find(s => s.therapyId === '1');
+      const unchanged = therapyState.list.find(s => s.therapyId === '2');
 
       expect(therapyState.list.length).toBe(2);
       expect(updated?.title).toBe('Updated');
@@ -378,7 +383,7 @@ describe('StateService', () => {
     }));
 
     it('should create new advice', fakeAsync(() => {
-      const newAdvice: Advice = { ...mockAdvice, id: '2' };
+      const newAdvice: Advice = { ...mockAdvice, adviceId: '2' };
       mockAdvicesRepo.createAdvice.and.returnValue(of(newAdvice));
 
       service.createAdvice(newAdvice);

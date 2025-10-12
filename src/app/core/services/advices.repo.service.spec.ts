@@ -9,14 +9,16 @@ describe('AdvicesRepoService', () => {
   let httpTestingController: HttpTestingController;
 
   const mockAdvice: Advice = {
-    id: '1',
+    adviceId: '1',
+    therapyId: '1',
     title: 'Test Advice',
     description: 'Test Description',
     content: 'Test Content',
-    image: 'http://test.com',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    therapyId: '1'
+    image: {
+      key: 'test-key',
+      url: 'http://test.com'
+    },
+    createdAt: '2024-01-01T00:00:00.000Z'
   };
 
   beforeEach(() => {
@@ -69,19 +71,19 @@ describe('AdvicesRepoService', () => {
       expect(advices).toEqual(mockAdvices);
     });
 
-    const req = httpTestingController.expectOne(`${service['url']}/therapy/1`);
+    const req = httpTestingController.expectOne(`${service['therapiesUrl']}/1/advices`);
     expect(req.request.method).toBe('GET');
     req.flush(mockAdvices);
   });
 
   it('should create a new advice', () => {
-    const newAdvice: Advice = { ...mockAdvice, id: '2' };
+    const newAdvice: Advice = { ...mockAdvice, adviceId: '2' };
 
     service.createAdvice(newAdvice).subscribe(advice => {
       expect(advice).toEqual(newAdvice);
     });
 
-    const req = httpTestingController.expectOne(service['url']);
+    const req = httpTestingController.expectOne(`${service['therapiesUrl']}/1/advices`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(newAdvice);
     req.flush(newAdvice);

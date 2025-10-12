@@ -186,7 +186,7 @@ export class StateService {
     return this.therapiesRepo.updateTherapy(id, therapy).subscribe({
       next: (updatedTherapy) => this.#therapyState.update(s => ({
           ...s,
-          list: s.list.map(svc => svc.id === id ? updatedTherapy : svc),
+          list: s.list.map(svc => svc.therapyId === id ? updatedTherapy : svc),
           current: updatedTherapy
         })),
       error: (err: ApiError) => {
@@ -199,7 +199,7 @@ export class StateService {
     return this.therapiesRepo.deleteTherapy(id).subscribe({
       next: () => this.#therapyState.update(s => ({
           ...s,
-          list: s.list.filter(svc => svc.id !== id),
+          list: s.list.filter(svc => svc.therapyId !== id),
           current: null
         })),
       error: (err: ApiError) => {
@@ -223,22 +223,23 @@ export class StateService {
     });
   }
 
-  loadAdvicesByTherapyId = (therapyId: string) => {
-    this.advicesRepo.getAdvicesByTherapyId(therapyId).subscribe({
-      next: (advices) => this.#adviceState.update(s => ({
-        ...s,
-        filtered: advices
-      })),
-      error: (err: ApiError) => this.#adviceState.update(s => ({
-        ...s,
-        filtered: [],
-        error: err.message
-      }))
-    });
-  }
+  loadAdvicesByTherapyId(therapyId: string) {
+  this.advicesRepo.getAdvicesByTherapyId(therapyId).subscribe({
+    next: (advices) => this.#adviceState.update(s => ({
+      ...s,
+      filtered: advices,
+      error: null
+    })),
+    error: (err: ApiError) => this.#adviceState.update(s => ({
+      ...s,
+      filtered: [],
+      error: err.message
+    }))
+  });
+}
 
-  loadAdviceById = (id: string) => {
-    this.advicesRepo.getAdviceById(id).subscribe({
+  loadAdviceById = (adviceId: string) => {
+    this.advicesRepo.getAdviceById(adviceId).subscribe({
       next: (advice) => this.#adviceState.update(s => ({
         ...s,
         current: advice

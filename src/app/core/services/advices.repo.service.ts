@@ -10,6 +10,7 @@ import { Advice } from '../../models/advice.model';
 export class AdvicesRepoService {
   private readonly http = inject(HttpClient);
   private readonly url = `${environment.apiUrl}/advices`;
+  private readonly therapiesUrl = `${environment.apiUrl}/therapies`
 
   getAllAdvices(): Observable<Advice[]> {
     return this.http.get<Advice[]>(this.url);
@@ -20,10 +21,10 @@ export class AdvicesRepoService {
   }
 
   getAdvicesByTherapyId(therapyId: string): Observable<Advice[]> {
-    return this.http.get<Advice[]>(`${this.url}/therapy/${therapyId}`);
+    return this.http.get<Advice[]>(`${this.therapiesUrl}/${therapyId}/advices`);
   }
 
-  createAdvice(resource: Advice): Observable<Advice> {
-    return this.http.post<Advice>(this.url, resource);
+  createAdvice(advice: Advice): Observable<Advice> {
+    return this.http.post<Advice>(`${this.therapiesUrl}/${advice.therapyId}/advices`, advice);
   }
 }

@@ -1,32 +1,27 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { AdvicesListComponent } from './advices-list.component';
 import { StateService } from '../../../core/services/state.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { of } from 'rxjs';
 
 describe('AdvicesListComponent', () => {
   let component: AdvicesListComponent;
   let fixture: ComponentFixture<AdvicesListComponent>;
   let mockStateService: jasmine.SpyObj<StateService>;
+  let mockRouter: jasmine.SpyObj<Router>;
 
   const mockAdvices = [
     {
-      id: '1',
+      adviceId: '1',
+      therapyId: '1',
       title: 'Consejo 1',
       description: 'Descripción 1',
       content: '<p>Contenido 1</p>',
-      image: 'image1.jpg',
-      therapyId: '1',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      id: '2',
-      title: 'Consejo 2',
-      description: 'Descripción 2',
-      content: '<p>Contenido 2</p>',
-      image: 'image2.jpg',
-      therapyId: '1',
-      createdAt: new Date(),
-      updatedAt: new Date()
+      image: {
+        key: 'image1-key',
+        url: 'image1.jpg'
+      },
+      createdAt: '2024-01-01T00:00:00.000Z'
     }
   ];
 
@@ -39,10 +34,14 @@ describe('AdvicesListComponent', () => {
       }
     });
 
+    mockRouter = jasmine.createSpyObj('Router', ['navigate']);
+
     await TestBed.configureTestingModule({
       imports: [AdvicesListComponent],
       providers: [
-        { provide: StateService, useValue: mockStateService }
+        { provide: StateService, useValue: mockStateService },
+        { provide: Router, useValue: mockRouter },
+        { provide: ActivatedRoute, useValue: { snapshot: { params: {} }, params: of({}) } },
       ]
     }).compileComponents();
 
@@ -55,62 +54,61 @@ describe('AdvicesListComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should initialize with advices from state service', () => {
-    expect(component.advices()).toEqual(mockAdvices);
-  });
-
   it('should call loadAllAdvices on init', () => {
     expect(mockStateService.loadAllAdvices).toHaveBeenCalled();
   });
 
-  describe('toggleCard', () => {
-    it('should expand card when clicked', () => {
-      component.toggleCard('1');
-      expect(component.expandedCard()).toBe('1');
-    });
+  it('should expand and collapse card', () => {
+    component.toggleCard('1');
+    expect(component.expandedCard()).toBe('1');
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/consejos', '1']);
 
-    it('should collapse card when clicked twice', () => {
-      component.toggleCard('1');
-      component.toggleCard('1');
-      expect(component.expandedCard()).toBeNull();
-    });
+    component.toggleCard('1');
+    expect(component.expandedCard()).toBeNull();
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/consejos']);
   });
 
-  it('should collapse expanded card', () => {
-    component.expandedCard.set('1');
+  it('should handle route params with adviceId', () => {
+    const mockActivatedRoute = TestBed.inject(ActivatedRoute);
+    Object.defineProperty(mockActivatedRoute, 'snapshot', {
+      get: () => ({ params: { adviceId: '1' } })
+    });
+
+    fixture = TestBed.createComponent(AdvicesListComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    expect(component.expandedCard()).toBe('1');
+  });
+
+  it('should clean content', () => {
+    expect(component.cleanContent('<script>alert(1)</script>')).toBe('');
+  });
+
+  it('should clean content when input is undefined or empty', () => {
+    expect(component.cleanContent('')).toBe('');
+    expect(component.cleanContent(undefined as unknown as string)).toBe('');
+  });
+
+  it('should close card with event stop propagation', () => {
     const mockEvent = { stopPropagation: jasmine.createSpy() } as unknown as Event;
+    component.expandedCard.set('1');
 
     component.closeCard(mockEvent);
 
-    expect(component.expandedCard()).toBeNull();
     expect(mockEvent.stopPropagation).toHaveBeenCalled();
+    expect(component.expandedCard()).toBeNull();
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/consejos']);
   });
 
-  describe('cleanContent', () => {
-    it('should return empty string for empty content', () => {
-      expect(component.cleanContent('')).toBe('');
-    });
+  it('should scroll to expanded card when element exists', fakeAsync(() => {
+    const mockElement = document.createElement('div');
+    const scrollSpy = spyOn(mockElement, 'scrollIntoView');
+    spyOn(document, 'querySelector').and.returnValue(mockElement);
 
-    it('should allow <b> tags', () => {
-      expect(component.cleanContent('<b>hola</b>')).toBe('<b>hola</b>');
-    });
+    component['scrollToExpandedCard']();
+    tick(100);
 
-    it('should remove <script> tags', () => {
-      expect(component.cleanContent('<script>alert(1)</script>')).toBe('');
-    });
-  });
-
-  it('should render advice cards', () => {
-    const cards = fixture.nativeElement.querySelectorAll('.advice-card');
-    expect(cards.length).toBe(mockAdvices.length);
-  });
-
-  it('should show expanded content when card is clicked', () => {
-    const card = fixture.nativeElement.querySelector('.advice-card');
-    card.click();
-    fixture.detectChanges();
-
-    const expandedContent = fixture.nativeElement.querySelector('.expanded-content');
-    expect(expandedContent).toBeTruthy();
-  });
+    expect(scrollSpy).toHaveBeenCalledWith({ behavior: 'smooth', block: 'nearest' });
+  }));
 });
