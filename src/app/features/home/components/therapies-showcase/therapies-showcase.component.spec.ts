@@ -13,22 +13,28 @@ describe('TherapiesShowcaseComponent', () => {
 
   const mockTherapies: Therapy[] = [
     {
-      id: '1',
+      therapyId: '1',
       title: 'Terapia 1',
       description: 'Descripción 1',
       content: 'Contenido 1',
-      image: 'image1.jpg',
-      createdAt: new Date(),
-      updatedAt: new Date()
+      maxParticipants: 1,
+      image: {
+      key: 'therapy1-key',
+      url: 'image1.jpg'
+    },
+    createdAt: '2024-01-01T00:00:00.000Z'
     },
     {
-      id: '2',
+      therapyId: '2',
       title: 'Terapia 2',
       description: 'Descripción 2',
       content: 'Contenido 2',
-      image: 'image2.jpg',
-      createdAt: new Date(),
-      updatedAt: new Date()
+      maxParticipants: 1,
+      image: {
+        key: 'therapy2-key',
+        url: 'image2.jpg'
+      },
+      createdAt: '2024-01-01T00:00:00.000Z'
     }
   ];
 

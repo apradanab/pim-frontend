@@ -27,7 +27,7 @@ import { Router } from '@angular/router';
       </div>
 
       <div class="therapies-grid">
-        @for (therapy of therapies(); track therapy.id; let i = $index) {
+        @for (therapy of therapies(); track therapy.therapyId; let i = $index) {
           <div class="therapy-box" [style.background]="getTherapyStyle(i).bgColor">
             <div class="therapy-header">
               <h3>{{ therapy.description }}</h3>
@@ -42,7 +42,7 @@ import { Router } from '@angular/router';
                 <span class="tag tag-{{tagIndex + 1}} tag-pos-{{i}}-{{tagIndex}}">{{ tag }}</span>
               }
             </div>
-            <img [src]="therapy.image"
+            <img [src]="therapy.image?.url"
                 [alt]="therapy.title"
                 loading="lazy"
                 [class]="'therapy-image therapy-image-' + (i + 1)">
@@ -193,10 +193,12 @@ import { Router } from '@angular/router';
     .therapy-image-1 {
       border-radius: 9rem 2rem 1rem 1rem;
       clip-path: polygon(100% 5%, 94% 0, 10% 17%, 0% 23%, 0% 100%, 100% 100%);
+      object-position: top;
     }
 
     .therapy-image-2 {
       border-radius: 1rem;
+      object-position: 100% 43%;
     }
 
     .therapy-image-3 {
