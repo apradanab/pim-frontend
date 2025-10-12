@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://pim-backend-server.onrender.com'
+  apiUrl: 'https://jft3i0ss2i.execute-api.eu-west-1.amazonaws.com/prod'
 };
