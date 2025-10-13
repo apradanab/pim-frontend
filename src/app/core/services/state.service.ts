@@ -56,7 +56,7 @@ export class StateService {
 
   // Authentication Methods
   login = (email: string, password: string) => {
-     this.#authState.update(state => ({ ...state, status: 'loading', error: null }));
+    this.#authState.update(state => ({ ...state, status: 'loading', error: null }));
 
     this.usersRepo.login({ email, password }).subscribe({
       next: ({ token, user }) => { this.#handleLoginSuccess(token, user) },
@@ -115,12 +115,12 @@ export class StateService {
       const payload = JSON.parse(atob(token.split('.')[1]));
 
       const user: User = {
-        userId: payload.sub, 
+        userId: payload.sub,
         cognitoId: payload.sub,
         name: payload.name || '',
         email: payload.email || '',
         role: payload.role || 'USER',
-        approved: payload.approved !== undefined ? payload.approved : true,
+        approved: payload.approved ?? true,
       };
 
       this.#authState.set({
