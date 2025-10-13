@@ -40,7 +40,7 @@ describe('UsersRepoService', () => {
       expect(response).toEqual(mockResponse);
     });
 
-    const req = http.expectOne(`${service['url']}/create`);
+    const req = http.expectOne(`${service['authUrl']}/register`);
     expect(req.request.method).toBe('POST');
     req.flush(mockResponse);
   });
@@ -50,13 +50,13 @@ describe('UsersRepoService', () => {
       email: 'test@test.com',
       password: 'password'
     };
-    const mockResponse = { token: 'mock-token' };
+    const mockResponse = { token: 'mock-token', user: {} as User };
 
     service.login(mockLogin).subscribe((response) => {
       expect(response).toEqual(mockResponse);
     });
 
-    const req = http.expectOne(`${service['url']}/login`);
+    const req = http.expectOne(`${service['authUrl']}/login`);
     expect(req.request.method).toBe('POST');
     req.flush(mockResponse);
   });
@@ -76,19 +76,35 @@ describe('UsersRepoService', () => {
 
   it('should call updateUser', () => {
     const mockId = '123';
-    const mockToken = 'mock-token';
     const mockFormData = new FormData();
     mockFormData.append('name', 'Updated Name');
     const mockResponse = {} as User;
 
-    service.updateUser(mockId, mockFormData, mockToken).subscribe((response) => {
+    service.updateUser(mockId, mockFormData).subscribe((response) => {
       expect(response).toEqual(mockResponse);
     });
 
     const req = http.expectOne(`${service['url']}/${mockId}`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.body).toBe(mockFormData);
-    expect(req.request.headers.get('Authorization')).toBe(`Bearer ${mockToken}`);
     req.flush(mockResponse);
-  })
+  });
+
+  it('should call completeRegistration', () => {
+    const mockData = {
+      registrationToken: 'token-123',
+      password: 'password123',
+      email: 'test@test.com',
+      name: 'Test User'
+    };
+    const mockResponse = { message: 'Registration completed' };
+
+    service.completeRegistration(mockData).subscribe((response) => {
+      expect(response).toEqual(mockResponse);
+    });
+
+    const req = http.expectOne(`${service['authUrl']}/complete-registration`);
+    expect(req.request.method).toBe('POST');
+    req.flush(mockResponse);
+  });
 });
