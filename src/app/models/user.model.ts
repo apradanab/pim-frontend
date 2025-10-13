@@ -1,14 +1,23 @@
 export type User = {
-  id: string;
+  PK?: string;
+  SK?: string;
+  Type?: string;
+  userId: string;
+  cognitoId?: string;
   name: string;
   email: string;
-  password?: string;
   role: 'GUEST' | 'USER' | 'ADMIN';
   approved: boolean;
   message?: string;
-  avatar?: string;
+  password?: string;
+  registrationToken?: string;
+  avatar?: {
+    key: string;
+    url: string;
+    size?: number;
+    contentType?: string;
+  };
   createdAt?: string;
-  updatedAt?: string;
 };
 
 export type UserCreateDto = {
