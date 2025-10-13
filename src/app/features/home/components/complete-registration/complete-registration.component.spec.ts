@@ -43,7 +43,7 @@ describe('CompleteRegistrationComponent', () => {
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: StateService, useValue: mockStateService },
-        { provide: UsersRepoService, useValue: {} } 
+        { provide: UsersRepoService, useValue: {} }
       ]
     }).compileComponents();
 
