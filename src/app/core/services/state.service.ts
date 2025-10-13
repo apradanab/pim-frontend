@@ -56,10 +56,10 @@ export class StateService {
 
   // Authentication Methods
   login = (email: string, password: string) => {
-    this.#authState.update(state => ({ ...state, status: 'loading', error: null }));
+     this.#authState.update(state => ({ ...state, status: 'loading', error: null }));
 
     this.usersRepo.login({ email, password }).subscribe({
-      next: ({ token }) => this.#handleLoginSuccess(token),
+      next: ({ token, user }) => { this.#handleLoginSuccess(token, user) },
       error: (error: ApiError) => this.#authState.update(s =>({
         ...s,
         status: 'error',
@@ -98,16 +98,7 @@ export class StateService {
   }
 
   // Private Helpers
-  #handleLoginSuccess(token: string) {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    const user: User = {
-      id: payload.id,
-      name: payload.name,
-      email: payload.email,
-      role: payload.role,
-      approved: payload.approved
-    };
-
+  #handleLoginSuccess(token: string, user: User) {
     this.#authState.set({
       status: 'success',
       currentUser: user,
@@ -122,12 +113,14 @@ export class StateService {
   #validateToken(token: string) {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
+
       const user: User = {
-        id: payload.id,
-        name: payload.name,
-        email: payload.email,
-        role: payload.role,
-        approved: payload.approved
+        userId: payload.sub, 
+        cognitoId: payload.sub,
+        name: payload.name || '',
+        email: payload.email || '',
+        role: payload.role || 'USER',
+        approved: payload.approved !== undefined ? payload.approved : true,
       };
 
       this.#authState.set({
@@ -135,10 +128,44 @@ export class StateService {
         currentUser: user,
         token,
         error: null,
-      })
+      });
     } catch {
       this.logout();
     }
+  }
+
+  // Users Methods
+
+  completeRegistration = (data: {
+    registrationToken: string;
+    password: string;
+    email: string;
+    name?: string;
+    avatarKey?: string;
+  }) => {
+    return this.usersRepo.completeRegistration(data).subscribe({
+      next: (response) => {
+        console.log('Registration completed:', response.message);
+      },
+      error: (err: ApiError) => {
+        console.error('Error completing registration:', err.message);
+      }
+    });
+  }
+
+  updateUserProfile = (userId: string, formData: FormData) => {
+    return this.usersRepo.updateUser(userId, formData).subscribe({
+      next: (updatedUser) => {
+        console.log('Profile updated successfully');
+        this.#authState.update(state => ({
+          ...state,
+          currentUser: updatedUser
+        }));
+      },
+      error: (err: ApiError) => {
+        console.error('Error updating profile:', err.message);
+      }
+    });
   }
 
   // Therapies Methods

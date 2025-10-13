@@ -8,6 +8,7 @@ import { Therapy } from '../../models/therapy.model';
 import { ApiError } from '../interceptors/error.interceptor';
 import { AdvicesRepoService } from './advices.repo.service';
 import { Advice } from '../../models/advice.model';
+import { User } from '../../models/user.model';
 
 describe('StateService', () => {
   let service: StateService;
@@ -17,11 +18,12 @@ describe('StateService', () => {
   let mockRouter: jasmine.SpyObj<Router>;
 
   const mockToken = 'mock-token';
-  const mockDecodedToken = {
-    id: '1',
+  const mockUser: User = {
+    userId: '123',
+    cognitoId: 'cognito-123',
     name: 'Test User',
     email: 'test@example.com',
-    role: 'ADMIN',
+    role: 'USER',
     approved: true
   };
   const mockTherapy: Therapy = {
@@ -51,7 +53,7 @@ describe('StateService', () => {
 
   beforeEach(() => {
     mockUsersRepo = jasmine.createSpyObj('UsersRepoService', [
-      'login', 'getById'
+      'login', 'completeRegistration', 'updateUser', 'getById'
     ]);
     mockTherapiesRepo = jasmine.createSpyObj('TherapiesRepoService', [
       'getTherapies', 'getTherapyById', 'createTherapy', 'updateTherapy', 'deleteTherapy'
@@ -78,8 +80,13 @@ describe('StateService', () => {
     );
     spyOn(localStorage, 'setItem');
     spyOn(localStorage, 'removeItem');
-
-    spyOn(window, 'atob').and.callFake(() => JSON.stringify(mockDecodedToken));
+    spyOn(window, 'atob').and.callFake(() => JSON.stringify({
+      sub: '1',
+      name: 'Test User',
+      email: 'test@example.com',
+      role: 'ADMIN',
+      approved: true
+    }));
 
     spyOn(console, 'error');
   });
@@ -113,17 +120,13 @@ describe('StateService', () => {
 
   describe('Authentication', () => {
     it('should handle successful login', fakeAsync(() => {
-      mockUsersRepo.login.and.returnValue(of({ token: mockToken }));
+      mockUsersRepo.login.and.returnValue(of({ token: mockToken, user: mockUser }));
 
       service.login('test@example.com', 'password');
       tick();
 
       const authState = service.authState();
-      expect(authState.currentUser).toEqual(jasmine.objectContaining({
-        id: '1',
-        name: 'Test User',
-        email: 'test@example.com'
-      }));
+      expect(authState.currentUser).toEqual(mockUser);
       expect(authState.token).toBe(mockToken);
       expect(authState.status).toBe('success');
       expect(localStorage.setItem).toHaveBeenCalledWith('token', mockToken);
@@ -150,8 +153,10 @@ describe('StateService', () => {
 
       const authState = service.authState();
       expect(authState.currentUser).toEqual(jasmine.objectContaining({
-        id: '1',
-        name: 'Test User'
+        userId: '1',
+        name: 'Test User',
+        email: 'test@example.com',
+        role: 'ADMIN'
       }));
       expect(authState.token).toBe(mockToken);
     }));
@@ -185,7 +190,71 @@ describe('StateService', () => {
 
       expect(localStorage.removeItem).toHaveBeenCalledWith('token');
     }));
+
+    it('should set default values when token payload is missing fields', fakeAsync(() => {
+      (window.atob as jasmine.Spy).and.callFake(() => JSON.stringify({ sub: '2' }));
+      (localStorage.getItem as jasmine.Spy).and.returnValue('mock-token');
+
+      service.checkAuth();
+      tick();
+
+      const authState = service.authState();
+      expect(authState.currentUser).toEqual({
+        userId: '2',
+        cognitoId: '2',
+        name: '',
+        email: '',
+        role: 'USER',
+        approved: true
+      });
+    }));
   });
+
+  describe('Users Methods', () => {
+    it('should complete registration successfully', fakeAsync(() => {
+      const response = { message: 'Registration done' };
+      mockUsersRepo.completeRegistration.and.returnValue(of(response));
+
+      service.completeRegistration({ registrationToken: 'token', password: 'password', email: 'test@example.com' });
+      tick();
+
+      expect(mockUsersRepo.completeRegistration).toHaveBeenCalledWith(jasmine.objectContaining({
+        registrationToken: 'token',
+        password: 'password',
+        email: 'test@example.com'
+      }));
+    }))
+
+    it('should handle error on complete registration', fakeAsync(() => {
+      const error: ApiError = { status: 400, message: 'Bad Request' };
+      mockUsersRepo.completeRegistration.and.returnValue(throwError(() => error));
+
+      service.completeRegistration({ registrationToken: 'token', password: 'pass', email: 'test@example.com' });
+      tick();
+
+      expect(console.error).toHaveBeenCalledWith('Error completing registration:', 'Bad Request');
+    }));
+
+    it('should update user profile successfully', fakeAsync(() => {
+      const updatedUser: User = { ...mockUser, name: 'Updated User' };
+      mockUsersRepo.updateUser.and.returnValue(of(updatedUser));
+
+      service.updateUserProfile('123', new FormData());
+      tick();
+
+      expect(service.authState().currentUser).toEqual(updatedUser);
+    }));
+
+    it('should handle error on update user profile', fakeAsync(() => {
+      const error: ApiError = { status: 500, message: 'Server Error' };
+      mockUsersRepo.updateUser.and.returnValue(throwError(() => error));
+
+      service.updateUserProfile('123', new FormData());
+      tick();
+
+      expect(console.error).toHaveBeenCalledWith('Error updating profile:', 'Server Error');
+    }));
+  })
 
   describe('Therapies Management', () => {
     it('should load therapies', fakeAsync(() => {
