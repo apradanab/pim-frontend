@@ -10,28 +10,34 @@ import { User, UserCreateDto, UserLoginDto } from '../../models/user.model';
 export class UsersRepoService {
   private readonly http = inject(HttpClient);
   private readonly url = `${environment.apiUrl}/users`;
+  private readonly authUrl = `${environment.apiUrl}/auth`;
 
   preregister(data: UserCreateDto): Observable<User> {
-    return this.http.post<User>(`${this.url}/create`, data);
+    return this.http.post<User>(`${this.authUrl}/register`, data);
   }
 
-  login(data:UserLoginDto): Observable<{ token: string }> {
-    return this.http.post<{ token: string }>(`${this.url}/login`, data);
+  login(data:UserLoginDto): Observable<{ token: string; user: User }> {
+    return this.http.post<{ token: string; user: User }>(`${this.authUrl}/login`, data);
   }
 
   getById(id: string): Observable<User> {
     return this.http.get<User>(`${this.url}/${id}`);
   }
 
-  updateUser(id: string, data: FormData, token: string): Observable<User> {
-    return this.http.patch<User>(
-      `${this.url}/${id}`,
-      data,
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      }
+  updateUser(id: string, data: FormData): Observable<User> {
+    return this.http.patch<User>(`${this.url}/${id}`, data);
+  }
+
+  completeRegistration(data: {
+    registrationToken: string;
+    password: string;
+    email: string;
+    name?: string;
+    avatarKey?: string;
+  }): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${this.authUrl}/complete-registration`,
+      data
     );
   }
 }
