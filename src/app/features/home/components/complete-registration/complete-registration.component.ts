@@ -4,8 +4,8 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UsersRepoService } from '../../../../core/services/users.repo.service';
 import { faCircleCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { lastValueFrom } from 'rxjs';
 import { LoginModalComponent } from "../../../shared/login-modal/login-modal.component";
+import { StateService } from '../../../../core/services/state.service';
 
 @Component({
   selector: 'pim-complete-registration',
@@ -28,6 +28,14 @@ import { LoginModalComponent } from "../../../shared/login-modal/login-modal.com
                 <input type="text" formControlName="name" required>
                 @if (form.controls.name.invalid && form.controls.name.touched) {
                   <div class="error">Nombre requerido</div>
+                }
+              </div>
+
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" formControlName="email" required>
+                @if (form.controls.email.invalid && form.controls.email.touched) {
+                  <div class="error">Email requerido</div>
                 }
               </div>
 
@@ -214,6 +222,7 @@ import { LoginModalComponent } from "../../../shared/login-modal/login-modal.com
 })
 export default class CompleteRegistrationComponent {
   private readonly repo = inject(UsersRepoService);
+  private readonly stateService = inject(StateService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
@@ -229,6 +238,7 @@ export default class CompleteRegistrationComponent {
 
   form = this.fb.group({
     name: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(8)]]
   });
 
@@ -247,13 +257,14 @@ export default class CompleteRegistrationComponent {
     if (this.form.invalid || !this.registrationToken) return;
 
     try {
-      const formData = new FormData();
-      formData.append('name', this.form.value.name!);
-      formData.append('password', this.form.value.password!);
-      if (this.file) formData.append('avatar', this.file);
+      const registrationData = {
+        registrationToken: this.registrationToken,
+        password: this.form.value.password!,
+        email: this.form.value.email!,
+        name: this.form.value.name!,
+      };
 
-      const payload = JSON.parse(atob(this.registrationToken.split('.')[1]));
-      await lastValueFrom(this.repo.updateUser(payload.id, formData, this.registrationToken));
+      this.stateService.completeRegistration(registrationData);
 
       this.success.set(true);
     } catch (error) {

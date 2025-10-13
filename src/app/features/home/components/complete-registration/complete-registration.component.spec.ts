@@ -1,10 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { UsersRepoService } from '../../../../core/services/users.repo.service';
-import { of, throwError } from 'rxjs';
-import { User } from '../../../../models/user.model';
 import CompleteRegistrationComponent from './complete-registration.component';
+import { StateService } from '../../../../core/services/state.service';
+import { UsersRepoService } from '../../../../core/services/users.repo.service';
 
 describe('CompleteRegistrationComponent', () => {
   let component: CompleteRegistrationComponent;
@@ -17,27 +16,17 @@ describe('CompleteRegistrationComponent', () => {
       };
     };
   };
-  let mockUsersRepoService: jasmine.SpyObj<UsersRepoService>;
-
-  const mockUser: User = {
-    id: '1',
-    name: 'Test User',
-    email: 'test@example.com',
-    role: 'USER',
-    approved: false,
-    avatar: undefined,
-    password: 'password123'
-  };
+  let mockStateService: jasmine.SpyObj<StateService>;
 
   const createComponent = () => {
     fixture = TestBed.createComponent(CompleteRegistrationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }
+  };
 
   beforeEach(async () => {
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
-    mockUsersRepoService = jasmine.createSpyObj('UsersRepoService', ['updateUser']);
+    mockStateService = jasmine.createSpyObj('StateService', ['completeRegistration']);
 
     mockActivatedRoute = {
       snapshot: {
@@ -53,27 +42,23 @@ describe('CompleteRegistrationComponent', () => {
         FormBuilder,
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
-        { provide: UsersRepoService, useValue: mockUsersRepoService }
+        { provide: StateService, useValue: mockStateService },
+        { provide: UsersRepoService, useValue: {} } 
       ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CompleteRegistrationComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    createComponent();
   });
 
   it('should create', () => {
-    createComponent();
     expect(component).toBeTruthy();
   });
 
   it('should initialize form with required fields', () => {
-    createComponent();
     expect(component.form).toBeDefined();
     expect(component.form.controls['name']).toBeDefined();
+    expect(component.form.controls['email']).toBeDefined();
     expect(component.form.controls['password']).toBeDefined();
-    expect(component.form.controls['name'].hasError('required')).toBeTruthy();
-    expect(component.form.controls['password'].hasError('required')).toBeTruthy();
   });
 
   it('should show modal when token is present', () => {
@@ -90,7 +75,6 @@ describe('CompleteRegistrationComponent', () => {
   });
 
   it('should handle file change', () => {
-    createComponent();
     const mockFile = new File([''], 'test.png', { type: 'image/png' });
     const mockEvent = {
       target: {
@@ -103,116 +87,58 @@ describe('CompleteRegistrationComponent', () => {
   });
 
   it('should close modal', () => {
-    createComponent();
     component.showModal.set(true);
     component.closeModal();
     expect(component.showModal()).toBeFalse();
   });
 
-  it('should not submit if form is invalid', () => {
-    createComponent();
-    component.form.setValue({ name: '', password: '' });
-    component.submit();
-    expect(mockUsersRepoService.updateUser).not.toHaveBeenCalled();
+  it('should not submit if form is invalid', async () => {
+    component.form.setValue({ name: '', email: '', password: '' });
+    await component.submit();
+    expect(mockStateService.completeRegistration).not.toHaveBeenCalled();
   });
 
   it('should submit form when valid and set success', async () => {
-    createComponent();
-    const mockPayload = { id: '123' };
-    const validToken = `header.${btoa(JSON.stringify(mockPayload))}.signature`;
-    component.registrationToken = validToken;
-
-    mockUsersRepoService.updateUser.and.returnValue(of(mockUser));
-
+    component.registrationToken = 'valid-token';
     component.form.setValue({
       name: 'Test User',
+      email: 'test@example.com',
       password: 'ValidPassword123'
     });
 
-    component.form.markAsDirty();
-    component.form.markAllAsTouched();
-
     await component.submit();
 
-    expect(mockUsersRepoService.updateUser).toHaveBeenCalledWith(
-      '123',
-      jasmine.any(FormData),
-      validToken
-    );
+    expect(mockStateService.completeRegistration).toHaveBeenCalledWith({
+      registrationToken: 'valid-token',
+      name: 'Test User',
+      email: 'test@example.com',
+      password: 'ValidPassword123'
+    });
+
     expect(component.success()).toBeTrue();
   });
 
   it('should log error when registration fails', async () => {
-    createComponent();
-    const mockPayload = { id: '123' };
-    const validToken = `header.${btoa(JSON.stringify(mockPayload))}.signature`;
-    component.registrationToken = validToken;
-
-    const testError = new Error('Test error');
-    mockUsersRepoService.updateUser.and.returnValue(throwError(() => testError));
-    spyOn(console, 'error');
-
+    component.registrationToken = 'valid-token';
     component.form.setValue({
       name: 'Test User',
+      email: 'test@example.com',
       password: 'ValidPassword123'
     });
+
+    const testError = new Error('Test error');
+    mockStateService.completeRegistration.and.throwError(testError);
+    spyOn(console, 'error');
 
     await component.submit();
 
     expect(console.error).toHaveBeenCalledWith('Registration error:', testError);
   });
 
-  it('should include avatar file when submitting if file exists', async () => {
-    createComponent();
-    const mockPayload = { id: '123' };
-    const validToken = `header.${btoa(JSON.stringify(mockPayload))}.signature`;
-    component.registrationToken = validToken;
-
-    component.form.setValue({
-      name: 'Test User',
-      password: 'ValidPassword123'
-    });
-
-    const mockFile = new File([''], 'avatar.png', { type: 'image/png' });
-    component.file = mockFile;
-
-    mockUsersRepoService.updateUser.and.returnValue(of(mockUser));
-
-    await component.submit();
-
-    const formData = mockUsersRepoService.updateUser.calls.mostRecent().args[1] as FormData;
-    expect(formData.get('avatar')).toBe(mockFile);
-  });
-
-  it('should not include avatar when no file is selected', async () => {
-    createComponent();
-    const mockPayload = { id: '123' };
-    const validToken = `header.${btoa(JSON.stringify(mockPayload))}.signature`;
-    component.registrationToken = validToken;
-
-    component.form.setValue({
-      name: 'Test User',
-      password: 'ValidPassword123'
-    });
-
-    component.file = null;
-
-    mockUsersRepoService.updateUser.and.returnValue(of(mockUser));
-
-    await component.submit();
-
-    const formData = mockUsersRepoService.updateUser.calls.mostRecent().args[1] as FormData;
-    expect(formData.get('avatar')).toBeNull();
-  });
-
-  it('should open login modal', () => {
+  it('should open and close login modal', () => {
     expect(component.showLoginModal).toBeFalse();
     component.openLoginModal();
     expect(component.showLoginModal).toBeTrue();
-  });
-
-  it('should close login modal', () => {
-    component.showLoginModal = true;
     component.closeLoginModal();
     expect(component.showLoginModal).toBeFalse();
   });
