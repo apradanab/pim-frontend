@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { CloudinaryService } from '../../../../core/services/cloudinary.service';
+import { ImageService } from '../../../../core/services/image.service';
 
 @Component({
   selector: 'pim-tour-video',
@@ -13,7 +13,7 @@ import { CloudinaryService } from '../../../../core/services/cloudinary.service'
       <div class="video-wrapper">
         <video
           class="video"
-          [src]="cloudinary.local.tourVideo"
+          [src]="imageService.local.tourVideo"
           autoplay
           loop
           [muted]="true"
@@ -164,8 +164,8 @@ import { CloudinaryService } from '../../../../core/services/cloudinary.service'
   `
 })
 export class TourVideoComponent {
-  cloudinary = inject(CloudinaryService);
-  starFlower = this.cloudinary.svg.starFlower;
+  imageService = inject(ImageService);
+  starFlower = this.imageService.icons.starFlower;
   faChevron = faChevronRight;
 
   openGoogleMaps() {

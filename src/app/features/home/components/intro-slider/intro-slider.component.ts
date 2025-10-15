@@ -1,6 +1,6 @@
 import { Component, input, signal, effect, inject } from '@angular/core';
 import { Slide } from '../../../../models/slide.model';
-import { CloudinaryService } from '../../../../core/services/cloudinary.service';
+import { ImageService } from '../../../../core/services/image.service';
 
 @Component({
   selector: 'pim-intro-slider',
@@ -222,10 +222,10 @@ export class IntroSliderComponent {
   hidden = signal(false);
 
 
-  private readonly cloudinary = inject(CloudinaryService);
-  readonly backgroundImage = this.cloudinary.images.introSlider;
-  readonly logoInline = this.cloudinary.svg.logoInline;
-  readonly triangle = this.cloudinary.svg.triangle;
+  private readonly imageService = inject(ImageService);
+  readonly backgroundImage = this.imageService.images.introSlider;
+  readonly logoInline = this.imageService.icons.logoInline;
+  readonly triangle = this.imageService.icons.triangle;
 
   constructor() {
     effect((onCleanup) => {

@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { CloudinaryService } from '../../../../core/services/cloudinary.service';
 import { Router } from '@angular/router';
+import { ImageService } from '../../../../core/services/image.service';
 
 @Component({
   selector: 'pim-advices-showcase',
@@ -324,12 +324,12 @@ import { Router } from '@angular/router';
 })
 export class AdvicesShowcaseComponent {
   private readonly router = inject(Router);
-  private readonly cloudinary = inject(CloudinaryService);
+  private readonly imageService = inject(ImageService);
 
-  readonly backgroundImage = this.cloudinary.images.background;
-  readonly iconShapes = this.cloudinary.svg.shapes;
-  readonly iconTriangle = this.cloudinary.svg.iconTriangle;
-  readonly together = this.cloudinary.svg.together;
+  readonly backgroundImage = this.imageService.images.backgroundAdvices;
+  readonly iconShapes = this.imageService.icons.shapes;
+  readonly iconTriangle = this.imageService.icons.iconTriangle;
+  readonly together = this.imageService.icons.together;
 
   navigateToAdvices() {
     this.router.navigate(['/consejos'])

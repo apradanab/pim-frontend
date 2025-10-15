@@ -1,6 +1,6 @@
 import { Component, input, output, inject } from '@angular/core';
-import { CloudinaryService } from '../../../core/services/cloudinary.service';
 import { ContactModalComponent } from "../contact-modal/contact-modal.component";
+import { ImageService } from '../../../core/services/image.service';
 
 @Component({
   selector: 'pim-grid-section',
@@ -12,7 +12,7 @@ import { ContactModalComponent } from "../contact-modal/contact-modal.component"
 
       <div class="content">
         <img
-          [src]="logoColor() === 'purple' ? cloudinary.svg.purpleLogo : cloudinary.svg.greenLogo"
+          [src]="logoColor() === 'purple' ? imageService.icons.purpleLogo : imageService.icons.greenLogo"
           width="200"
           height="138"
           class="logo"
@@ -216,7 +216,7 @@ import { ContactModalComponent } from "../contact-modal/contact-modal.component"
   `
 })
 export class GridSectionComponent {
-  readonly cloudinary = inject(CloudinaryService);
+  readonly imageService = inject(ImageService);
 
   sectionTitle = input<string>('');
   logoColor = input<'purple' | 'green'>('purple');
@@ -228,10 +228,10 @@ export class GridSectionComponent {
   buttonAction = output();
 
   decorations = input([
-    { src: this.cloudinary.svg.purpleCircle, class: 'purple-circle', alt: 'Círculo morado' },
-    { src: this.cloudinary.svg.purpleStar2, class: 'purple-star', alt: 'Estrella morada' },
-    { src: this.cloudinary.svg.orangeSquare, class: 'orange-square', alt: 'Cuadrado naranja' },
-    { src: this.cloudinary.svg.greenCircle, class: 'green-circle', alt: 'Círculo verde' }
+    { src: this.imageService.icons.purpleCircle, class: 'purple-circle', alt: 'Círculo morado' },
+    { src: this.imageService.icons.purpleStar2, class: 'purple-star', alt: 'Estrella morada' },
+    { src: this.imageService.icons.orangeSquare, class: 'orange-square', alt: 'Cuadrado naranja' },
+    { src: this.imageService.icons.greenCircle, class: 'green-circle', alt: 'Círculo verde' }
   ]);
 
   openContactModal() {

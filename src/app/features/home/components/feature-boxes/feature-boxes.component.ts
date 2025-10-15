@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faLightbulb } from '@fortawesome/free-solid-svg-icons';
-import { CloudinaryService } from '../../../../core/services/cloudinary.service';
+import { ImageService } from '../../../../core/services/image.service';
 
 @Component({
   selector: 'pim-feature-boxes',
@@ -274,32 +274,32 @@ import { CloudinaryService } from '../../../../core/services/cloudinary.service'
   `
 })
 export class FeatureBoxesComponent {
-  private readonly cloudinary = inject(CloudinaryService);
+  private readonly imageService = inject(ImageService);
 
-  readonly lydiaImg = this.cloudinary.images.lydia;
-  readonly curvedLoopLine = this.cloudinary.svg.curvedLoopLine;
+  readonly lydiaImg = this.imageService.images.lydia;
+  readonly curvedLoopLine = this.imageService.icons.curvedLoopLine;
 
   icons = [
     {
-      src: this.cloudinary.svg.purpleDobleCircle,
+      src: this.imageService.icons.purpleDoubleCircle,
       class: 'circle',
       alt: 'Doble círculo',
       name: 'doubleCircle'
     },
     {
-      src: this.cloudinary.svg.purpleStar,
+      src: this.imageService.icons.purpleStar,
       class: 'star',
       alt: 'Estrella',
       name: 'star'
     },
     {
-      src: this.cloudinary.svg.flowerMom,
+      src: this.imageService.icons.flowerMom,
       class: 'flower',
       alt: 'Estrella',
       name: 'flower'
     },
     {
-      src: this.cloudinary.svg.purpleHeart,
+      src: this.imageService.icons.purpleHeart,
       class:  'heart',
       alt: 'Corazón',
       name: 'heart'
