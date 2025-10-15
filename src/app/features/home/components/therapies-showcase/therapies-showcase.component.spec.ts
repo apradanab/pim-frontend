@@ -1,9 +1,11 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { TherapiesShowcaseComponent } from './therapies-showcase.component';
 import { StateService } from '../../../../core/services/state.service';
 import { Therapy } from '../../../../models/therapy.model';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Router } from '@angular/router';
+import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('TherapiesShowcaseComponent', () => {
   let component: TherapiesShowcaseComponent;
@@ -14,7 +16,7 @@ describe('TherapiesShowcaseComponent', () => {
   const mockTherapies: Therapy[] = [
     {
       therapyId: '1',
-      title: 'Terapia 1',
+      title: 'Terapia antigua',
       description: 'Descripción 1',
       content: 'Contenido 1',
       maxParticipants: 1,
@@ -22,11 +24,11 @@ describe('TherapiesShowcaseComponent', () => {
       key: 'therapy1-key',
       url: 'image1.jpg'
     },
-    createdAt: '2024-01-01T00:00:00.000Z'
+    createdAt: '2023-01-01T00:00:00.000Z'
     },
     {
       therapyId: '2',
-      title: 'Terapia 2',
+      title: 'Terapia reciente',
       description: 'Descripción 2',
       content: 'Contenido 2',
       maxParticipants: 1,
@@ -58,7 +60,9 @@ describe('TherapiesShowcaseComponent', () => {
       imports: [TherapiesShowcaseComponent, FontAwesomeModule],
       providers: [
         { provide: StateService, useValue: mockStateService },
-        { provide: Router, useValue: mockRouter }
+        { provide: Router, useValue: mockRouter },
+        provideHttpClient(withFetch()),
+        provideHttpClientTesting()
       ]
     }).compileComponents();
 
@@ -92,6 +96,15 @@ describe('TherapiesShowcaseComponent', () => {
     expect(style3.bgColor).toBe('#b7a8ed');
     expect(style4.bgColor).toBe('#fea087');
   });
+
+  it('should sort therapies by createdAt date', fakeAsync(() => {
+    fixture.detectChanges();
+    tick(0);
+
+    const therapies = component.therapies();
+    expect(therapies[0].title).toBe('Terapia antigua');
+    expect(therapies[1].title).toBe('Terapia reciente');
+  }));
 
   it('should navigate to terapia-individual', () => {
     component.navigateToTherapies();

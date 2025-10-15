@@ -2,9 +2,9 @@ import { Component, effect, inject, signal } from '@angular/core';
 import { StateService } from '../../../../core/services/state.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { TherapyStyle } from '../../../../models/therapy.model';
-import { CloudinaryService } from '../../../../core/services/cloudinary.service';
+import { Therapy, TherapyStyle } from '../../../../models/therapy.model';
 import { Router } from '@angular/router';
+import { ImageService } from '../../../../core/services/image.service';
 
 @Component({
   selector: 'pim-therapies-showcase',
@@ -299,7 +299,7 @@ export class TherapiesShowcaseComponent {
   private readonly stateService = inject(StateService);
   private readonly router = inject(Router);
 
-  readonly circleStar = inject(CloudinaryService).svg.circleStar;
+  readonly circleStar = inject(ImageService).icons.circleStar;
   faChevron = faChevronRight;
 
   therapyStyles: TherapyStyle[] = [
@@ -308,15 +308,17 @@ export class TherapiesShowcaseComponent {
     { bgColor: '#b7a8ed', tags: ['personalizada' ,'apoyo educativo'] }
   ];
 
-  therapies = signal(this.stateService.state$.therapies.list);
+  therapies = signal<Therapy[]>([]);
 
   constructor() {
-    this.stateService.loadTherapies();
-
     effect(() => {
-      const list = this.stateService.state$.therapies.list;
+      const list = [...this.stateService.state$.therapies.list];
+      list.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+
       this.therapies.set(list);
     }, { allowSignalWrites: true });
+
+    this.stateService.loadTherapies();
   }
 
   getTherapyStyle(index: number): TherapyStyle {
