@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { GridSectionComponent } from './grid-section.component';
+import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('GridSectionComponent', () => {
   let component: GridSectionComponent;
@@ -7,7 +9,11 @@ describe('GridSectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GridSectionComponent]
+      imports: [GridSectionComponent],
+      providers: [
+        provideHttpClient(withFetch()),
+        provideHttpClientTesting(),
+      ]
     })
     .compileComponents();
 

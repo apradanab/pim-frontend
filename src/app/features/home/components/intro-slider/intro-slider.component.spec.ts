@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed, fakeAsync, flush, tick } from '@angular/core
 import { signal, WritableSignal } from '@angular/core';
 import { IntroSliderComponent } from './intro-slider.component';
 import { Slide } from '../../../../models/slide.model';
+import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 interface MutableIntroSliderComponent {
   slides: WritableSignal<Slide[]>;
@@ -26,7 +28,11 @@ describe('IntroSliderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [IntroSliderComponent]
+      imports: [IntroSliderComponent],
+      providers: [
+        provideHttpClient(withFetch()),
+        provideHttpClientTesting()
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(IntroSliderComponent);

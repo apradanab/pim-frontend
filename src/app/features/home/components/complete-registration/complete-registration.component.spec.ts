@@ -4,6 +4,8 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import CompleteRegistrationComponent from './complete-registration.component';
 import { StateService } from '../../../../core/services/state.service';
 import { UsersRepoService } from '../../../../core/services/users.repo.service';
+import { MediaService, UploadResponse } from '../../../../core/services/media.service';
+import { of } from 'rxjs';
 
 describe('CompleteRegistrationComponent', () => {
   let component: CompleteRegistrationComponent;
@@ -17,6 +19,7 @@ describe('CompleteRegistrationComponent', () => {
     };
   };
   let mockStateService: jasmine.SpyObj<StateService>;
+  let mockMediaService: jasmine.SpyObj<MediaService>;
 
   const createComponent = () => {
     fixture = TestBed.createComponent(CompleteRegistrationComponent);
@@ -27,6 +30,7 @@ describe('CompleteRegistrationComponent', () => {
   beforeEach(async () => {
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
     mockStateService = jasmine.createSpyObj('StateService', ['completeRegistration']);
+    mockMediaService = jasmine.createSpyObj('MediaService', ['generateUploadUrl', 'uploadFile']);
 
     mockActivatedRoute = {
       snapshot: {
@@ -43,7 +47,8 @@ describe('CompleteRegistrationComponent', () => {
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: StateService, useValue: mockStateService },
-        { provide: UsersRepoService, useValue: {} }
+        { provide: UsersRepoService, useValue: {} },
+        { provide: MediaService, useValue: mockMediaService },
       ]
     }).compileComponents();
 
@@ -100,19 +105,33 @@ describe('CompleteRegistrationComponent', () => {
 
   it('should submit form when valid and set success', async () => {
     component.registrationToken = 'valid-token';
+    const mockFile = new File([''], 'avatar.png', { type: 'image/png' });
+    component.file = mockFile;
     component.form.setValue({
       name: 'Test User',
       email: 'test@example.com',
       password: 'ValidPassword123'
     });
 
+    const uploadResponse: UploadResponse = {
+      uploadUrl: 'http://upload.url',
+      viewUrl: 'http://view.url',
+      key: 'avatar-key'
+    };
+    mockMediaService.generateUploadUrl.and.returnValue(of(uploadResponse));
+    mockMediaService.uploadFile.and.returnValue(Promise.resolve());
+
     await component.submit();
+
+    expect(mockMediaService.generateUploadUrl).toHaveBeenCalledWith('user', 'temp-avatar', 'image/png');
+    expect(mockMediaService.uploadFile).toHaveBeenCalledWith('http://upload.url', mockFile);
 
     expect(mockStateService.completeRegistration).toHaveBeenCalledWith({
       registrationToken: 'valid-token',
       name: 'Test User',
       email: 'test@example.com',
-      password: 'ValidPassword123'
+      password: 'ValidPassword123',
+      avatarKey: 'avatar-key',
     });
 
     expect(component.success()).toBeTrue();

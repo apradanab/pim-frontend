@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
-import { CloudinaryService } from '../../../core/services/cloudinary.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faFacebook, faInstagram, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import { Router } from '@angular/router';
 import { ContactModalComponent } from "../contact-modal/contact-modal.component";
+import { ImageService } from '../../../core/services/image.service';
 
 @Component({
   selector: 'pim-footer',
@@ -13,7 +13,7 @@ import { ContactModalComponent } from "../contact-modal/contact-modal.component"
     <footer>
       <div class="footer-content">
         <div class="footer-block logo-block">
-          <img [src]="cloudinary.svg.logoInline" alt="Logo" class="footer-logo">
+          <img [src]="imageService.icons.logoInline" alt="Logo" class="footer-logo">
           <p class="footer-description">
             Apoyando a niños y adolescentes con estrategias terapéuticas personalizadas para un futuro emocionalmente equilibrado.
           </p>
@@ -192,7 +192,7 @@ import { ContactModalComponent } from "../contact-modal/contact-modal.component"
 `
 })
 export class FooterComponent {
-  readonly cloudinary = inject(CloudinaryService);
+  readonly imageService = inject(ImageService);
   readonly router = inject(Router);
 
   showContactModal = false;

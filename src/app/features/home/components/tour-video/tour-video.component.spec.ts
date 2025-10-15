@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { TourVideoComponent } from './tour-video.component';
+import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('TourVideoComponent', () => {
   let component: TourVideoComponent;
@@ -8,7 +9,11 @@ describe('TourVideoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TourVideoComponent]
+      imports: [TourVideoComponent],
+      providers: [
+        provideHttpClient(withFetch()),
+        provideHttpClientTesting()
+      ]
     })
     .compileComponents();
 

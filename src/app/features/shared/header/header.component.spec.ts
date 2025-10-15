@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HeaderComponent } from './header.component';
 import { Router } from '@angular/router';
 import { StateService } from '../../../core/services/state.service';
+import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
@@ -21,7 +23,9 @@ describe('HeaderComponent', () => {
         {
           provide: StateService,
           useValue: {}
-        }
+        },
+        provideHttpClient(withFetch()),
+        provideHttpClientTesting()
       ]
     });
 

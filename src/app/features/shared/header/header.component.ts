@@ -2,11 +2,11 @@ import { Component, inject } from '@angular/core';
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { MobileSidebarComponent } from "../mobile-sidebar/mobile-sidebar.component";
-import { CloudinaryService } from '../../../core/services/cloudinary.service';
 import { Router } from '@angular/router';
 import { ContactModalComponent } from '../contact-modal/contact-modal.component';
 import { StateService } from '../../../core/services/state.service';
 import { LoginModalComponent } from "../login-modal/login-modal.component";
+import { ImageService } from '../../../core/services/image.service';
 
 @Component({
   selector: 'pim-header',
@@ -18,7 +18,7 @@ import { LoginModalComponent } from "../login-modal/login-modal.component";
           (click)="navigateToHome()"
           (keyup.enter)="navigateToHome()"
           tabindex="0">
-        <img [src]="cloudinary.local.favicon" width="150" height="150" alt="Logo" class="logo-icon">
+        <img [src]="imageService.local.favicon" width="150" height="150" alt="Logo" class="logo-icon">
         <div class="logo-text">
           <span>Psicología</span>
           <span>Infantojuvenil</span>
@@ -250,7 +250,7 @@ import { LoginModalComponent } from "../login-modal/login-modal.component";
   `
 })
 export class HeaderComponent  {
-  readonly cloudinary = inject(CloudinaryService);
+  readonly imageService = inject(ImageService);
   readonly router = inject(Router);
   readonly stateService = inject(StateService);
 

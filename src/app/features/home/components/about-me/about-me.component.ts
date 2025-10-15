@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSeedling } from '@fortawesome/free-solid-svg-icons';
-import { CloudinaryService } from '../../../../core/services/cloudinary.service';
+import { ImageService } from '../../../../core/services/image.service';
 
 @Component({
   selector: 'pim-about-me',
@@ -175,6 +175,6 @@ import { CloudinaryService } from '../../../../core/services/cloudinary.service'
   `
 })
 export class AboutMeComponent {
-  readonly logoOrange = inject(CloudinaryService).svg.orangeLogo;
+  readonly logoOrange = inject(ImageService).icons.orangeLogo;
   faSeed = faSeedling;
 }
