@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FooterComponent } from './footer.component';
 import { Router } from '@angular/router';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 describe('FooterComponent', () => {
   let component: FooterComponent;
@@ -13,7 +15,9 @@ describe('FooterComponent', () => {
     await TestBed.configureTestingModule({
       imports: [FooterComponent],
       providers: [
-        { provide: Router, useValue: mockRouter }
+        { provide: Router, useValue: mockRouter },
+        provideHttpClient(withFetch()),
+        provideHttpClientTesting(),
       ]
     }).compileComponents();
 
