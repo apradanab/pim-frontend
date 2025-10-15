@@ -6,6 +6,8 @@ import { faCircleCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { LoginModalComponent } from "../../../shared/login-modal/login-modal.component";
 import { StateService } from '../../../../core/services/state.service';
+import { MediaService } from '../../../../core/services/media.service';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'pim-complete-registration',
@@ -223,6 +225,7 @@ import { StateService } from '../../../../core/services/state.service';
 export default class CompleteRegistrationComponent {
   private readonly repo = inject(UsersRepoService);
   private readonly stateService = inject(StateService);
+  private readonly mediaService = inject(MediaService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
@@ -257,15 +260,26 @@ export default class CompleteRegistrationComponent {
     if (this.form.invalid || !this.registrationToken) return;
 
     try {
+      let avatarKey: string | undefined;
+
+      if (this.file) {
+        const uploadResponse = await lastValueFrom(
+          this.mediaService.generateUploadUrl('user', 'temp-avatar', this.file.type)
+        );
+
+        await this.mediaService.uploadFile(uploadResponse.uploadUrl, this.file);
+        avatarKey = uploadResponse.key;
+      }
+
       const registrationData = {
         registrationToken: this.registrationToken,
         password: this.form.value.password!,
         email: this.form.value.email!,
         name: this.form.value.name!,
+        avatarKey: avatarKey,
       };
 
       this.stateService.completeRegistration(registrationData);
-
       this.success.set(true);
     } catch (error) {
       console.error('Registration error:', error);
