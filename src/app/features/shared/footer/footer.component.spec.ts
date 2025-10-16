@@ -40,6 +40,11 @@ describe('FooterComponent', () => {
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/consejos']);
   })
 
+  it('should call router.navigate with /horarios when navigateToSchedule is called', () => {
+    component.navigateToSchedule();
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/horarios']);
+  })
+
   describe('Modal', () => {
     it('should open contact modal', () => {
       expect(component.showContactModal).toBeFalse();
