@@ -2,7 +2,7 @@ import { Component, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoginModalComponent } from '../login-modal/login-modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faChevronRight, faHeart, faHouse, faMessage, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faCalendar, faChevronRight, faHeart, faHouse, faMessage, faUser } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'pim-mobile-sidebar',
@@ -38,6 +38,14 @@ import { faChevronRight, faHeart, faHouse, faMessage, faUser } from '@fortawesom
           <span>Consejos</span>
           <fa-icon [icon]="faChevron"></fa-icon>
         </a>
+        <a (click)="navigateToSchedule()"
+          (keyup.enter)="navigateToSchedule()"
+          tabindex="0"
+          >
+          <fa-icon [icon]="faCalendar"></fa-icon>
+          <span>Horarios</span>
+          <fa-icon [icon]="faChevron"></fa-icon>
+        </a>
         <a aria-label="Ver en Google Maps"
           (click)="openGoogleMaps()"
           (keyup.enter)="openGoogleMaps()"
@@ -59,7 +67,7 @@ import { faChevronRight, faHeart, faHouse, faMessage, faUser } from '@fortawesom
       position: fixed;
       top: 90px;
       width: 50%;
-      height: 200px;
+      height: 250px;
       background-color: #ebece9;
       border: 1px solid #b3b3b3;
       box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
@@ -121,6 +129,7 @@ export class MobileSidebarComponent {
   faUser = faUser;
   faHeart = faHeart;
   faMessage = faMessage;
+  faCalendar = faCalendar;
   faHouse = faHouse;
   faChevron = faChevronRight;
 
@@ -130,6 +139,10 @@ export class MobileSidebarComponent {
 
   navigateToAdvices() {
     this.router.navigate(['/consejos']);
+  }
+
+  navigateToSchedule() {
+    this.router.navigate(['/horarios'])
   }
 
   openLoginModal() {

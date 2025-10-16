@@ -40,6 +40,12 @@ import { ImageService } from '../../../core/services/image.service';
         >Consejos
         </a>
         <a class="nav-option"
+          (click)="navigateToSchedule()"
+          (keyup.enter)="navigateToSchedule()"
+          tabindex="0"
+        >Horarios
+        </a>
+        <a class="nav-option"
           (click)="openContactModal()"
           (keyup.enter)="openContactModal()"
           tabindex="0"
@@ -121,7 +127,7 @@ import { ImageService } from '../../../core/services/image.service';
     display: flex;
     gap: 20px;
     cursor: pointer;
-    margin-right: 280px;
+    margin-right: 190px;
   }
 
   .nav-option {
@@ -205,7 +211,7 @@ import { ImageService } from '../../../core/services/image.service';
       background-color:rgba(81, 69, 69, 0.8);
       border: none;
       border-radius: 10px;
-      box-shadow: inset 0px -3px 2px #514545;
+      box-shadow: inset 0px -2.5px 1px #514545;
       transition: all 0.5s ease;
 
       &:active {
@@ -271,6 +277,10 @@ export class HeaderComponent  {
 
   navigateToAdvicesView() {
     this.router.navigate(['/consejos'])
+  }
+
+  navigateToSchedule() {
+    this.router.navigate(['/horarios']);
   }
 
   toggleSidebar() {

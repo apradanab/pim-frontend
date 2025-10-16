@@ -31,7 +31,11 @@ import { ImageService } from '../../../core/services/image.service';
               tabindex="0"
             >Consejos
             </a>
-            <a href="#horarios">Horarios</a>
+            <a (click)="navigateToSchedule()"
+              (keyup.enter)="navigateToSchedule()"
+              tabindex="0"
+            >Horarios
+            </a>
           </div>
           <div class="links-column">
             <a aria-label="Ver formulario de contacto"
@@ -207,6 +211,10 @@ export class FooterComponent {
 
   navigateToAdvicesView() {
     this.router.navigate(['/consejos']);
+  }
+
+  navigateToSchedule() {
+    this.router.navigate(['/horarios']);
   }
 
   openContactModal() {

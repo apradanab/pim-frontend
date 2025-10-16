@@ -47,6 +47,11 @@ describe('MobileSidebarComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/consejos']);
   });
 
+  it('should call router.navigate with /horarios when navigateToSchedule is called', () => {
+    component.navigateToSchedule();
+    expect(router.navigate).toHaveBeenCalledWith(['/horarios']);
+  })
+
   it('should open Google Maps in new tab when openGoogleMaps is called', () => {
     spyOn(window, 'open');
     const expectedUrl = 'https://www.google.com/maps/search/?api=1&query=Calle%20Par%C3%ADs%201%2C%20Montcada%2C%20Barcelona%2C%2008110';

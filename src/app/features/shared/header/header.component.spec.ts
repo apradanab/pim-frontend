@@ -52,6 +52,11 @@ describe('HeaderComponent', () => {
     it('should call router.navigate with /consejos when navigateToAdvicesView is called', () => {
       component.navigateToAdvicesView();
       expect(router.navigate).toHaveBeenCalledWith(['/consejos']);
+    });
+
+    it('should call router.navigate with /horarios when navigateToSchedule is called', () => {
+      component.navigateToSchedule();
+      expect(router.navigate).toHaveBeenCalledWith(['/horarios']);
     })
   });
 
