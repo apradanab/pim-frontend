@@ -32,5 +32,23 @@ describe('App Routes', () => {
 
     const advicesComponent = await advicesRoute!.loadComponent!();
     expect(advicesComponent).toBeDefined();
-  })
+  });
+
+  it('should lazy load AdvicesViewComponent on /consejos/:adviceId', async () => {
+    const adviceDetailRoute = routes.find(route => route.path === 'consejos/:adviceId');
+    expect(adviceDetailRoute).toBeDefined();
+    expect(adviceDetailRoute?.loadComponent).toBeDefined();
+
+    const adviceDetailComponent = await adviceDetailRoute!.loadComponent!();
+    expect(adviceDetailComponent).toBeDefined();
+  });
+
+  it('should lazy load ScheduleViewComponent on /horarios', async () => {
+    const scheduleRoute = routes.find(route => route.path === 'horarios');
+    expect(scheduleRoute).toBeDefined();
+    expect(scheduleRoute?.loadComponent).toBeDefined();
+
+    const scheduleComponent = await scheduleRoute!.loadComponent!();
+    expect(scheduleComponent).toBeDefined();
+  });
 });
