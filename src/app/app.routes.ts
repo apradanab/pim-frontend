@@ -17,5 +17,15 @@ export const routes: Routes = [
     loadComponent: () => import('./features/advices-view/advices-view.component'),
     title: 'Consejos profesionales'
   },
+  {
+    path: 'consejos/:adviceId',
+    loadComponent: () => import('./features/advices-view/advices-view.component'),
+    title: 'Detalle del consejo'
+  },
+  {
+    path: 'horarios',
+    loadComponent: () => import('./features/schedule-view/schedule-view.component'),
+    title: 'Horario de citas'
+  },
   { path: '**', redirectTo: 'home', title: 'Redirección'}
 ];
