@@ -1,6 +1,7 @@
 import { User } from "./user.model";
 import { Therapy } from "./therapy.model";
 import { Advice } from "./advice.model";
+import { Appointment } from "./appointment.model";
 
 export type AuthStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -21,5 +22,12 @@ export interface AdviceState {
   list: Advice[];
   filtered: Advice[];
   current: Advice | null;
+  error: string | null;
+}
+
+export interface AppointmentState {
+  userAppointments: Appointment[];
+  availableAppointments: Appointment[];
+  current: Appointment | null;
   error: string | null;
 }
