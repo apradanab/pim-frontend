@@ -72,6 +72,7 @@ import { ImageService } from '../../../../core/services/image.service';
     width: 100%;
     height: 100%;
     position: absolute;
+    object-fit: cover;
   }
 
   .slides {
