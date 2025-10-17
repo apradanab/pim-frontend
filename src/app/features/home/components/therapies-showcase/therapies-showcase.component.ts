@@ -61,7 +61,6 @@ import { ImageService } from '../../../../core/services/image.service';
 
     .header-section {
       display: flex;
-      justify-content: center;
       margin-bottom: 3rem;
       align-items: flex-end;
       gap: 1.5rem;
@@ -103,6 +102,7 @@ import { ImageService } from '../../../../core/services/image.service';
       box-shadow: inset 0px -5px 2px #b64022;
       cursor: pointer;
       transition: all 0.2s ease;
+      white-space: nowrap;
     }
 
     .cta-button:active {

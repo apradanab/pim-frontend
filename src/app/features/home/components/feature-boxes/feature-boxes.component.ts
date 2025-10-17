@@ -111,8 +111,8 @@ import { ImageService } from '../../../../core/services/image.service';
   }
 
   .admin-image {
-    width: 80px;
-    height: 80px;
+    width: 93px;
+    height: 93px;
     border-radius: 50%;
     overflow: hidden;
     position: absolute;
