@@ -33,8 +33,10 @@ import { ImageService } from '../../../../core/services/image.service';
               <h3>{{ therapy.description }}</h3>
               <button class="therapy-button"
                       (click)="navigateToTherapyByIndex($index)"
-                      (keyup.enter)="navigateToTherapyByIndex($index)">
-                <fa-icon [icon]="faChevron" />
+                      (keyup.enter)="navigateToTherapyByIndex($index)"
+                      [attr.aria-label]="'Más información sobre ' + therapy.title">
+                <fa-icon [icon]="faChevron" aria-hidden="true"/>
+                <span class="sr-only">Más información sobre {{ therapy.title }}</span>
               </button>
             </div>
             <div class="tags">
@@ -160,6 +162,18 @@ import { ImageService } from '../../../../core/services/image.service';
     .therapy-button fa-icon:hover {
       transition: transform 0.5s ease;
       transform: translateX(5px);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
 
     .tags {
