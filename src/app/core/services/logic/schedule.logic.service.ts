@@ -5,8 +5,7 @@ import { WeekDay } from '../../../models/schedule.model';
   providedIn: 'root'
 })
 export class ScheduleLogicService {
-  private currentWeek = signal(new Date());
-
+  private readonly currentWeek = signal(new Date());
   private readonly weeksInPast = 1;
   private readonly weeksInFuture = 3;
 
@@ -21,6 +20,11 @@ export class ScheduleLogicService {
   readonly currentMonthLabel = computed(() => this.getMonthLabel(this.currentWeek()));
   readonly goPrevious = computed(() => this.canNavigate(-1));
   readonly goNext = computed(() => this.canNavigate(1));
+
+  public getNextHour(time: string): string {
+    const index = this.hours.indexOf(time);
+    return this.hours[index + 1] || '';
+  }
 
   public moveWeek(offset: number) {
     if ((offset === -1 && !this.goPrevious()) || (offset === 1 && !this.goNext())) {
