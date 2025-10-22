@@ -118,11 +118,11 @@ export class ScheduleCellComponent {
     return this.isHovered();
   }
 
-  private appointmentAtTime = computed(() =>
+  private readonly appointmentAtTime = computed(() =>
     this.appointments().find(a => a.date === this.dateIso() && a.startTime === this.hour())
   );
 
-  private appointmentsInRange = computed(() =>
+  private readonly appointmentsInRange = computed(() =>
     this.appointments().filter(appointment => {
       if (appointment.date !== this.dateIso()) return false;
       const startIndex = this.hours().indexOf(appointment.startTime);
@@ -173,7 +173,7 @@ export class ScheduleCellComponent {
 
   therapyTitle = computed<string>(() => {
     const appointment = this.mainAppointment();
-    if (!appointment || !appointment.therapyId) return '';
+    if (!appointment?.therapyId) return '';
 
     return this.therapiesMap()[appointment.therapyId]?.title || 'Terapia';
   });
