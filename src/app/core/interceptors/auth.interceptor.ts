@@ -1,9 +1,9 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { StateService } from '../services/state.service';
+import { AuthStateService } from '../services/states/auth.state.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const stateService = inject(StateService);
+  const stateService = inject(AuthStateService);
 
   if  (req.url.includes('/login') || req.url.includes('/create')) {
     return next(req);

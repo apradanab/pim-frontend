@@ -1,20 +1,24 @@
 import { Component, inject, signal, effect } from '@angular/core';
-import { StateService } from '../../../core/services/state.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import DOMPurify from 'dompurify';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Advice } from '../../../models/advice.model';
+import { CommonModule } from '@angular/common';
+import { Therapy } from '../../../models/therapy.model';
+import { TherapiesStateService } from '../../../core/services/states/therapies.state.service';
+import { AdvicesStateService } from '../../../core/services/states/advices.state.service';
 
 @Component({
   selector: 'pim-therapies-tabs',
   standalone: true,
-  imports: [FontAwesomeModule],
+  imports: [FontAwesomeModule, CommonModule],
   template: `
     <div class="therapies-tabs">
       <div class="grid-background"></div>
 
       <div class="tabs-header">
-        @for (therapy of therapies(); track therapy.id; let i = $index) {
+        @for (therapy of therapies(); track therapy.therapyId; let i = $index) {
           <button class="tab-button"
                   [class.active]="activeTab() === i"
                   (click)="navigateToTab(i)"
@@ -22,7 +26,7 @@ import { ActivatedRoute, Router } from '@angular/router';
                   [style.color]="activeTab() === i ? 'white' : '#2f2929'">
             {{ therapy.title }}
             <span class="icon-circle" [style.background]="activeTab() === i ? 'rgba(255,255,255,0.3)' : 'white'">
-              <fa-icon [icon]="faArrowDown"
+              <fa-icon [icon]="faChevron"
                       [class.rotated]="activeTab() === i"
                       [style.color]="activeTab() === i ? 'white' : 'black'"/>
             </span>
@@ -36,11 +40,25 @@ import { ActivatedRoute, Router } from '@angular/router';
             <div class="therapy-detail">
               <h3>{{ therapies()[activeTab()].title }}</h3>
               <p class="description">{{ therapies()[activeTab()].description }}</p>
+              <div class="image-container">
+                <img [src]="therapies()[activeTab()].image?.url" alt="imagen" loading="lazy" class="therapy-image">
+              </div>
               <div class="content" [innerHTML]="cleanContent(therapies()[activeTab()].content)"></div>
             </div>
           }
         </div>
-        <div class="tab-footer" [style.background]="getTherapyStyle(activeTab()).bgColor"></div>
+        <div class="tab-footer" [style.background]="getTherapyStyle(activeTab()).bgColor">
+
+            <h4>Consejos relacionados</h4>
+            @for (advice of relatedAdvices(); track advice.adviceId) {
+              <button class="advice-button"
+                      [style.background]="getTherapyStyle(activeTab()).bgColor"
+                      (click)="navigateToAdvice(advice.adviceId)">
+                    {{ advice.title }}
+              </button>
+            }
+
+        </div>
       </div>
     </div>
   `,
@@ -132,7 +150,7 @@ import { ActivatedRoute, Router } from '@angular/router';
     }
 
     .tab-content {
-      padding: 2rem;
+      padding: 4rem;
       background: white;
       position: relative;
       z-index: 1;
@@ -140,7 +158,7 @@ import { ActivatedRoute, Router } from '@angular/router';
     }
 
     .tab-footer {
-      height: 10px;
+      height: 100px;
       border-radius: 0 0 1rem 1rem;
     }
 
@@ -149,6 +167,7 @@ import { ActivatedRoute, Router } from '@angular/router';
       font-weight: 500;
       color: #2f2929;
       margin-bottom: 1.2rem;
+      margin-top: 4.5rem;
       font-family: 'Caprasimo', cursive;
     }
 
@@ -159,9 +178,27 @@ import { ActivatedRoute, Router } from '@angular/router';
       line-height: 1.5;
     }
 
+    .image-container {
+      position: absolute;
+      right: 70px;
+      top: 40px;
+    }
+
+    .therapy-image {
+      max-height: 200px;
+      width: 550px;
+      border-radius: 12px;
+      object-fit: cover;
+      object-position: 100% 25%;
+    }
+
     .content {
       line-height: 1.6;
       color: #555;
+    }
+
+    .advice-button {
+      padding: 0.8rem 1.5rem;
     }
 
     @keyframes fadeIn {
@@ -194,12 +231,21 @@ import { ActivatedRoute, Router } from '@angular/router';
         gap: 0.3rem;
       }
 
+      .therapy-image {
+        max-height: 80px;
+        max-width: 430px;
+        position: relative;
+        top: -25px;
+        right: -50px;
+      }
+
       .tab-content {
         padding: 1.5rem;
       }
 
       .therapy-detail h3 {
         font-size: 2.5rem;
+        margin-top: 5rem;
       }
 
       .icon-circle {
@@ -214,12 +260,15 @@ import { ActivatedRoute, Router } from '@angular/router';
   `
 })
 export class TherapiesTabsComponent {
-  private readonly stateService = inject(StateService);
+  private readonly therapiesService = inject(TherapiesStateService);
+  private readonly advicesService = inject(AdvicesStateService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
-  faArrowDown = faArrowDown;
+  faChevron = faChevronUp;
   activeTab = signal(0);
+  relatedAdvices = signal<Advice[]>([]);
+  therapies = signal<Therapy[]>([]);
 
   therapiesConfig = [
     {
@@ -236,28 +285,47 @@ export class TherapiesTabsComponent {
     }
   ];
 
-  therapies = signal(this.stateService.state$.therapies.list);
+  private readonly order = ['Terapia Individual', 'Grupo de Madres', 'Terapia Pedagógica'];
 
   constructor() {
-    this.stateService.loadTherapies();
+    this.therapiesService.listTherapies();
+    this.advicesService.listAdvices();
 
     this.route.paramMap.subscribe(params => {
       const therapyType = params.get('therapyType');
       const tabIndex = this.therapiesConfig.findIndex(config => config.route === therapyType);
+
       if (tabIndex > -1) {
         this.activeTab.set(tabIndex);
+        this.loadRelatedAdvices(tabIndex);
       }
     });
 
     effect(() => {
-      const list = this.stateService.state$.therapies.list;
+      const list = [...this.therapiesService.therapiesState().list];
+      list.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
       this.therapies.set(list);
     }, { allowSignalWrites: true });
+
+    effect(() => {
+      this.relatedAdvices.set(this.advicesService.advicesState().filtered ?? []);
+    }, { allowSignalWrites: true });
+  }
+
+  private loadRelatedAdvices(tabIndex: number) {
+    const therapy = this.therapies()[tabIndex];
+    if (!therapy?.therapyId) return;
+
+    this.advicesService.listAdvicesByTherapy(therapy.therapyId);
   }
 
   navigateToTab(index: number) {
     this.activeTab.set(index);
     this.router.navigate(['/terapias', this.therapiesConfig[index].route]);
+  }
+
+  navigateToAdvice(adviceId: string) {
+    this.router.navigate(['/consejos', adviceId]);
   }
 
   cleanContent(content: string) {

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import  TherapiesViewComponent  from './therapies-view.component';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { StateService } from '../../core/services/state.service';
+import { UsersStateService } from '../../core/services/states/users.state.service';
 import { provideHttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
@@ -14,7 +14,7 @@ describe('TherapiesViewComponent', () => {
     await TestBed.configureTestingModule({
       imports: [TherapiesViewComponent],
       providers: [
-        StateService,
+        UsersStateService,
         provideHttpClient(),
         provideHttpClientTesting(),
         {

@@ -94,7 +94,7 @@ import { ImageService } from '../../../../core/services/image.service';
     width: 40px;
     height: 40px;
     position: absolute;
-    right: 60px;
+    right: 50px;
     cursor: pointer;
     transform: rotate(-20deg);
     transition: transform 0.3s ease;
@@ -111,8 +111,8 @@ import { ImageService } from '../../../../core/services/image.service';
   }
 
   .admin-image {
-    width: 93px;
-    height: 93px;
+    width: 90px;
+    height: 90px;
     border-radius: 50%;
     overflow: hidden;
     position: absolute;

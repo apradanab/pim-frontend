@@ -1,5 +1,5 @@
 import { Component, effect, inject, signal } from '@angular/core';
-import { StateService } from '../../../core/services/state.service';
+import { AdvicesStateService } from '../../../core/services/states/advices.state.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import DOMPurify from 'dompurify';
@@ -26,7 +26,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
               (keyup.enter)="toggleCard(advice.adviceId)"
               tabindex="0">
             <div class="card-content">
-              <img [src]="advice.image" alt="{{advice.title}}" class="card-image">
+              <img [src]="advice.image.url" alt="{{advice.title}}" class="card-image">
               <h3>{{ advice.title }}</h3>
               <p class="description">{{ advice.description }}</p>
 
@@ -79,13 +79,17 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
       font: 400 3.5rem/1 'Caprasimo', cursive;
       color: #2f2929;
       margin-bottom: 1rem;
+      position: relative;
+      bottom: 30px;
     }
 
     .header-section p {
       font-size: 1.2rem;
       color: #9e9e9b;
-      max-width: 600px;
+      max-width: 650px;
       margin: 0 auto;
+      position: relative;
+      bottom: 20px;
     }
 
     .advices-grid {
@@ -195,18 +199,17 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     `
 })
 export class AdvicesListComponent {
-  private readonly stateService = inject(StateService);
+  private readonly stateService = inject(AdvicesStateService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
   faArrowRight = faArrowRight;
   expandedCard = signal<string | null>(null);
-  advices = signal(this.stateService.state$.advices.list);
+  advices = signal(this.stateService.advicesState().list);
 
   constructor() {
-    this.stateService.loadAllAdvices();
+    this.stateService.listAdvices();
 
-    // Manejo de parámetros con effect
     effect(() => {
       const params = this.route.snapshot.params;
       const adviceId = params['adviceId'];
@@ -217,7 +220,7 @@ export class AdvicesListComponent {
     }, { allowSignalWrites: true });
 
     effect(() => {
-      const list = this.stateService.state$.advices.list;
+      const list = this.stateService.advicesState().list;
       this.advices.set(list);
     }, { allowSignalWrites: true });
   }

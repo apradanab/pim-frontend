@@ -2,8 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { TherapiesRepoService } from './therapies.repo.service';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { Therapy } from '../../models/therapy.model';
-import { environment } from '../../../environments/environment.development';
+import { Therapy } from '../../../models/therapy.model';
+import { environment } from '../../../../environments/environment.development';
 
 describe('TherapiesRepoService', () => {
   let service: TherapiesRepoService;
@@ -53,7 +53,7 @@ describe('TherapiesRepoService', () => {
   });
 
   it('should get all therapies', () => {
-    service.getTherapies().subscribe(therapies => {
+    service.listTherapies().subscribe(therapies => {
       expect(therapies).toEqual(mockTherapies);
     });
 
@@ -64,7 +64,7 @@ describe('TherapiesRepoService', () => {
 
   it('should get therapy by id', () => {
     const therapyId = '1';
-    service.getTherapyById(therapyId).subscribe(therapy => {
+    service.getTherapy(therapyId).subscribe(therapy => {
       expect(therapy).toEqual(mockTherapies[0]);
     });
 

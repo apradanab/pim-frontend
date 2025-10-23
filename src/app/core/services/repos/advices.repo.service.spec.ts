@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { AdvicesRepoService } from './advices.repo.service';
-import { Advice } from '../../models/advice.model';
+import { Advice } from '../../../models/advice.model';
 
 describe('AdvicesRepoService', () => {
   let service: AdvicesRepoService;
@@ -45,7 +45,7 @@ describe('AdvicesRepoService', () => {
   it('should get all advices', () => {
     const mockAdvices: Advice[] = [mockAdvice];
 
-    service.getAllAdvices().subscribe(advices => {
+    service.listAdvices().subscribe(advices => {
       expect(advices).toEqual(mockAdvices);
     });
 
@@ -55,7 +55,7 @@ describe('AdvicesRepoService', () => {
   });
 
   it('should get advice by id', () => {
-    service.getAdviceById('1').subscribe(advice => {
+    service.getAdvice('1').subscribe(advice => {
       expect(advice).toEqual(mockAdvice);
     });
 
@@ -67,7 +67,7 @@ describe('AdvicesRepoService', () => {
   it('should get advices by therapy id', () => {
     const mockAdvices: Advice[] = [mockAdvice];
 
-    service.getAdvicesByTherapyId('1').subscribe(advices => {
+    service.listAdvicesByTherapy('1').subscribe(advices => {
       expect(advices).toEqual(mockAdvices);
     });
 

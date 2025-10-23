@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { environment } from '../../../environments/environment.development';
-import { Therapy } from '../../models/therapy.model';
+import { environment } from '../../../../environments/environment.development';
+import { Therapy } from '../../../models/therapy.model';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -11,11 +11,11 @@ export class TherapiesRepoService {
   private readonly http = inject(HttpClient);
   private readonly url = `${environment.apiUrl}/therapies`;
 
-  getTherapies(): Observable<Therapy[]> {
+  listTherapies(): Observable<Therapy[]> {
     return this.http.get<Therapy[]>(this.url)
   }
 
-  getTherapyById(id: string): Observable<Therapy> {
+  getTherapy(id: string): Observable<Therapy> {
     return this.http.get<Therapy>(`${this.url}/${id}`);
   }
 

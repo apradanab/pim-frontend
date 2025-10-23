@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ContactModalComponent } from './contact-modal.component';
-import { UsersRepoService } from '../../../core/services/users.repo.service';
+import { UsersRepoService } from '../../../core/services/repos/users.repo.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ReactiveFormsModule } from '@angular/forms';
 import { of, throwError } from 'rxjs';

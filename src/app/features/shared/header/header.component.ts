@@ -4,7 +4,7 @@ import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { MobileSidebarComponent } from "../mobile-sidebar/mobile-sidebar.component";
 import { Router } from '@angular/router';
 import { ContactModalComponent } from '../contact-modal/contact-modal.component';
-import { StateService } from '../../../core/services/state.service';
+import { UsersStateService } from '../../../core/services/states/users.state.service';
 import { LoginModalComponent } from "../login-modal/login-modal.component";
 import { ImageService } from '../../../core/services/image.service';
 
@@ -258,7 +258,7 @@ import { ImageService } from '../../../core/services/image.service';
 export class HeaderComponent  {
   readonly imageService = inject(ImageService);
   readonly router = inject(Router);
-  readonly stateService = inject(StateService);
+  readonly stateService = inject(UsersStateService);
 
   sidebarActive = false;
   showContactModal = false;

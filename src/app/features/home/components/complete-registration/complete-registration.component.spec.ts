@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import CompleteRegistrationComponent from './complete-registration.component';
-import { StateService } from '../../../../core/services/state.service';
-import { UsersRepoService } from '../../../../core/services/users.repo.service';
+import { UsersStateService } from '../../../../core/services/states/users.state.service';
+import { UsersRepoService } from '../../../../core/services/repos/users.repo.service';
 import { MediaService, UploadResponse } from '../../../../core/services/media.service';
 import { of } from 'rxjs';
 
@@ -18,7 +18,7 @@ describe('CompleteRegistrationComponent', () => {
       };
     };
   };
-  let mockStateService: jasmine.SpyObj<StateService>;
+  let mockStateService: jasmine.SpyObj<UsersStateService>;
   let mockMediaService: jasmine.SpyObj<MediaService>;
 
   const createComponent = () => {
@@ -46,7 +46,7 @@ describe('CompleteRegistrationComponent', () => {
         FormBuilder,
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
-        { provide: StateService, useValue: mockStateService },
+        { provide: UsersStateService, useValue: mockStateService },
         { provide: UsersRepoService, useValue: {} },
         { provide: MediaService, useValue: mockMediaService },
       ]

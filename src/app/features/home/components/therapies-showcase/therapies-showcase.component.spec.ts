@@ -1,6 +1,6 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { TherapiesStateService } from '../../../../core/services/states/therapies.state.service';
 import { TherapiesShowcaseComponent } from './therapies-showcase.component';
-import { StateService } from '../../../../core/services/state.service';
 import { Therapy } from '../../../../models/therapy.model';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Router } from '@angular/router';
@@ -10,7 +10,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 describe('TherapiesShowcaseComponent', () => {
   let component: TherapiesShowcaseComponent;
   let fixture: ComponentFixture<TherapiesShowcaseComponent>;
-  let mockStateService: jasmine.SpyObj<StateService>;
+  let mockTherapiesService: jasmine.SpyObj<TherapiesStateService>;
   let mockRouter: jasmine.SpyObj<Router>;
 
   const mockTherapies: Therapy[] = [
@@ -41,12 +41,7 @@ describe('TherapiesShowcaseComponent', () => {
   ];
 
   beforeEach(async () => {
-    mockStateService = jasmine.createSpyObj('StateService', ['loadTherapies'], {
-      state$: {
-        therapies: {
-          list: mockTherapies
-        }
-      },
+    mockTherapiesService = jasmine.createSpyObj('StateService', ['listTherapies'], {
       therapiesState: jasmine.createSpy().and.returnValue({
         list: mockTherapies,
         current: null,
@@ -59,7 +54,7 @@ describe('TherapiesShowcaseComponent', () => {
     await TestBed.configureTestingModule({
       imports: [TherapiesShowcaseComponent, FontAwesomeModule],
       providers: [
-        { provide: StateService, useValue: mockStateService },
+        { provide: TherapiesStateService, useValue: mockTherapiesService },
         { provide: Router, useValue: mockRouter },
         provideHttpClient(withFetch()),
         provideHttpClientTesting()
@@ -76,7 +71,7 @@ describe('TherapiesShowcaseComponent', () => {
   });
 
   it('should call loadTherapies on init', () => {
-    expect(mockStateService.loadTherapies).toHaveBeenCalled();
+    expect(mockTherapiesService.listTherapies).toHaveBeenCalled();
   });
 
   it('should have correct therapy styles', () => {

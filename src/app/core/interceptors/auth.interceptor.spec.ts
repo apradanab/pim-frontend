@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpInterceptorFn, HttpRequest, HttpEvent, HttpHandlerFn, HttpHeaders } from '@angular/common/http';
 import { authInterceptor } from './auth.interceptor';
-import { StateService } from '../services/state.service';
+import { AuthStateService } from '../services/states/auth.state.service';
 import { Observable, of } from 'rxjs';
 
 describe('authInterceptor', () => {
-  let stateServiceMock: jasmine.SpyObj<StateService>;
+  let stateServiceMock: jasmine.SpyObj<AuthStateService>;
   let nextHandler: jasmine.Spy<HttpHandlerFn>;
   const mockRequest = new HttpRequest('GET', '/api/test');
 
@@ -13,7 +13,7 @@ describe('authInterceptor', () => {
     TestBed.runInInjectionContext(() => authInterceptor(req, next));
 
   beforeEach(() => {
-    stateServiceMock = jasmine.createSpyObj<StateService>('StateService', ['isLoggedIn', 'authState']);
+    stateServiceMock = jasmine.createSpyObj<AuthStateService>('AuthStateService', ['isLoggedIn', 'authState']);
 
     stateServiceMock.authState.and.returnValue({
       status: 'idle',
@@ -29,7 +29,7 @@ describe('authInterceptor', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: StateService, useValue: stateServiceMock }
+        { provide: AuthStateService, useValue: stateServiceMock }
       ]
     });
   });

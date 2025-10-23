@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { UsersRepoService } from './users.repo.service';
-import { User, UserCreateDto, UserLoginDto } from '../../models/user.model';
+import { User, UserCreateDto, UserLoginDto } from '../../../models/user.model';
 import { provideHttpClient } from '@angular/common/http';
 
 describe('UsersRepoService', () => {

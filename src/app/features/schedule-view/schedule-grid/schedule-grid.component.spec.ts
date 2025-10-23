@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ScheduleGridComponent } from '../schedule-grid/schedule-grid.component';
 import { AppointmentsStateService } from '../../../core/services/states/appointments.state.service';
 import { ScheduleLogicService } from '../../../core/services/logic/schedule.logic.service';
-import { StateService } from '../../../core/services/state.service';
+import { TherapiesStateService } from '../../../core/services/states/therapies.state.service';
 import { Appointment, AppointmentStatus } from '../../../models/appointment.model';
 import { Therapy } from '../../../models/therapy.model';
 import { signal } from '@angular/core';
@@ -52,11 +52,11 @@ class MockScheduleLogicService {
   }
 }
 
-class MockStateService {
+class MockTherapiesStateService {
   therapiesState = signal({
     list: mockTherapies,
   });
-  loadTherapies = jasmine.createSpy('loadTherapies');
+  listTherapies = jasmine.createSpy('listTherapies');
 }
 
 describe('ScheduleGridComponent', () => {
@@ -70,7 +70,7 @@ describe('ScheduleGridComponent', () => {
       providers: [
         { provide: AppointmentsStateService, useClass: MockAppointmentsStateService },
         { provide: ScheduleLogicService, useClass: MockScheduleLogicService },
-        { provide: StateService, useClass: MockStateService },
+        { provide: TherapiesStateService, useClass: MockTherapiesStateService },
       ]
     }).compileComponents();
 

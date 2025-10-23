@@ -3,7 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { StateService } from '../../../core/services/state.service';
+import { AuthStateService } from '../../../core/services/states/auth.state.service';
 
 @Component({
   selector: 'pim-login-modal',
@@ -153,7 +153,7 @@ import { StateService } from '../../../core/services/state.service';
 })
 export class LoginModalComponent {
   modalClosed = output<void>();
-  private readonly stateService = inject(StateService);
+  private readonly stateService = inject(AuthStateService);
   private readonly fb = inject(FormBuilder);
 
   faTimes = faTimes;

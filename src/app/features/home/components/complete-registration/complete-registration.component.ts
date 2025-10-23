@@ -1,11 +1,11 @@
 import { Component, inject, signal, effect } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { UsersRepoService } from '../../../../core/services/users.repo.service';
+import { UsersRepoService } from '../../../../core/services/repos/users.repo.service';
 import { faCircleCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { LoginModalComponent } from "../../../shared/login-modal/login-modal.component";
-import { StateService } from '../../../../core/services/state.service';
+import { UsersStateService } from '../../../../core/services/states/users.state.service';
 import { MediaService } from '../../../../core/services/media.service';
 import { lastValueFrom } from 'rxjs';
 
@@ -224,7 +224,7 @@ import { lastValueFrom } from 'rxjs';
 })
 export default class CompleteRegistrationComponent {
   private readonly repo = inject(UsersRepoService);
-  private readonly stateService = inject(StateService);
+  private readonly stateService = inject(UsersStateService);
   private readonly mediaService = inject(MediaService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
