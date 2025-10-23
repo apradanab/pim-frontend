@@ -60,7 +60,7 @@ export class AuthStateService {
   }
 
   // Private Helpers
-  #handleLoginSuccess = (token: string, user: User) => {
+  readonly #handleLoginSuccess = (token: string, user: User) => {
     this.#authState.set({
       status: 'success',
       currentUser: user,
@@ -72,7 +72,7 @@ export class AuthStateService {
     this.router.navigate(['/']);
   }
 
-  #validateToken = (token: string) => {
+  readonly #validateToken = (token: string) => {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
 
@@ -92,6 +92,7 @@ export class AuthStateService {
         error: null,
       });
     } catch (error) {
+      console.error('Token validation failed:', error);
       this.logout();
     }
   }
