@@ -6,7 +6,7 @@ import { AppointmentsStateService } from '../../../core/services/states/appointm
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { Therapy } from '../../../models/therapy.model';
-import { StateService } from '../../../core/services/state.service';
+import { TherapiesStateService } from '../../../core/services/states/therapies.state.service';
 
 @Component({
   selector: 'pim-schedule-grid',
@@ -128,14 +128,14 @@ import { StateService } from '../../../core/services/state.service';
   `
 })
 export class ScheduleGridComponent {
-  private readonly stateService = inject(AppointmentsStateService);
+  private readonly appointmentService = inject(AppointmentsStateService);
   protected readonly logicService = inject(ScheduleLogicService);
-  protected readonly therapyService = inject(StateService);
+  protected readonly therapyService = inject(TherapiesStateService);
 
   faClock = faClock;
   hoveredAppointmentId = signal<string | null>(null);
 
-  availableAppointments = computed(() => this.stateService.appointmentsState().availableAppointments);
+  availableAppointments = computed(() => this.appointmentService.appointmentsState().availableAppointments);
 
   therapiesMap = computed<Record<string, Therapy>>(() => {
     const therapies: Therapy[] = this.therapyService.therapiesState().list;
@@ -150,8 +150,8 @@ export class ScheduleGridComponent {
     effect(() => {
       const weekDays = this.logicService.weekDays();
       if (weekDays.length > 0) {
-        this.stateService.loadAllAppointments();
-        this.therapyService.loadTherapies();
+        this.appointmentService.loadAllAppointments();
+        this.therapyService.listTherapies();
         console.log('Appointments loaded:', weekDays);
       }
     });
@@ -170,7 +170,7 @@ export class ScheduleGridComponent {
 
     if (status === 'available' || status === 'empty') {
       if (appointment?.appointmentId && appointment.therapyId) {
-        this.stateService.requestAppointment(appointment.therapyId, appointment.appointmentId);
+        this.appointmentService.requestAppointment(appointment.therapyId, appointment.appointmentId);
       }
     } else {
       console.log('Cell not available for booking:', status);

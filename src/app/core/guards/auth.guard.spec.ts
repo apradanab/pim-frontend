@@ -1,22 +1,22 @@
 import { TestBed } from '@angular/core/testing';
 import { CanActivateFn, Router, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
 import { authGuard, adminGuard } from './auth.guard';
-import { StateService } from '../services/state.service';
+import { AuthStateService } from '../services/states/auth.state.service';
 import { User } from '../../models/user.model';
 
 describe('Auth Guards', () => {
-  let stateServiceMock: jasmine.SpyObj<StateService>;
+  let stateServiceMock: jasmine.SpyObj<AuthStateService>;
   let routerMock: jasmine.SpyObj<Router>;
   const mockRoute = {} as ActivatedRouteSnapshot;
   const mockState = { url: '/protected' } as RouterStateSnapshot;
 
   beforeEach(() => {
-    stateServiceMock = jasmine.createSpyObj<StateService>('StateService', ['isLoggedIn', 'authState']);
+    stateServiceMock = jasmine.createSpyObj<AuthStateService>('AuthStateService', ['isLoggedIn', 'authState']);
     routerMock = jasmine.createSpyObj('Router', ['navigate']);
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: StateService, useValue: stateServiceMock },
+        { provide: AuthStateService, useValue: stateServiceMock },
         { provide: Router, useValue: routerMock },
       ],
     });

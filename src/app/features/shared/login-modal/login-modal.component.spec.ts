@@ -1,13 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LoginModalComponent } from './login-modal.component';
-import { StateService } from '../../../core/services/state.service';
+import { AuthStateService } from '../../../core/services/states/auth.state.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 describe('LoginModalComponent', () => {
   let component: LoginModalComponent;
   let fixture: ComponentFixture<LoginModalComponent>;
-  let stateServiceMock: jasmine.SpyObj<StateService>;
+  let stateServiceMock: jasmine.SpyObj<AuthStateService>;
 
   beforeEach(async () => {
     stateServiceMock = jasmine.createSpyObj('StateService', ['login']);
@@ -19,7 +19,7 @@ describe('LoginModalComponent', () => {
         FontAwesomeModule
       ],
       providers: [
-        { provide: StateService, useValue: stateServiceMock }
+        { provide: AuthStateService, useValue: stateServiceMock }
       ]
     }).compileComponents();
 

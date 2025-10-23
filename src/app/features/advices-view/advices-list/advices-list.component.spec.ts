@@ -1,13 +1,13 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { AdvicesListComponent } from './advices-list.component';
-import { StateService } from '../../../core/services/state.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
+import { AdvicesStateService } from '../../../core/services/states/advices.state.service';
 
 describe('AdvicesListComponent', () => {
   let component: AdvicesListComponent;
   let fixture: ComponentFixture<AdvicesListComponent>;
-  let mockStateService: jasmine.SpyObj<StateService>;
+  let mockStateService: jasmine.SpyObj<AdvicesStateService>;
   let mockRouter: jasmine.SpyObj<Router>;
 
   const mockAdvices = [
@@ -26,12 +26,13 @@ describe('AdvicesListComponent', () => {
   ];
 
   beforeEach(async () => {
-    mockStateService = jasmine.createSpyObj('StateService', ['loadAllAdvices'], {
-      state$: {
-        advices: {
-          list: mockAdvices
-        }
-      }
+    mockStateService = jasmine.createSpyObj('AdvicesStateService', ['listAdvices'], {
+      advicesState: jasmine.createSpy().and.returnValue({
+        list: mockAdvices,
+        filtered: [],
+        current: null,
+        error: null
+      })
     });
 
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
@@ -39,7 +40,7 @@ describe('AdvicesListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AdvicesListComponent],
       providers: [
-        { provide: StateService, useValue: mockStateService },
+        { provide: AdvicesStateService, useValue: mockStateService },
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: { snapshot: { params: {} }, params: of({}) } },
       ]
@@ -55,7 +56,7 @@ describe('AdvicesListComponent', () => {
   });
 
   it('should call loadAllAdvices on init', () => {
-    expect(mockStateService.loadAllAdvices).toHaveBeenCalled();
+    expect(mockStateService.listAdvices).toHaveBeenCalled();
   });
 
   it('should expand and collapse card', () => {
