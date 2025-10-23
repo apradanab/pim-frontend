@@ -12,6 +12,12 @@ export interface AuthState {
   error: string | null;
 }
 
+export interface UserState {
+  list: User[];
+  currentUser: User | null;
+  error: string | null;
+}
+
 export interface TherapyState {
   list: Therapy[];
   current: Therapy | null;
