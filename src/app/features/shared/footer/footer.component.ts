@@ -3,7 +3,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faFacebook, faInstagram, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import { Router } from '@angular/router';
 import { ContactModalComponent } from "../contact-modal/contact-modal.component";
-import { ImageService } from '../../../core/services/image.service';
+import { ImageService } from '../../../core/services/utils/image.service';
 
 @Component({
   selector: 'pim-footer',

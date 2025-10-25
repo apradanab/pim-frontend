@@ -37,6 +37,11 @@ describe('MobileSidebarComponent', () => {
     expect(component.showLoginModal).toBeFalse();
   });
 
+  it('should call router.navigate with /perfil when navigateToProfile is called', () => {
+    component.navigateToProfile();
+    expect(router.navigate).toHaveBeenCalledWith(['/perfil']);
+  });
+
   it('should call router.navigate with /terapias/terapia-individual when navigateToTherapies is called', () => {
     component.navigateToTherapies();
     expect(router.navigate).toHaveBeenCalledWith(['/terapias/terapia-individual']);

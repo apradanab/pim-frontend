@@ -4,7 +4,7 @@ import { WeekDay } from '../../../models/schedule.model';
 @Injectable({
   providedIn: 'root'
 })
-export class ScheduleLogicService {
+export class DateTimeService {
   private readonly currentWeek = signal(new Date());
   private readonly weeksInPast = 1;
   private readonly weeksInFuture = 3;
@@ -84,5 +84,25 @@ export class ScheduleLogicService {
     return direction === -1
       ? this.getMonday(target) >= this.getMonday(min)
       : this.getMonday(target) <= this.getMonday(max);
+  }
+
+  public parseDateString(dateStr: string): Date {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month -1, day);
+  }
+
+  public timeToMinutes(timeStr: string): number {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return hours * 60 + minutes;
+  }
+
+  public formatDisplayDate(dateStr: string): string {
+    const date = this.parseDateString(dateStr);
+    return date.toLocaleDateString('es-ES', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   }
 }

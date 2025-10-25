@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ScheduleGridComponent } from '../schedule-grid/schedule-grid.component';
 import { AppointmentsStateService } from '../../../core/services/states/appointments.state.service';
-import { ScheduleLogicService } from '../../../core/services/logic/schedule.logic.service';
+import { DateTimeService } from '../../../core/services/utils/date-time.service';
 import { TherapiesStateService } from '../../../core/services/states/therapies.state.service';
 import { Appointment, AppointmentStatus } from '../../../models/appointment.model';
 import { Therapy } from '../../../models/therapy.model';
@@ -69,7 +69,7 @@ describe('ScheduleGridComponent', () => {
       imports: [ScheduleGridComponent],
       providers: [
         { provide: AppointmentsStateService, useClass: MockAppointmentsStateService },
-        { provide: ScheduleLogicService, useClass: MockScheduleLogicService },
+        { provide: DateTimeService, useClass: MockScheduleLogicService },
         { provide: TherapiesStateService, useClass: MockTherapiesStateService },
       ]
     }).compileComponents();

@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { ScheduleLogicService } from '../../../core/services/logic/schedule.logic.service';
+import { DateTimeService } from '../../../core/services/utils/date-time.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { faCalendarDays } from '@fortawesome/free-regular-svg-icons';
@@ -12,23 +12,23 @@ import { faCalendarDays } from '@fortawesome/free-regular-svg-icons';
   <div class="navigation">
 
     <div class="month-header">
-    <span class="week">{{ logicService.currentMonthLabel() }}</span>
+    <span class="week">{{ dateTimeService.currentMonthLabel() }}</span>
     </div>
 
     <div class="calendar-navigation">
       <button
-        (click)="logicService.moveWeek(-1)"
-        [disabled]="!logicService.goPrevious()"
-        [class.disabled]="!logicService.goPrevious()">
+        (click)="dateTimeService.moveWeek(-1)"
+        [disabled]="!dateTimeService.goPrevious()"
+        [class.disabled]="!dateTimeService.goPrevious()">
         <fa-icon [icon]="faChevronLeft"></fa-icon>
       </button>
       <div class="calendar-icon">
       <fa-icon [icon]="faCalendar" [size]="'2x'"></fa-icon>
       </div>
       <button
-        (click)="logicService.moveWeek(1)"
-        [disabled]="!logicService.goNext()"
-        [class.disabled]="!logicService.goNext()">
+        (click)="dateTimeService.moveWeek(1)"
+        [disabled]="!dateTimeService.goNext()"
+        [class.disabled]="!dateTimeService.goNext()">
         <fa-icon [icon]="faChevronRight"></fa-icon>
       </button>
     </div>
@@ -101,7 +101,7 @@ import { faCalendarDays } from '@fortawesome/free-regular-svg-icons';
   `
 })
 export class WeekNavigationComponent {
-  protected readonly logicService = inject(ScheduleLogicService);
+  protected readonly dateTimeService = inject(DateTimeService);
   faChevronRight = faChevronRight;
   faChevronLeft = faChevronLeft;
   faCalendar = faCalendarDays;

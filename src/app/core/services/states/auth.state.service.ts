@@ -4,6 +4,7 @@ import { UsersRepoService } from '../repos/users.repo.service';
 import { AuthState } from '../../../models/state.model';
 import { User } from '../../../models/user.model';
 import { ApiError } from '../../interceptors/error.interceptor';
+import { UsersStateService } from './users.state.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ import { ApiError } from '../../interceptors/error.interceptor';
 export class AuthStateService {
   private readonly router = inject(Router);
   private readonly usersRepo = inject(UsersRepoService);
+  private readonly usersState = inject(UsersStateService);
 
   readonly #authState = signal<AuthState>({
     status: 'idle',
@@ -40,6 +42,8 @@ export class AuthStateService {
       token: null,
       error: null
     });
+    this.usersState.setCurrentUser(null);
+
     localStorage.removeItem('token');
     this.router.navigate(['/']);
   }
@@ -67,6 +71,7 @@ export class AuthStateService {
       token,
       error: null,
     });
+    this.usersState.setCurrentUser(user);
 
     localStorage.setItem('token', token);
     this.router.navigate(['/']);

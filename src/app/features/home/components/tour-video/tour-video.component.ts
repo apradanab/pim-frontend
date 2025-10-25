@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { ImageService } from '../../../../core/services/image.service';
+import { ImageService } from '../../../../core/services/utils/image.service';
 
 @Component({
   selector: 'pim-tour-video',

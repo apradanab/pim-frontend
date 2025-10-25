@@ -1,6 +1,6 @@
 import { Component, input, signal, effect, inject } from '@angular/core';
 import { Slide } from '../../../../models/slide.model';
-import { ImageService } from '../../../../core/services/image.service';
+import { ImageService } from '../../../../core/services/utils/image.service';
 
 @Component({
   selector: 'pim-intro-slider',
