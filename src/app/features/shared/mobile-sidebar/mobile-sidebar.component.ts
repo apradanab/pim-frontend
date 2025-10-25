@@ -14,14 +14,25 @@ import { faCalendar, faChevronRight, faHeart, faHouse, faMessage, faUser } from 
       [class.active]="active()"
       >
       <div class="menu">
-        <a (click)="openLoginModal()"
-          (keyup.enter)="openLoginModal()"
-          tabindex="0"
-          >
-          <fa-icon [icon]="faUser"></fa-icon>
-          <span>Iniciar sesión</span>
-          <fa-icon [icon]="faChevron"></fa-icon>
-        </a>
+        @if(isLoggedIn()) {
+          <a (click)="navigateToProfile()"
+            (keyup.enter)="navigateToProfile()"
+            tabindex="0"
+            >
+            <fa-icon [icon]="faUser"></fa-icon>
+            <span>Ver mi perfil</span>
+            <fa-icon [icon]="faChevron"></fa-icon>
+          </a>
+        } @else {
+          <a (click)="openLoginModal()"
+            (keyup.enter)="openLoginModal()"
+            tabindex="0"
+            >
+            <fa-icon [icon]="faUser"></fa-icon>
+            <span>Iniciar sesión</span>
+            <fa-icon [icon]="faChevron"></fa-icon>
+          </a>
+        }
         <a (click)="navigateToTherapies()"
           (keyup.enter)="navigateToTherapies()"
           tabindex="0"
@@ -124,6 +135,7 @@ export class MobileSidebarComponent {
   readonly router = inject(Router);
 
   active = input(false);
+  isLoggedIn = input(false);
   showLoginModal = false;
 
   faUser = faUser;
@@ -132,6 +144,10 @@ export class MobileSidebarComponent {
   faCalendar = faCalendar;
   faHouse = faHouse;
   faChevron = faChevronRight;
+
+  navigateToProfile() {
+    this.router.navigate(['/perfil']);
+  }
 
   navigateToTherapies() {
     this.router.navigate(['/terapias/terapia-individual']);

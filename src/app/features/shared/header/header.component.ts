@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { MobileSidebarComponent } from "../mobile-sidebar/mobile-sidebar.component";
@@ -6,12 +6,13 @@ import { Router } from '@angular/router';
 import { ContactModalComponent } from '../contact-modal/contact-modal.component';
 import { UsersStateService } from '../../../core/services/states/users.state.service';
 import { LoginModalComponent } from "../login-modal/login-modal.component";
-import { ImageService } from '../../../core/services/image.service';
+import { ImageService } from '../../../core/services/utils/image.service';
+import { ProfileAvatarComponent } from '../profile-avatar/profile-avatar.component';
 
 @Component({
   selector: 'pim-header',
   standalone: true,
-  imports: [FontAwesomeModule, MobileSidebarComponent, ContactModalComponent, LoginModalComponent],
+  imports: [FontAwesomeModule, MobileSidebarComponent, ContactModalComponent, LoginModalComponent, ProfileAvatarComponent],
   template: `
     <header class="header">
       <div class="logo"
@@ -60,27 +61,41 @@ import { ImageService } from '../../../core/services/image.service';
         </a>
       </nav>
 
-      <div class="login-container">
-        <button class="login-button"
+      <div class="login-container" [class.user-logged-in]="isLoggedIn()">
+        @if (isLoggedIn()) {
+          <pim-profile-avatar></pim-profile-avatar>
+        } @else {
+          <button class="login-button"
                 (click)="openLoginModal()"
                 (keyup.enter)="openLoginModal()"
                 tabindex="0"
         >Iniciar sesión</button>
+        }
       </div>
 
-      <button class="burger-menu"
-              (click)="toggleSidebar()"
-              aria-label="Toggle sidebar"
-              [attr.aria-expanded]="sidebarActive">
-        <svg class="burger-icon" viewBox="0 0 24 24">
-          <path class="burger-line top" [class.active]="sidebarActive" d="M4 12h16c0.6 0 1 0.4 1 1s-0.4 1-1 1H4c-0.6 0-1-0.4-1-1s0.4-1 1-1z"/>
-          <path class="burger-line middle" [class.active]="sidebarActive" d="M4 12h16c0.6 0 1 0.4 1 1s-0.4 1-1 1H4c-0.6 0-1-0.4-1-1s0.4-1 1-1z"/>
-          <path class="burger-line bottom" [class.active]="sidebarActive" d="M4 12h16c0.6 0 1 0.4 1 1s-0.4 1-1 1H4c-0.6 0-1-0.4-1-1s0.4-1 1-1z"/>
-        </svg>
-      </button>
+      @if (!isLoggedIn()) {
+        <button class="burger-menu"
+          (click)="toggleSidebar()"
+          aria-label="Toggle sidebar"
+          [attr.aria-expanded]="sidebarActive">
+          <svg class="burger-icon" viewBox="0 0 24 24">
+            <path class="burger-line top" [class.active]="sidebarActive" d="M4 12h16c0.6 0 1 0.4 1 1s-0.4 1-1 1H4c-0.6 0-1-0.4-1-1s0.4-1 1-1z"/>
+            <path class="burger-line middle" [class.active]="sidebarActive" d="M4 12h16c0.6 0 1 0.4 1 1s-0.4 1-1 1H4c-0.6 0-1-0.4-1-1s0.4-1 1-1z"/>
+            <path class="burger-line bottom" [class.active]="sidebarActive" d="M4 12h16c0.6 0 1 0.4 1 1s-0.4 1-1 1H4c-0.6 0-1-0.4-1-1s0.4-1 1-1z"/>
+          </svg>
+        </button>
+      } @else {
+        <pim-profile-avatar class="avatar-menu"
+        [isMenuButton]="true"
+        (click)="toggleSidebar()"
+        tabindex="0"
+        aria-label="Ver perfil y menú">
+        </pim-profile-avatar>
+      }
+
     </header>
 
-    <pim-mobile-sidebar [active]="sidebarActive"></pim-mobile-sidebar>
+    <pim-mobile-sidebar [active]="sidebarActive" [isLoggedIn]="isLoggedIn()"></pim-mobile-sidebar>
 
     @if (showContactModal) {
       <pim-contact-modal (modalClosed)="closeContactModal()"></pim-contact-modal>
@@ -127,7 +142,8 @@ import { ImageService } from '../../../core/services/image.service';
     display: flex;
     gap: 20px;
     cursor: pointer;
-    margin-right: 190px;
+    margin-right: auto;
+    margin-left: 65px;
   }
 
   .nav-option {
@@ -150,6 +166,7 @@ import { ImageService } from '../../../core/services/image.service';
     background-color:rgba(81, 69, 69, 0.8);
     border-radius: 30px;
     padding: 5px 10px;
+    white-space: nowrap;
   }
 
   .login-button {
@@ -163,19 +180,34 @@ import { ImageService } from '../../../core/services/image.service';
   }
 
   .login-container:active {
-    color: #17999b;
-    box-shadow: inset 0 0 10px 8px rgba(23, 153, 155, 0.3);
-    background-color: rgba(27, 188, 191, 0.08);
+    box-shadow:
+      0px -5px 10px 5px rgba(23, 153, 155, 0.54),
+      0 5px 10px 5px rgba(80, 85, 143, 0.54);
+    background-color: #ebece9;
     border: 2.5px solid black;
+    color: rgba(81, 69, 69, 0.8);
     padding : 3px 8px;
-    border-color: #17999b;
+    border-color: rgba(81, 69, 69, 0.8);
   }
 
   .login-button:active {
-    color: #17999b;
+    color: rgba(81, 69, 69, 0.8);
+    font-weight: bold;
+    font-size: 1rem;
+  }
+
+  .login-container.user-logged-in {
+    background-color: transparent;
+    border-radius: 50px;
+    padding: 0px;
+    border: 0.5px;
   }
 
   .burger-menu {
+    display: none;
+  }
+
+  .avatar-menu {
     display: none;
   }
 
@@ -220,6 +252,11 @@ import { ImageService } from '../../../core/services/image.service';
       }
     }
 
+    .avatar-menu {
+      display: flex;
+      align-items: center;
+    }
+
     .burger-icon {
       width: 30px;
       height: 30px;
@@ -259,6 +296,9 @@ export class HeaderComponent  {
   readonly imageService = inject(ImageService);
   readonly router = inject(Router);
   readonly stateService = inject(UsersStateService);
+
+  protected readonly currentUser = computed(() => this.stateService.usersState().currentUser);
+  protected readonly isLoggedIn = computed(() => !!this.currentUser());
 
   sidebarActive = false;
   showContactModal = false;
