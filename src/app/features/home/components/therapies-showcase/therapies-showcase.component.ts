@@ -3,7 +3,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { Therapy, TherapyStyle } from '../../../../models/therapy.model';
 import { Router } from '@angular/router';
-import { ImageService } from '../../../../core/services/image.service';
+import { ImageService } from '../../../../core/services/utils/image.service';
 import { TherapiesStateService } from '../../../../core/services/states/therapies.state.service';
 
 @Component({

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ScheduleCellComponent } from './schedule-cell.component';
-import { ScheduleLogicService } from '../../../core/services/logic/schedule.logic.service';
+import { DateTimeService } from '../../../core/services/utils/date-time.service';
 import { Appointment, AppointmentStatus } from '../../../models/appointment.model';
 import { Therapy } from '../../../models/therapy.model';
 
@@ -49,7 +49,7 @@ describe('ScheduleCellComponent', () => {
     await TestBed.configureTestingModule({
       imports: [TestScheduleCellComponent],
       providers: [
-        { provide: ScheduleLogicService, useClass: MockScheduleLogicService },
+        { provide: DateTimeService, useClass: MockScheduleLogicService },
       ]
     }).compileComponents();
 

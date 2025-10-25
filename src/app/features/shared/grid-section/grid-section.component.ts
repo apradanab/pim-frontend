@@ -1,6 +1,6 @@
 import { Component, input, output, inject } from '@angular/core';
 import { ContactModalComponent } from "../contact-modal/contact-modal.component";
-import { ImageService } from '../../../core/services/image.service';
+import { ImageService } from '../../../core/services/utils/image.service';
 
 @Component({
   selector: 'pim-grid-section',

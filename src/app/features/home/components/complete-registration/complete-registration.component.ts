@@ -6,7 +6,7 @@ import { faCircleCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { LoginModalComponent } from "../../../shared/login-modal/login-modal.component";
 import { UsersStateService } from '../../../../core/services/states/users.state.service';
-import { MediaService } from '../../../../core/services/media.service';
+import { MediaService } from '../../../../core/services/utils/media.service';
 import { lastValueFrom } from 'rxjs';
 
 @Component({

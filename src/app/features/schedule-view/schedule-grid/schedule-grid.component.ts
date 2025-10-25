@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { ScheduleCellComponent } from "../schedule-cell/schedule-cell.component";
 import { Appointment } from '../../../models/appointment.model';
-import { ScheduleLogicService } from '../../../core/services/logic/schedule.logic.service';
+import { DateTimeService } from '../../../core/services/utils/date-time.service';
 import { AppointmentsStateService } from '../../../core/services/states/appointments.state.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
@@ -129,7 +129,7 @@ import { TherapiesStateService } from '../../../core/services/states/therapies.s
 })
 export class ScheduleGridComponent {
   private readonly appointmentService = inject(AppointmentsStateService);
-  protected readonly logicService = inject(ScheduleLogicService);
+  protected readonly logicService = inject(DateTimeService);
   protected readonly therapyService = inject(TherapiesStateService);
 
   faClock = faClock;

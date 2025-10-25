@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Router } from '@angular/router';
-import { ImageService } from '../../../../core/services/image.service';
+import { ImageService } from '../../../../core/services/utils/image.service';
 
 @Component({
   selector: 'pim-advices-showcase',

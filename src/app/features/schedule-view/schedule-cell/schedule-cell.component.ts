@@ -1,7 +1,7 @@
 import { Component, computed, inject, input, output, HostBinding } from '@angular/core';
 import { Appointment, AppointmentStatus } from '../../../models/appointment.model';
 import { Therapy } from '../../../models/therapy.model';
-import { ScheduleLogicService } from '../../../core/services/logic/schedule.logic.service';
+import { DateTimeService } from '../../../core/services/utils/date-time.service';
 
 @Component({
   selector: 'pim-schedule-cell',
@@ -96,7 +96,7 @@ import { ScheduleLogicService } from '../../../core/services/logic/schedule.logi
   `
 })
 export class ScheduleCellComponent {
-  protected readonly logicService = inject(ScheduleLogicService);
+  protected readonly logicService = inject(DateTimeService);
 
   dateIso = input.required<string>();
   hour = input.required<string>();

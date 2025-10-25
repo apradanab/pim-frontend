@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import CompleteRegistrationComponent from './complete-registration.component';
 import { UsersStateService } from '../../../../core/services/states/users.state.service';
 import { UsersRepoService } from '../../../../core/services/repos/users.repo.service';
-import { MediaService, UploadResponse } from '../../../../core/services/media.service';
+import { MediaService, UploadResponse } from '../../../../core/services/utils/media.service';
 import { of } from 'rxjs';
 
 describe('CompleteRegistrationComponent', () => {
