@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { ScheduleLogicService } from './schedule.logic.service';
+import { DateTimeService } from './date-time.service';
 
-describe('ScheduleLogicService', () => {
-  let service: ScheduleLogicService;
+describe('DateTimeService', () => {
+  let service: DateTimeService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(ScheduleLogicService);
+    service = TestBed.inject(DateTimeService);
   });
 
   it('should be created', () => {
@@ -55,5 +55,28 @@ describe('ScheduleLogicService', () => {
       const next = service.getNextHour('20:00');
       expect(next).toBe('');
     });
+  });
+
+  it('parseDateString. Should parse date string correctly into Date object', () => {
+    const dateString = '2025-10-25';
+    const date = service.parseDateString(dateString);
+
+    expect(date.getFullYear()).toBe(2025);
+    expect(date.getMonth()).toBe(9);
+    expect(date.getDate()).toBe(25);
+  });
+
+  it('timeToMinutes. Should correctly convert a time string to minutes', () => {
+    expect(service.timeToMinutes('9:00')).toBe(540);
+    expect(service.timeToMinutes('10:30')).toBe(630);
+    expect(service.timeToMinutes('20:00')).toBe(1200);
+  });
+
+  it('formatDisplayDate. Should format a date string into a readable Spanish date', () => {
+    const dateString = '2025-10-25';
+    const formattedDate = service.formatDisplayDate(dateString);
+
+    expect(formattedDate).toContain('25 de octubre de 2025');
+    expect(formattedDate).toContain('sábado');
   });
 });
