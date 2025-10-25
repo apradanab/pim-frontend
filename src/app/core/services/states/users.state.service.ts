@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { UsersRepoService } from '../repos/users.repo.service';
 import { ApiError } from '../../interceptors/error.interceptor';
 import { UserState } from '../../../models/state.model';
+import { User } from '../../../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,14 @@ export class UsersStateService {
     error: null
   });
   usersState = this.#state.asReadonly();
+
+  setCurrentUser(user: User | null): void {
+    this.#state.update(state => ({
+      ...state,
+      currentUser: user,
+      error: null
+    }));
+  }
 
   completeRegistration = (data: {
     registrationToken: string;
