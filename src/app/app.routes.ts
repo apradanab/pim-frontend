@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home', title: 'Redirección inicial'},
@@ -26,6 +27,12 @@ export const routes: Routes = [
     path: 'horarios',
     loadComponent: () => import('./features/schedule-view/schedule-view.component'),
     title: 'Horario de citas'
+  },
+  {
+    path: 'perfil',
+    loadComponent: () => import('./features/user-profile-view/user-profile-view.component'),
+    title: 'Perfil de usuario',
+    canActivate: [authGuard]
   },
   { path: '**', redirectTo: 'home', title: 'Redirección'}
 ];

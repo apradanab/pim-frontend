@@ -1,4 +1,5 @@
 import { routes } from './app.routes';
+import { authGuard } from './core/guards/auth.guard';
 
 describe('App Routes', () => {
   it('should have a default redirect to /home', () => {
@@ -51,4 +52,14 @@ describe('App Routes', () => {
     const scheduleComponent = await scheduleRoute!.loadComponent!();
     expect(scheduleComponent).toBeDefined();
   });
+
+  it('should lazy load UserProfileViewComponent on /perfil with authGuard', async () => {
+    const route = routes.find(route => route.path === 'perfil');
+    expect(route).toBeDefined();
+    expect(route?.loadComponent).toBeDefined();
+    expect(route?.canActivate).toContain(authGuard);
+
+    const component = await route!.loadComponent!();
+    expect(component).toBeDefined();
+  })
 });
