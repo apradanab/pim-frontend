@@ -2,12 +2,14 @@ import { inject, Injectable, signal } from '@angular/core';
 import { AppointmentsRepoService } from '../repos/appointments.repo.service';
 import { AppointmentState } from '../../../models/state.model';
 import { ApiError } from '../../interceptors/error.interceptor';
+import { UsersStateService } from './users.state.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppointmentsStateService {
   private readonly appointmentsRepo = inject(AppointmentsRepoService);
+  private readonly userStateService = inject(UsersStateService);
 
   readonly #state = signal<AppointmentState>({
     userAppointments: [],
@@ -31,7 +33,7 @@ export class AppointmentsStateService {
     });
   }
 
-  loadUserAppointments = (userId?: string) => {
+  loadUserAppointments = (userId: string) => {
     this.appointmentsRepo.getUserAppointments(userId).subscribe({
       next: (appointments) => this.#state.update(s => ({
         ...s,
@@ -45,30 +47,35 @@ export class AppointmentsStateService {
     });
   }
 
+  private reloadUserAppointments() {
+    const userId = this.userStateService.usersState().currentUser?.userId;
+    if (userId) this.loadUserAppointments(userId);
+  }
+
   requestAppointment = (therapyId: string, appointmentId: string) => {
     return this.appointmentsRepo.requestAppointment(therapyId, appointmentId).subscribe({
-      next: () => this.loadUserAppointments(),
+      next: () => this.reloadUserAppointments(),
       error: (err: ApiError) => console.error('Error requesting appointment:', err)
     });
   }
 
   joinGroupAppointment = (therapyId: string, appointmentId: string) => {
     return this.appointmentsRepo.joinGroupAppointment(therapyId, appointmentId).subscribe({
-      next: () => this.loadUserAppointments(),
+      next: () => this.reloadUserAppointments(),
       error: (err: ApiError) => console.error('Error joining group appointment:', err)
     });
   }
 
   leaveGroupAppointment = (therapyId: string, appointmentId: string, cancellationReason?: string) => {
     return this.appointmentsRepo.leaveGroupAppointment(therapyId, appointmentId, cancellationReason).subscribe({
-      next: () => this.loadUserAppointments(),
+      next: () => this.reloadUserAppointments(),
       error: (err: ApiError) => console.error('Error leaving group appointment:', err)
     });
   }
 
   requestCancellation = (therapyId: string, appointmentId: string, notes: string) => {
     return this.appointmentsRepo.requestCancellation(therapyId, appointmentId, notes).subscribe({
-      next: () => this.loadUserAppointments(),
+      next: () => this.reloadUserAppointments(),
       error: (err: ApiError) => console.error('Error requesting cancellation:', err)
     });
   }
