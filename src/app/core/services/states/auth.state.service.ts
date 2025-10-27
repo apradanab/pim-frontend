@@ -65,13 +65,20 @@ export class AuthStateService {
 
   // Private Helpers
   readonly #handleLoginSuccess = (token: string, user: User) => {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const userIdFromToken = payload.sub;
+    const fullUser: User = {
+      ...user,
+      userId: userIdFromToken,
+    }
+
     this.#authState.set({
       status: 'success',
-      currentUser: user,
+      currentUser: fullUser,
       token,
       error: null,
     });
-    this.usersState.setCurrentUser(user);
+    this.usersState.setCurrentUser(fullUser);
 
     localStorage.setItem('token', token);
     this.router.navigate(['/']);

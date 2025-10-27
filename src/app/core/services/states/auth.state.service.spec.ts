@@ -41,7 +41,7 @@ describe('AuthStateService', () => {
     spyOn(localStorage, 'setItem');
     spyOn(localStorage, 'removeItem');
     spyOn(window, 'atob').and.callFake(() => JSON.stringify({
-      sub: '1',
+      sub: '123',
       name: 'Test User',
       email: 'test@example.com',
       role: 'ADMIN',
@@ -119,7 +119,7 @@ describe('AuthStateService', () => {
 
       const state = service.authState();
       expect(state.currentUser).toEqual(jasmine.objectContaining({
-        userId: '1',
+        userId: '123',
         name: 'Test User',
         email: 'test@example.com',
         role: 'ADMIN'
