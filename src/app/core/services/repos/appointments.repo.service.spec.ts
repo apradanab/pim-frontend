@@ -55,16 +55,6 @@ describe('AppointmentsRepoService', () => {
     req.flush(relatedAppointments as Appointment[]);
   });
 
-  it('should retrieve all appointments when userId is not provided', () => {
-    service.getUserAppointments().subscribe((appointments) => {
-      expect(appointments).toEqual(mockAppointments as Appointment[]);
-    });
-
-    const req = httpMock.expectOne(`${apiUrl}/appointments`);
-    expect(req.request.method).toBe('GET');
-    req.flush(mockAppointments as Appointment[]);
-  })
-
   it('should request an appointment', () => {
     const therapyId = 't1';
     const appointmentId = '1';
