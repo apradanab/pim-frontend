@@ -1,7 +1,6 @@
 import { Component, inject, signal, effect } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { UsersRepoService } from '../../../../core/services/repos/users.repo.service';
 import { faCircleCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { LoginModalComponent } from "../../../shared/login-modal/login-modal.component";
@@ -72,10 +71,10 @@ import { lastValueFrom } from 'rxjs';
           }
         </div>
       </div>
+    }
 
-      @if (showLoginModal) {
-        <pim-login-modal (modalClosed)="closeLoginModal()"></pim-login-modal>
-      }
+    @if (showLoginModal()) {
+      <pim-login-modal (modalClosed)="closeLoginModal()"></pim-login-modal>
     }
   `,
   styles: [`
@@ -180,13 +179,13 @@ import { lastValueFrom } from 'rxjs';
     }
 
     .success fa-icon {
-      color: #4CAF50;
+      color: #e0f15e;
       font-size: 3rem;
       margin-bottom: 1rem;
     }
 
     .login-container {
-      background-color: #2f2929;
+      background-color: #706666;
       border-radius: 30px;
       padding: 5px 10px;
       width: 170px;
@@ -223,7 +222,6 @@ import { lastValueFrom } from 'rxjs';
   `]
 })
 export default class CompleteRegistrationComponent {
-  private readonly repo = inject(UsersRepoService);
   private readonly stateService = inject(UsersStateService);
   private readonly mediaService = inject(MediaService);
   private readonly router = inject(Router);
@@ -235,7 +233,7 @@ export default class CompleteRegistrationComponent {
 
   showModal = signal(false);
   success = signal(false);
-  showLoginModal = false;
+  showLoginModal = signal(false);
   file: File | null = null;
   registrationToken: string | null = null;
 
@@ -264,7 +262,7 @@ export default class CompleteRegistrationComponent {
 
       if (this.file) {
         const uploadResponse = await lastValueFrom(
-          this.mediaService.generateUploadUrl('user', 'temp-avatar', this.file.type)
+          this.mediaService.generateUploadUrl('avatar', 'temp-avatar', this.file.type)
         );
 
         await this.mediaService.uploadFile(uploadResponse.uploadUrl, this.file);
@@ -281,6 +279,12 @@ export default class CompleteRegistrationComponent {
 
       this.stateService.completeRegistration(registrationData);
       this.success.set(true);
+
+      setTimeout(() => {
+        this.closeModal();
+        this.openLoginModal();
+      }, 3500);
+
     } catch (error) {
       console.error('Registration error:', error);
     }
@@ -298,10 +302,10 @@ export default class CompleteRegistrationComponent {
   }
 
   openLoginModal() {
-    this.showLoginModal = true;
+    this.showLoginModal.set(true);
   }
 
   closeLoginModal() {
-    this.showLoginModal = false;
+    this.showLoginModal.set(false);
   }
 }

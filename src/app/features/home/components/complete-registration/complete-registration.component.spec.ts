@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import CompleteRegistrationComponent from './complete-registration.component';
@@ -123,7 +123,7 @@ describe('CompleteRegistrationComponent', () => {
 
     await component.submit();
 
-    expect(mockMediaService.generateUploadUrl).toHaveBeenCalledWith('user', 'temp-avatar', 'image/png');
+    expect(mockMediaService.generateUploadUrl).toHaveBeenCalledWith('avatar', 'temp-avatar', 'image/png');
     expect(mockMediaService.uploadFile).toHaveBeenCalledWith('http://upload.url', mockFile);
 
     expect(mockStateService.completeRegistration).toHaveBeenCalledWith({
@@ -155,10 +155,28 @@ describe('CompleteRegistrationComponent', () => {
   });
 
   it('should open and close login modal', () => {
-    expect(component.showLoginModal).toBeFalse();
+    expect(component.showLoginModal()).toBeFalse();
     component.openLoginModal();
-    expect(component.showLoginModal).toBeTrue();
+    expect(component.showLoginModal()).toBeTrue();
     component.closeLoginModal();
-    expect(component.showLoginModal).toBeFalse();
+    expect(component.showLoginModal()).toBeFalse();
   });
+
+  it('should close registration modal and open login modal after 3,5s delay', fakeAsync(async () => {
+    component.registrationToken = 'valid-token';
+    component.form.setValue({ name: 'name', email: 'email@example.com', password: 'ValidPassword' });
+
+    mockMediaService.generateUploadUrl.and.returnValue(of({} as UploadResponse));
+    mockMediaService.uploadFile.and.returnValue(Promise.resolve());
+
+    spyOn(component, 'closeModal');
+    spyOn(component, 'openLoginModal');
+
+    await component.submit();
+
+    tick(3500);
+
+    expect(component.closeModal).toHaveBeenCalled();
+    expect(component.openLoginModal).toHaveBeenCalled();
+  }));
 });
