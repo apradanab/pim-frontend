@@ -67,12 +67,12 @@ describe('BookingModalComponent', () => {
   });
 
   it('should emit close when Cancel button is clicked', () => {
-    spyOn(component.close, 'emit');
+    spyOn(component.modalClosed, 'emit');
 
     const cancelButton = fixture.nativeElement.querySelector('.cancel-button');
     cancelButton.click();
 
-    expect(component.close.emit).toHaveBeenCalled();
+    expect(component.modalClosed.emit).toHaveBeenCalled();
   });
 
   it('should request appointment and emit bookingCompleted when Confirm button is clicked', () => {

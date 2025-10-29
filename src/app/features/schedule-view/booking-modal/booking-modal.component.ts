@@ -103,7 +103,7 @@ export class BookingModalComponent {
   appointment = input.required<Appointment>();
   therapy = input.required<Therapy | undefined>();
 
-  close = output<void>();
+  modalClosed = output<void>();
   bookingCompleted = output<void>();
 
   onConfirm() {
@@ -116,6 +116,6 @@ export class BookingModalComponent {
   }
 
   onClose() {
-    this.close.emit();
+    this.modalClosed.emit();
   }
 }

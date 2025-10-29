@@ -7,11 +7,13 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { Therapy } from '../../../models/therapy.model';
 import { TherapiesStateService } from '../../../core/services/states/therapies.state.service';
+import { AuthStateService } from '../../../core/services/states/auth.state.service';
+import { BookingModalComponent } from "../booking-modal/booking-modal.component";
 
 @Component({
   selector: 'pim-schedule-grid',
   standalone: true,
-  imports: [ScheduleCellComponent, FontAwesomeModule],
+  imports: [ScheduleCellComponent, FontAwesomeModule, BookingModalComponent],
   template: `
     <div class="schedule">
       <div class="grid">
@@ -47,6 +49,16 @@ import { TherapiesStateService } from '../../../core/services/states/therapies.s
         }
       </div>
     </div>
+
+    @if (isModalOpen() && selectedAppointment(); as appointment) {
+      <pim-booking-modal
+      [appointment]="appointment"
+      [therapy]="selectedTherapy()"
+      (modalClosed)="onCloseModal()"
+      (bookingCompleted)="onCloseModal()"
+      >
+      </pim-booking-modal>
+    }
   `,
   styles: `
     .schedule {
@@ -128,14 +140,19 @@ import { TherapiesStateService } from '../../../core/services/states/therapies.s
   `
 })
 export class ScheduleGridComponent {
-  private readonly appointmentService = inject(AppointmentsStateService);
+  private readonly aptsService = inject(AppointmentsStateService);
+  private readonly authService = inject(AuthStateService);
   protected readonly logicService = inject(DateTimeService);
   protected readonly therapyService = inject(TherapiesStateService);
+
+  isModalOpen = signal(false);
+  selectedAppointment = signal<Appointment | null>(null);
+  selectedTherapy = signal<Therapy | undefined>(undefined);
 
   faClock = faClock;
   hoveredAppointmentId = signal<string | null>(null);
 
-  availableAppointments = computed(() => this.appointmentService.appointmentsState().availableAppointments);
+  availableAppointments = computed(() => this.aptsService.appointmentsState().availableAppointments);
 
   therapiesMap = computed<Record<string, Therapy>>(() => {
     const therapies: Therapy[] = this.therapyService.therapiesState().list;
@@ -150,7 +167,7 @@ export class ScheduleGridComponent {
     effect(() => {
       const weekDays = this.logicService.weekDays();
       if (weekDays.length > 0) {
-        this.appointmentService.loadAllAppointments();
+        this.aptsService.loadAllAppointments();
         this.therapyService.listTherapies();
         console.log('Appointments loaded:', weekDays);
       }
@@ -168,12 +185,28 @@ export class ScheduleGridComponent {
   onCellClick(event: { dateIso: string; time: string; appointment?: Appointment; status: string }) {
     const { appointment, status } = event;
 
-    if (status === 'available' || status === 'empty') {
-      if (appointment?.appointmentId && appointment.therapyId) {
-        this.appointmentService.requestAppointment(appointment.therapyId, appointment.appointmentId);
-      }
-    } else {
-      console.log('Cell not available for booking:', status);
+    console.log('Event Status:', status);
+    console.log('Is Appointment?', !!appointment);
+    console.log('Is Logged In:', this.authService.isLoggedIn());
+
+    if (status !== 'available' || !appointment) {
+      console.log('Cita no disponible para reservar');
+      return;
     }
+
+    if (!this.authService.isLoggedIn()) {
+      return;
+    }
+
+    const therapy = this.therapiesMap()[appointment.therapyId];
+    this.selectedAppointment.set(appointment);
+    this.selectedTherapy.set(therapy);
+    this.isModalOpen.set(true);
+  }
+
+  onCloseModal() {
+    this.isModalOpen.set(false);
+    this.selectedAppointment.set(null);
+    this.selectedTherapy.set(undefined);
   }
 }
