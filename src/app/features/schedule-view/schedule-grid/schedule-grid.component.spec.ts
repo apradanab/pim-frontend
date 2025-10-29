@@ -6,6 +6,7 @@ import { TherapiesStateService } from '../../../core/services/states/therapies.s
 import { Appointment, AppointmentStatus } from '../../../models/appointment.model';
 import { Therapy } from '../../../models/therapy.model';
 import { signal } from '@angular/core';
+import { AuthStateService } from '../../../core/services/states/auth.state.service';
 
 const mockAppointments: Appointment[] = [
   {
@@ -59,10 +60,17 @@ class MockTherapiesStateService {
   listTherapies = jasmine.createSpy('listTherapies');
 }
 
+class MockAuthStateService {
+  isLoggedIn = jasmine.createSpy('isLoggedIn').and.returnValue(true);
+}
+
 describe('ScheduleGridComponent', () => {
   let component: ScheduleGridComponent;
   let fixture: ComponentFixture<ScheduleGridComponent>;
   let mockAppointmentsStateService: MockAppointmentsStateService;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let mockTherapiesStateService: MockTherapiesStateService;
+  let mockAuthService: MockAuthStateService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -71,6 +79,7 @@ describe('ScheduleGridComponent', () => {
         { provide: AppointmentsStateService, useClass: MockAppointmentsStateService },
         { provide: DateTimeService, useClass: MockScheduleLogicService },
         { provide: TherapiesStateService, useClass: MockTherapiesStateService },
+        { provide: AuthStateService, useClass: MockAuthStateService },
       ]
     }).compileComponents();
 
@@ -78,6 +87,8 @@ describe('ScheduleGridComponent', () => {
     component = fixture.componentInstance;
 
     mockAppointmentsStateService = TestBed.inject(AppointmentsStateService) as unknown as MockAppointmentsStateService;
+    mockTherapiesStateService = TestBed.inject(TherapiesStateService) as unknown as MockTherapiesStateService;
+    mockAuthService = TestBed.inject(AuthStateService) as unknown as MockAuthStateService;
 
     fixture.detectChanges();
   });
@@ -108,20 +119,21 @@ describe('ScheduleGridComponent', () => {
   });
 
   describe('onCellClick', () => {
-    it('should request appointment for available status', () => {
-      const availableEvent = {
-        dateIso: '2025-10-20',
-        time: '10:00',
-        status: 'available',
-        appointment: mockAppointments[0]
-      };
+    const availableEvent = {
+      dateIso: '2025-10-20',
+      time: '10:00',
+      status: 'available',
+      appointment: mockAppointments[0]
+    };
 
+    it('should request appointment for available status', () => {
+      mockAuthService.isLoggedIn.and.returnValue(true);
       component.onCellClick(availableEvent);
 
-      expect(mockAppointmentsStateService.requestAppointment).toHaveBeenCalledWith(
-        't1',
-        'a1'
-      );
+      expect(mockAppointmentsStateService.requestAppointment).not.toHaveBeenCalled();
+      expect(component.isModalOpen()).toBeTrue();
+      expect(component.selectedAppointment()).toEqual(availableEvent.appointment);
+      expect(component.selectedTherapy()!.therapyId).toBe(availableEvent.appointment.therapyId);
     });
 
     it('should not request appointment for other statuses', () => {
@@ -135,6 +147,30 @@ describe('ScheduleGridComponent', () => {
       component.onCellClick(bookedEvent);
 
       expect(mockAppointmentsStateService.requestAppointment).not.toHaveBeenCalled();
+      expect(component.isModalOpen()).toBeFalse();
     });
+
+    it('should not open the modal if user is not logged in', () => {
+      mockAuthService.isLoggedIn.and.returnValue(false);
+      component.onCellClick(availableEvent);
+
+      expect(component.isModalOpen()).toBeFalse();
+      expect(component.selectedAppointment()).toBeNull();
+      expect(component.selectedTherapy()).toBeUndefined();
+    })
   });
+
+  describe('onCloseModal', () => {
+    it('should close the modal and reset selected signals', () => {
+      component.isModalOpen.set(true);
+      component.selectedAppointment.set(mockAppointments[0]);
+      component.selectedTherapy.set(mockTherapies[0]);
+
+      component.onCloseModal();
+
+      expect(component.isModalOpen()).toBeFalse();
+      expect(component.selectedAppointment()).toBeNull();
+      expect(component.selectedTherapy()).toBeUndefined();
+    })
+  })
 });
