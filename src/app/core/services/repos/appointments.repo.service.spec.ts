@@ -58,15 +58,16 @@ describe('AppointmentsRepoService', () => {
   it('should request an appointment', () => {
     const therapyId = 't1';
     const appointmentId = '1';
+    const notes = 'note';
     const mockResponse = { message: 'Appointment requested successfully' };
 
-    service.requestAppointment(therapyId, appointmentId).subscribe((response) => {
+    service.requestAppointment(therapyId, appointmentId, notes).subscribe((response) => {
       expect(response).toEqual(mockResponse);
     });
 
     const req = httpMock.expectOne(`${apiUrl}/therapies/${therapyId}/appointments/${appointmentId}/actions/request`);
     expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual({});
+    expect(req.request.body).toEqual({ notes });
     req.flush(mockResponse);
   });
 

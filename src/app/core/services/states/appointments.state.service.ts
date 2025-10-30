@@ -52,8 +52,8 @@ export class AppointmentsStateService {
     if (userId) this.loadUserAppointments(userId);
   }
 
-  requestAppointment = (therapyId: string, appointmentId: string) => {
-    return this.appointmentsRepo.requestAppointment(therapyId, appointmentId).subscribe({
+  requestAppointment = (therapyId: string, appointmentId: string, notes?: string) => {
+    return this.appointmentsRepo.requestAppointment(therapyId, appointmentId, notes).subscribe({
       next: () => this.reloadUserAppointments(),
       error: (err: ApiError) => console.error('Error requesting appointment:', err)
     });

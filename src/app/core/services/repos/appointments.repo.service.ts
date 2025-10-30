@@ -20,10 +20,11 @@ export class AppointmentsRepoService {
     return this.http.get<Appointment[]>(url);
   }
 
-  requestAppointment(therapyId: string, appointmentId: string): Observable<{ message: string }> {
+  requestAppointment(therapyId: string, appointmentId: string, notes?: string): Observable<{ message: string }> {
+    const body = { notes };
     return this.http.post<{ message: string }>(
       `${this.apiUrl}/therapies/${therapyId}/appointments/${appointmentId}/actions/request`,
-      {}
+      body
     );
   }
 
