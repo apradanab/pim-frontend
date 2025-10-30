@@ -66,11 +66,11 @@ describe('BookingModalComponent', () => {
     expect(mockDateTimeService.formatDisplayDate).toHaveBeenCalledWith(mockAppointment.date);
   });
 
-  it('should emit close when Cancel button is clicked', () => {
+  it('should emit close when close button is clicked', () => {
     spyOn(component.modalClosed, 'emit');
 
-    const cancelButton = fixture.nativeElement.querySelector('.cancel-button');
-    cancelButton.click();
+    const closeButton = fixture.nativeElement.querySelector('.close-button');
+    closeButton.click();
 
     expect(component.modalClosed.emit).toHaveBeenCalled();
   });
@@ -78,14 +78,37 @@ describe('BookingModalComponent', () => {
   it('should request appointment and emit bookingCompleted when Confirm button is clicked', () => {
     spyOn(component.bookingCompleted, 'emit');
 
+    component.note.set('');
+    fixture.detectChanges();
+
     const confirmButton = fixture.nativeElement.querySelector('.confirm-button');
     confirmButton.click();
 
     expect(mockAppointmentsService.requestAppointment).toHaveBeenCalledWith(
       mockAppointment.therapyId,
-      mockAppointment.appointmentId
+      mockAppointment.appointmentId,
+      undefined
     );
 
     expect(component.bookingCompleted.emit).toHaveBeenCalled();
   });
+
+  it('should request appointemnt with notes when note is entered', () => {
+    spyOn(component.bookingCompleted, 'emit');
+    const testNote = 'nota';
+
+    component.note.set(testNote);
+    fixture.detectChanges();
+
+    const confirmButton = fixture.nativeElement.querySelector('.confirm-button');
+    confirmButton.click();
+
+    expect(mockAppointmentsService.requestAppointment).toHaveBeenCalledWith(
+      mockAppointment.therapyId,
+      mockAppointment.appointmentId,
+      testNote
+    );
+
+    expect(component.bookingCompleted.emit).toHaveBeenCalled();
+  })
 });

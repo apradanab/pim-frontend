@@ -32,9 +32,9 @@ import { ApiError } from '../../../core/interceptors/error.interceptor';
                 tabindex="0">
           <fa-icon [icon]="faTimes"></fa-icon>
         </button>
-
-        <h2 id="contact-modal-title" class="modal-title">Solicita información</h2>
-
+        <div class="modal-header">
+          <h2 id="contact-modal-title" class="modal-title">Solicita información</h2>
+        </div>
         <form class="contact-form"
               [formGroup]="contactForm"
               (ngSubmit)="onSubmit()">
@@ -120,6 +120,18 @@ Tienes derecho a acceder, rectificar y suprimir tus datos, así como otros derec
       max-height: 90vh;
       overflow-y: auto;
       position: relative;
+    }
+
+    .modal-header {
+      margin-left: -2rem;
+      margin-right: -2rem;
+      margin-bottom: 1.5rem;
+      margin-top: -2rem;
+      padding-top: 2rem;
+      border-radius: 1rem 1rem 0 0;
+      background-color: #ebece9;
+      border-bottom: 1px solid #b3b3b3;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
 
     .close-button {

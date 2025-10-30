@@ -16,13 +16,16 @@ import { lastValueFrom } from 'rxjs';
     @if (showModal()) {
       <div class="modal">
         <div class="modal-box">
-          <button class="close-btn" (click)="closeModal()">
-            <fa-icon [icon]="faTimes" />
-          </button>
+
 
           @if (!success()) {
             <form [formGroup]="form" (ngSubmit)="submit()">
-              <h2>Completa tu registro</h2>
+              <div class="modal-header">
+                <h2>Completa tu registro</h2>
+                <button class="close-btn" (click)="closeModal()">
+                  <fa-icon [icon]="faTimes" />
+                </button>
+              </div>
 
               <div class="form-group">
                 <label for="name">Nombre completo</label>
@@ -56,8 +59,14 @@ import { lastValueFrom } from 'rxjs';
               <button type="submit" [disabled]="form.invalid" class="submit-btn">Enviar</button>
             </form>
           } @else {
+            <div class="modal-header-2">
+              <button class="close-btn" (click)="closeModal()">
+                <fa-icon [icon]="faTimes" />
+              </button>
+            </div>
+
             <div class="success">
-              <fa-icon [icon]="faCircleCheck" />
+              <fa-icon class="success-icon" [icon]="faCircleCheck" />
               <h3>¡Registro completado!</h3>
 
                 <div class="login-container">
@@ -97,6 +106,18 @@ import { lastValueFrom } from 'rxjs';
       width: 90%;
       max-width: 400px;
       position: relative;
+    }
+
+    .modal-header {
+      margin-left: -2rem;
+      margin-right: -2rem;
+      margin-bottom: 1.5rem;
+      margin-top: -2rem;
+      padding-top: 2rem;
+      border-radius: 1rem 1rem 0 0;
+      background-color: #ebece9;
+      border-bottom: 1px solid #b3b3b3;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
 
     .close-btn {
@@ -172,13 +193,24 @@ import { lastValueFrom } from 'rxjs';
 
     .success {
       text-align: center;
-      padding: 2rem 0;
+      padding: 1rem 0 0 0;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
-    .success fa-icon {
+    .modal-header-2 {
+      margin-left: -2rem;
+      margin-right: -2rem;
+      margin-top: -2rem;
+      padding: 1.6rem;
+      border-radius: 1rem 1rem 0 0;
+      background-color: #ebece9;
+      border-bottom: 1px solid #b3b3b3;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .success-icon {
       color: #e0f15e;
       font-size: 3rem;
       margin-bottom: 1rem;
