@@ -119,9 +119,10 @@ describe('AppointmentsStateService', () => {
   describe('requestAppointment', () => {
     it('should call repo and reload user appointments', () => {
       const reloadSpy = createReloadSpy();
+      const notes = 'nota';
       mockRepo.requestAppointment.and.returnValue(of(mockSuccessResponse));
-      service.requestAppointment(therapyId, appointmentId);
-      expect(mockRepo.requestAppointment).toHaveBeenCalledWith(therapyId, appointmentId);
+      service.requestAppointment(therapyId, appointmentId, notes);
+      expect(mockRepo.requestAppointment).toHaveBeenCalledWith(therapyId, appointmentId, notes);
       expect(reloadSpy).toHaveBeenCalledWith(userId);
     });
 
