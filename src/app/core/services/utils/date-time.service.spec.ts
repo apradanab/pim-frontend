@@ -76,7 +76,8 @@ describe('DateTimeService', () => {
     const dateString = '2025-10-25';
     const formattedDate = service.formatDisplayDate(dateString);
 
-    expect(formattedDate).toContain('25 de octubre de 2025');
+    expect(formattedDate).toBe('sábado, 25 octubre de 2025');
     expect(formattedDate).toContain('sábado');
+    expect(formattedDate).toContain('25 octubre de 2025');
   });
 });
