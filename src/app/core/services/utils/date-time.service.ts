@@ -98,11 +98,13 @@ export class DateTimeService {
 
   public formatDisplayDate(dateStr: string): string {
     const date = this.parseDateString(dateStr);
-    return date.toLocaleDateString('es-ES', {
+    const formatted = date.toLocaleDateString('es-ES', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
+
+    return formatted.replace(' de ', ' ').replace(',', ',');
   }
 }
