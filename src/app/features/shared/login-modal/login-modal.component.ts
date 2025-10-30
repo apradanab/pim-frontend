@@ -1,6 +1,5 @@
 import { Component, inject, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { AuthStateService } from '../../../core/services/states/auth.state.service';
@@ -8,7 +7,7 @@ import { AuthStateService } from '../../../core/services/states/auth.state.servi
 @Component({
   selector: 'pim-login-modal',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, FontAwesomeModule],
+  imports: [ReactiveFormsModule, FontAwesomeModule],
   template: `
     <div class="modal-overlay"
         (click)="closeModal()"
@@ -20,15 +19,16 @@ import { AuthStateService } from '../../../core/services/states/auth.state.servi
           role="dialog"
           aria-labelledby="login-modal-title"
           aria-modal="true">
-        <button class="close-button"
+        <div class="modal-header">
+          <h2 id="login-modal-title">Iniciar sesión</h2>
+          <button class="close-button"
                 (click)="closeModal()"
                 (keyup.enter)="closeModal()"
                 aria-label="Cerrar modal"
                 tabindex="0">
-          <fa-icon [icon]="faTimes"></fa-icon>
-        </button>
-
-        <h2 id="login-modal-title">Iniciar sesión</h2>
+            <fa-icon [icon]="faTimes"></fa-icon>
+          </button>
+        </div>
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
           <div class="form-group">
@@ -84,9 +84,21 @@ import { AuthStateService } from '../../../core/services/states/auth.state.servi
       position: relative;
     }
 
+    .modal-header {
+      margin-left: -2rem;
+      margin-right: -2rem;
+      margin-bottom: 1.5rem;
+      margin-top: -2rem;
+      padding-top: 2rem;
+      border-radius: 1rem 1rem 0 0;
+      background-color: #ebece9;
+      border-bottom: 1px solid #b3b3b3;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
     .close-button {
       position: absolute;
-      top: 1rem;
+      top: 0.7rem;
       right: 1rem;
       background: none;
       border: none;
