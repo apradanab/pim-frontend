@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { BookingModalComponent } from './booking-modal.component';
 import { AppointmentsStateService } from '../../../core/services/states/appointments.state.service';
 import { DateTimeService } from '../../../core/services/utils/date-time.service';
@@ -75,8 +75,9 @@ describe('BookingModalComponent', () => {
     expect(component.modalClosed.emit).toHaveBeenCalled();
   });
 
-  it('should request appointment and emit bookingCompleted when Confirm button is clicked', () => {
+  it('should request appointment and emit bookingCompleted when Confirm button is clicked', fakeAsync(() => {
     spyOn(component.bookingCompleted, 'emit');
+    spyOn(component.modalClosed, 'emit');
 
     component.note.set('');
     fixture.detectChanges();
@@ -90,11 +91,15 @@ describe('BookingModalComponent', () => {
       undefined
     );
 
-    expect(component.bookingCompleted.emit).toHaveBeenCalled();
-  });
+    tick(5000);
 
-  it('should request appointemnt with notes when note is entered', () => {
+    expect(component.bookingCompleted.emit).toHaveBeenCalled();
+    expect(component.modalClosed.emit).toHaveBeenCalled();
+  }));
+
+  it('should request appointemnt with notes when note is entered', fakeAsync(() => {
     spyOn(component.bookingCompleted, 'emit');
+    spyOn(component.modalClosed, 'emit');
     const testNote = 'nota';
 
     component.note.set(testNote);
@@ -109,6 +114,9 @@ describe('BookingModalComponent', () => {
       testNote
     );
 
+    tick(5000);
+
     expect(component.bookingCompleted.emit).toHaveBeenCalled();
-  })
+    expect(component.modalClosed.emit).toHaveBeenCalled();
+  }));
 });

@@ -5,7 +5,7 @@ import { Therapy } from '../../../models/therapy.model';
 import { AppointmentsStateService } from '../../../core/services/states/appointments.state.service';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCircleCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'pim-booking-modal',
@@ -14,36 +14,56 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
   template: `
   <div class="modal-overlay" (click)="onClose()" (keyup.enter)="onClose()" tabindex="0">
     <div class="modal-content" (click)="$event.stopPropagation()" (keyup.enter)="$event.stopPropagation()" tabindex="0">
-      <div class="modal-header">
-        <h2>Confirmar cita</h2>
-      </div>
 
-      <button class="close-button"
+      @if (!isSuccess()) {
+        <div class="modal-header">
+          <h2>Confirmar cita</h2>
+        </div>
+
+        <button class="close-button"
               (click)="onClose()"
               (keyup.enter)="onClose()"
               aria-label="Cerrar modal"
               tabindex="0">
-        <fa-icon [icon]="faTimes"></fa-icon>
-      </button>
+          <fa-icon [icon]="faTimes"></fa-icon>
+        </button>
 
-      @if (appointment() && therapy()) {
-        <div class="details">
-          <p class="therapy-name"> {{ therapy()!.title }} </p>
-          <div class="time-details">
-            <p> {{ dateTimeService.formatDisplayDate(appointment().date)}} </p>
-            <p> {{appointment().startTime}} - {{appointment().endTime}} </p>
+        @if (appointment() && therapy()) {
+          <div class="details">
+            <p class="therapy-name"> {{ therapy()!.title }} </p>
+            <div class="time-details">
+              <p> {{ dateTimeService.formatDisplayDate(appointment().date)}} </p>
+              <p> {{appointment().startTime}} - {{appointment().endTime}} </p>
+            </div>
+            <div class="note-field">
+              <label for="user-note"></label>
+              <textarea id="user-note"
+                        [(ngModel)]="note"
+                        rows="3"
+                        placeholder="Deja un mensaje">
+              </textarea>
+            </div>
           </div>
-          <div class="note-field">
-            <label for="user-note"></label>
-            <textarea id="user-note"
-                      [(ngModel)]="note"
-                      rows="3"
-                      placeholder="Deja un mensaje">
-            </textarea>
+        }
+          <button class="confirm-button" (click)="onConfirm()">Confirmar reserva</button>
+      } @else {
+        <div class="modal-header-2">
+          <button class="close-button"
+                (click)="onClose()"
+                (keyup.enter)="onClose()"
+                aria-label="Cerrar modal"
+                tabindex="0">
+            <fa-icon [icon]="faTimes"></fa-icon>
+          </button>
+        </div>
+        <div class="success-content">
+          <div class="success-icon">
+            <fa-icon [icon]="faCircleCheck"></fa-icon>
           </div>
+          <h3>¡Cita reservada con éxito!</h3>
+          <p>Te enviaremos un correo de confirmación pronto</p>
         </div>
       }
-        <button class="confirm-button" (click)="onConfirm()">Confirmar reserva</button>
     </div>
   </div>
   `,
@@ -153,13 +173,52 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
     color: white;
     border: none;
     border-radius: 2rem;
-    font-size: 1rem;
+    font-size: 0.9rem;
     cursor: pointer;
     transition: background-color 0.3s;
   }
 
   .confirm-button:hover {
     background-color: #e04a24;
+  }
+
+  .modal-header-2 {
+    margin-left: -1.85rem;
+    margin-right: -1.85rem;
+    margin-top: -2rem;
+    padding: 1.6rem;
+    border-radius: 1rem 1rem 0 0;
+    background-color: #ebece9;
+    border-bottom: 1px solid #b3b3b3;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .success-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 0;
+    margin-top: 1rem;
+  }
+
+  .success-icon {
+    color: #e0f15e;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .success-content h3 {
+    font-family: 'Caprasimo', cursive;
+    color: #2f2929;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+
+  .success-content p {
+    font-family: 'Carlito', sans-serif;
+    color: #878484;
+    font-size: 1rem;
   }
   `
 })
@@ -172,7 +231,11 @@ export class BookingModalComponent {
 
   modalClosed = output<void>();
   bookingCompleted = output<void>();
+
   note = signal<string>('');
+  isSuccess = signal<boolean>(false);
+
+  faCircleCheck = faCircleCheck;
   faTimes = faTimes;
 
   onConfirm() {
@@ -182,7 +245,12 @@ export class BookingModalComponent {
       this.note().trim() || undefined
     );
 
-    this.bookingCompleted.emit();
+    this.isSuccess.set(true);
+
+    setTimeout(() => {
+      this.bookingCompleted.emit();
+      this.modalClosed.emit();
+    }, 5000);
   }
 
   onClose() {
