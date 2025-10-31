@@ -34,7 +34,7 @@ jobs:
       - name: Check commit message length
         uses: gsactions/commit-message-checker@v1
         with:
-          pattern: '^[^#].{3,72}'
+          pattern: '^[^#].{10,72}'
           error: 'The commit message length must be between 10 and 72'
           excludeDescription: 'true' # optional: this excludes the description body of a pull request
           excludeTitle: 'true' # optional: this excludes the title of a pull request
