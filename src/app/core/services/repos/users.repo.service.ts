@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment.development';
 import { Observable } from 'rxjs';
-import { User, UserCreateDto, UserLoginDto } from '../../../models/user.model';
+import { UpdateUserInput, User, UserCreateDto, UserLoginDto } from '../../../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +24,7 @@ export class UsersRepoService {
     return this.http.get<User>(`${this.url}/${id}`);
   }
 
-  updateUser(id: string, data: FormData): Observable<User> {
+  updateUser(id: string, data: UpdateUserInput): Observable<User> {
     return this.http.patch<User>(`${this.url}/${id}`, data);
   }
 

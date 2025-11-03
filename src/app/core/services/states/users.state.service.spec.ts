@@ -3,7 +3,7 @@ import { UsersStateService } from './users.state.service';
 import { UsersRepoService } from '../repos/users.repo.service';
 import { of, throwError } from 'rxjs';
 import { ApiError } from '../../interceptors/error.interceptor';
-import { User } from '../../../models/user.model';
+import { UpdateUserInput, User } from '../../../models/user.model';
 
 describe('UsersStateService', () => {
   let service: UsersStateService;
@@ -18,6 +18,11 @@ describe('UsersStateService', () => {
     approved: true
   };
 
+  const mockUpdateInput: UpdateUserInput = {
+    name: 'Updated name',
+    email: 'updated@example.com'
+  }
+
   beforeEach(() => {
     mockRepo = jasmine.createSpyObj('UsersRepoService', [
       'completeRegistration', 'updateUser', 'getById'
@@ -31,6 +36,7 @@ describe('UsersStateService', () => {
     });
 
     service = TestBed.inject(UsersStateService);
+    service.setCurrentUser(mockUser);
 
     spyOn(console, 'error');
   });
@@ -69,9 +75,10 @@ describe('UsersStateService', () => {
       const updatedUser: User = { ...mockUser, name: 'Updated User' };
       mockRepo.updateUser.and.returnValue(of(updatedUser));
 
-      service.updateUserProfile('123', new FormData());
+      service.updateUserProfile('123', mockUpdateInput);
       tick();
 
+      expect(mockRepo.updateUser).toHaveBeenCalledWith('123', mockUpdateInput);
       const state = service.usersState();
       expect(state.currentUser).toEqual(updatedUser);
       expect(state.error).toBeNull();
@@ -81,12 +88,13 @@ describe('UsersStateService', () => {
       const error: ApiError = { status: 500, message: 'Server Error' };
       mockRepo.updateUser.and.returnValue(throwError(() => error));
 
-      service.updateUserProfile('123', new FormData());
+      service.updateUserProfile('123', mockUpdateInput).catch(() => {});
       tick();
 
       expect(console.error).toHaveBeenCalledWith('Error updating profile:', 'Server Error');
 
       const state = service.usersState();
+      expect(state.currentUser).toEqual(mockUser);
       expect(state.error).toBe(null);
     }));
 
