@@ -20,6 +20,14 @@ export type User = {
   createdAt?: string;
 };
 
+export type UpdateUserInput = {
+  name?: string;
+  email?: string;
+  password?: string;
+  currentPassword?: string;
+  avatarKey?: string;
+}
+
 export type UserCreateDto = {
   name: string;
   email: string;
