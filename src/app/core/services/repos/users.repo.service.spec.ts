@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { UsersRepoService } from './users.repo.service';
-import { User, UserCreateDto, UserLoginDto } from '../../../models/user.model';
+import { UpdateUserInput, User, UserCreateDto, UserLoginDto } from '../../../models/user.model';
 import { provideHttpClient } from '@angular/common/http';
 
 describe('UsersRepoService', () => {
@@ -76,17 +76,19 @@ describe('UsersRepoService', () => {
 
   it('should call updateUser', () => {
     const mockId = '123';
-    const mockFormData = new FormData();
-    mockFormData.append('name', 'Updated Name');
+    const mockUpdateData: UpdateUserInput = {
+      name: 'Updated Name',
+      email: 'updated@test.com'
+    };
     const mockResponse = {} as User;
 
-    service.updateUser(mockId, mockFormData).subscribe((response) => {
+    service.updateUser(mockId, mockUpdateData).subscribe((response) => {
       expect(response).toEqual(mockResponse);
     });
 
     const req = http.expectOne(`${service['url']}/${mockId}`);
     expect(req.request.method).toBe('PATCH');
-    expect(req.request.body).toBe(mockFormData);
+    expect(req.request.body).toBe(mockUpdateData);
     req.flush(mockResponse);
   });
 
