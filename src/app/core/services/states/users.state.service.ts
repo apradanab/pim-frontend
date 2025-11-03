@@ -2,7 +2,8 @@ import { Injectable, inject, signal } from '@angular/core';
 import { UsersRepoService } from '../repos/users.repo.service';
 import { ApiError } from '../../interceptors/error.interceptor';
 import { UserState } from '../../../models/state.model';
-import { User } from '../../../models/user.model';
+import { UpdateUserInput, User } from '../../../models/user.model';
+import { catchError, lastValueFrom, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -42,18 +43,20 @@ export class UsersStateService {
     });
   }
 
-  updateUserProfile = (userId: string, formData: FormData) => {
-    return this.usersRepo.updateUser(userId, formData).subscribe({
-      next: (updatedUser) => {
-        console.log('Profile updated successfully');
-        this.#state.update(state => ({
-          ...state,
-          currentUser: updatedUser
-        }));
-      },
-      error: (err: ApiError) => {
-        console.error('Error updating profile:', err.message);
-      }
-    });
+  updateUserProfile = (userId: string, data: UpdateUserInput): Promise<User> => {
+    return lastValueFrom(
+      this.usersRepo.updateUser(userId, data).pipe(
+        tap((updatedUser) => {
+          this.#state.update(state => ({
+            ...state,
+            currentUser: updatedUser
+          }));
+        }),
+        catchError((err: ApiError) => {
+          console.error('Error updating profile:', err.message);
+          throw err;
+        })
+      )
+    );
   }
 }
