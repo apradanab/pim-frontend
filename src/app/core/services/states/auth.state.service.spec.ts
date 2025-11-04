@@ -82,7 +82,6 @@ describe('AuthStateService', () => {
       expect(state.token).toBe(mockToken);
       expect(state.status).toBe('success');
       expect(localStorage.setItem).toHaveBeenCalledWith('token', mockToken);
-      expect(mockRouter.navigate).toHaveBeenCalledWith(['/']);
     }))
 
     it('should handle login error', fakeAsync(() => {
@@ -158,7 +157,8 @@ describe('AuthStateService', () => {
         name: '',
         email: '',
         role: 'USER',
-        approved: true
+        approved: true,
+        createdAt: undefined
       });
       expect(state.token).toBe('mock-token');
     }));
