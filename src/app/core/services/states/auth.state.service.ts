@@ -81,7 +81,6 @@ export class AuthStateService {
     this.usersState.setCurrentUser(fullUser);
 
     localStorage.setItem('token', token);
-    this.router.navigate(['/']);
   }
 
   readonly #validateToken = (token: string) => {
@@ -95,6 +94,7 @@ export class AuthStateService {
         email: payload.email || '',
         role: payload.role || 'USER',
         approved: payload.approved ?? true,
+        createdAt: payload.createdAt,
       }
 
       this.#authState.set({
