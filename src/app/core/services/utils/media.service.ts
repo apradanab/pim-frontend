@@ -18,7 +18,7 @@ export class MediaService {
   private readonly cdnUrl = environment.cdnUrl;
   private readonly mediaApiKey = environment.mediaApiKey;
 
-  private readonly allowedTypes = ['image/jpeg','image/jpg','image/png','image/webp'];
+  private readonly allowedTypes = ['image/jpeg','image/jpg','image/png','image/webp','image/svg'];
 
   generateUploadUrl(
     type: 'therapy' | 'advice' | 'avatar',
@@ -33,8 +33,7 @@ export class MediaService {
       'x-api-key': this.mediaApiKey,
     };
 
-    return this.http.put<UploadResponse>( `${this.apiUrl}/media/${type}/${id}`, {}, { params: { contentType }, headers: headers })
-    ;
+    return this.http.put<UploadResponse>( `${this.apiUrl}/media/${type}/${id}`, {}, { params: { contentType }, headers: headers });
   }
 
   async uploadFile(uploadUrl: string, file: File): Promise<void> {
