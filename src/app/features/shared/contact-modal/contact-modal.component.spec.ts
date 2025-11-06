@@ -6,6 +6,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { of, throwError } from 'rxjs';
 import { User } from '../../../models/user.model';
 import { ApiError } from '../../../core/interceptors/error.interceptor';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('ContactModalComponent', () => {
   let component: ContactModalComponent;
@@ -22,10 +24,12 @@ describe('ContactModalComponent', () => {
       imports: [
         ContactModalComponent,
         ReactiveFormsModule,
-        FontAwesomeModule
+        FontAwesomeModule,
       ],
       providers: [
-        { provide: UsersRepoService, useValue: usersRepoMock }
+        { provide: UsersRepoService, useValue: usersRepoMock },
+        provideHttpClient(),
+        provideHttpClientTesting(),
       ]
     }).compileComponents();
 
@@ -103,7 +107,7 @@ describe('ContactModalComponent', () => {
     component.showPrivacyPolicy(new Event('click'));
     expect(component.showPrivacy).toBeTrue();
 
-    component.hidePrivacyPolicy();
+    component.closePrivacyModal();
     expect(component.showPrivacy).toBeFalse();
   });
 });
