@@ -6,6 +6,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { UserCreateDto } from '../../../models/user.model';
 import { ApiError } from '../../../core/interceptors/error.interceptor';
+import { ImageService } from '../../../core/services/utils/image.service';
 
 @Component({
   selector: 'pim-contact-modal',
@@ -71,7 +72,7 @@ import { ApiError } from '../../../core/interceptors/error.interceptor';
                   formControlName="privacyPolicy"
                   aria-required="true">
             <label for="privacyPolicy">
-              He leído y acepto la <a href="#" (click)="showPrivacyPolicy($event)">Política de Privacidad</a>
+              He leído y acepto la <a href="#" (click)="showPrivacyPolicy($event)">política de privacidad</a>
             </label>
           </div>
 
@@ -87,12 +88,22 @@ import { ApiError } from '../../../core/interceptors/error.interceptor';
     @if (showPrivacy) {
       <div class="privacy-policy-modal">
         <div class="privacy-content">
-          <h3>Política de Privacidad</h3>
-          <div class="privacy-text">
-            <p>De acuerdo con el Reglamento (UE) 2016/679 (RGPD), te informamos de que los datos personales que proporciones en este formulario serán tratados con la finalidad de gestionar tu solicitud de información. No se cederán a terceros y se conservarán únicamente el tiempo necesario para dicha gestión.
-Tienes derecho a acceder, rectificar y suprimir tus datos, así como otros derechos, escribiendo a:</p>
+
+          <div class="modal-header">
+            <button class="close-button"
+                  (click)="closePrivacyModal()"
+                  (keyup.enter)="closePrivacyModal()"
+                  aria-label="Cerrar modal"
+                  tabindex="0">
+              <fa-icon [icon]="faTimes"></fa-icon>
+            </button>
+              <h3 id="contact-modal-title" class="modal-title">Política de privacidad</h3>
           </div>
-          <button (click)="hidePrivacyPolicy()" class="close-privacy">Cerrar</button>
+            <div class="privacy-text">
+              <p>De acuerdo con el Reglamento (UE) 2016/679 (RGPD), te informamos de que los datos personales que proporciones en este formulario serán tratados con la finalidad de gestionar tu solicitud de información. No se cederán a terceros y se conservarán únicamente el tiempo necesario para dicha gestión.
+              Tienes derecho a acceder, rectificar y suprimir tus datos, así como otros derechos, escribiendo a:</p>
+            </div>
+            <img [src]="imageService.icons.logoInline" alt="Logo">
         </div>
       </div>
     }
@@ -249,7 +260,7 @@ Tienes derecho a acceder, rectificar y suprimir tus datos, así como otros derec
 
     .privacy-text {
       font-family: 'Carlito', sans-serif;
-      margin-bottom: 1.5rem;
+      margin-bottom: 0.5rem;
       line-height: 1.6;
     }
 
@@ -261,6 +272,19 @@ Tienes derecho a acceder, rectificar y suprimir tus datos, así como otros derec
       border-radius: 2rem;
       font-family: 'Carlito', sans-serif;
       cursor: pointer;
+    }
+
+    .privacy-content button {
+      top: 19.5rem;
+      right: 26.5rem;
+      width: 30px;
+    }
+
+    .privacy-content img {
+      width: 70px;
+      position: relative;
+      left: 29rem;
+      top: 1rem;
     }
 
     @media (max-width: 768px) {
@@ -275,13 +299,14 @@ Tienes derecho a acceder, rectificar y suprimir tus datos, así como otros derec
   `
 })
 export class ContactModalComponent {
-  modalClosed = output<void>();
   private readonly fb = inject(FormBuilder);
   private readonly usersRepo = inject(UsersRepoService);
+  readonly imageService = inject(ImageService);
 
   error: ApiError | null = null;
   faTimes = faTimes;
   showPrivacy = false;
+  modalClosed = output<void>();
 
   contactForm = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
@@ -311,7 +336,7 @@ export class ContactModalComponent {
     this.showPrivacy = true;
   }
 
-  hidePrivacyPolicy() {
+  closePrivacyModal() {
     this.showPrivacy = false;
   }
 }
