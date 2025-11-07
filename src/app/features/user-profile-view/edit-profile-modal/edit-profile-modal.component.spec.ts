@@ -169,30 +169,30 @@ describe('EditProfileModalComponent', () => {
   });
 
   it('should handle file change, set file, and update previewUrl', fakeAsync(() => {
-  const testFile = new File(['file content'], 'test.png', { type: 'image/png' });
-  const mockEvent = {
-  target: {
-    files: [testFile],
-    length: 1
-  }
-  } as unknown as Event;
+    const testFile = new File(['file content'], 'test.png', { type: 'image/png' });
+    const mockEvent = {
+    target: {
+      files: [testFile],
+      length: 1
+    }
+    } as unknown as Event;
 
-  const readerResult = 'data:image/png;base64,mocked';
+    const readerResult = 'data:image/png;base64,mocked';
 
-  Object.defineProperty(mockFileReader, 'result', {
-    writable: true,
-    value: readerResult
-  });
+    Object.defineProperty(mockFileReader, 'result', {
+      writable: true,
+      value: readerResult
+    });
 
-  component.handleFileChange(mockEvent);
+    component.handleFileChange(mockEvent);
 
-  expect(component.file).toBe(testFile);
-  expect(mockFileReader.readAsDataURL).toHaveBeenCalledWith(testFile);
+    expect(component.file).toBe(testFile);
+    expect(mockFileReader.readAsDataURL).toHaveBeenCalledWith(testFile);
 
-  const loadEvent = { target: mockFileReader } as { target: FileReader };
-  (mockFileReader.onload as jasmine.Spy).call(mockFileReader, loadEvent);
-  tick();
+    const loadEvent = { target: mockFileReader } as { target: FileReader };
+    (mockFileReader.onload as jasmine.Spy).call(mockFileReader, loadEvent);
+    tick();
 
-  expect(component.previewUrl()).toBe(readerResult);
- }));
+    expect(component.previewUrl()).toBe(readerResult);
+  }));
 });
