@@ -38,3 +38,7 @@ export enum AppointmentStatus {
   CANCELLED = 'CANCELLED',
   AVAILABLE = 'AVAILABLE'
 }
+
+export interface CancellationDetails {
+  notes: string;
+}
