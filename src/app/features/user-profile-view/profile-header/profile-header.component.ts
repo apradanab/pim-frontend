@@ -216,7 +216,7 @@ export class ProfileHeaderComponent {
   formattedCreationDate = computed(() => {
     const user = this.currentUser();
 
-    if (user && user.createdAt) {
+    if (user?.createdAt) {
       const fullDateString = this.dateTimeService.formatDisplayDate(user.createdAt.split('T')[0]);
       const parts = fullDateString.split(' ');
 

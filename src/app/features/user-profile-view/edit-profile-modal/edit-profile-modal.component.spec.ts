@@ -30,12 +30,10 @@ describe('EditProfileModalComponent', () => {
   let usersState: MockUsersStateService;
   let mediaService: MockMediaService;
   let mockFileReader: jasmine.SpyObj<FileReader>;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let FileReaderSpy: jasmine.Spy;
 
   beforeEach(async () => {
     mockFileReader = jasmine.createSpyObj('FileReader', ['readAsDataURL', 'onload']);
-    FileReaderSpy = spyOn(window, 'FileReader' as keyof Window).and.returnValue(mockFileReader);
+    spyOn(window, 'FileReader' as keyof Window).and.returnValue(mockFileReader);
 
     await TestBed.configureTestingModule({
       imports: [ReactiveFormsModule, EditProfileModalComponent],
