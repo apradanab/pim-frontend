@@ -71,7 +71,7 @@ describe('CancellationModalComponent', () => {
   });
 
   it('should emit close event and reset form when closing modal', () => {
-    const emitSpy = spyOn(component.close, 'emit');
+    const emitSpy = spyOn(component.modalClose, 'emit');
     component.showPolicy = true;
 
     component.closeModal();

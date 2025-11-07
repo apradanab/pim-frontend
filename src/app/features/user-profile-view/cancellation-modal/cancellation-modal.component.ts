@@ -294,7 +294,7 @@ export class CancellationModalComponent {
   readonly imageService = inject(ImageService);
 
   confirm = output<CancellationDetails>();
-  close = output<void>();
+  modalClose = output<void>();
 
   faTimes = faTimes;
   showPolicy = false;
@@ -327,7 +327,7 @@ export class CancellationModalComponent {
   }
 
   closeModal () {
-    this.close.emit();
+    this.modalClose.emit();
     this.cancellationForm.reset({
       notes: '',
       cancellationPolicy: false
