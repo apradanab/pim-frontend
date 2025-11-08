@@ -71,7 +71,7 @@ import { faCalendarDays } from '@fortawesome/free-regular-svg-icons';
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .navigation button:hover:not(.disabled) {
+  .navigation button:active:not(.disabled) {
     background: #ddd;
   }
 

@@ -101,15 +101,16 @@ import { BookingModalComponent } from "../booking-modal/booking-modal.component"
     }
 
     .time-header {
-      border-right: 3px solid #ddd;
-      border-bottom: 3px solid #ddd;
+      border-right: 3px solid #9f9f9ad1;
+      border-bottom: 3px solid #9f9f9ad1;
       display: flex;
       align-items: center;
       justify-content: space-around;
+      background-color: #676762d1;
     }
 
     fa-icon {
-      color: #676762ff;
+      color: #f5f5f5;
     }
 
     .row {

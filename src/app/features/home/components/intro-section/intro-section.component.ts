@@ -30,9 +30,9 @@ import { ContactModalComponent } from "../../../shared/contact-modal/contact-mod
     position: relative;
     text-align: center;
     padding: 60px 40px;
-    background: #fcfcf9;
     display: flex;
     justify-content: center;
+    background-color: #fcfcf9;
   }
 
   .grid-background {
@@ -61,7 +61,7 @@ import { ContactModalComponent } from "../../../shared/contact-modal/contact-mod
   .intro-section h1 {
     font-family: 'Caprasimo', cursive;
     font-weight: normal;
-    font-size: 4.8rem;
+    font-size: 4.6rem;
     position: relative;
     bottom: 20px;
   }
@@ -96,7 +96,8 @@ import { ContactModalComponent } from "../../../shared/contact-modal/contact-mod
     cursor: pointer;
     transition: all 0.2s ease;
     position: relative;
-    top: 10px;
+    top: 16px;
+    z-index: 1;
   }
 
   .intro-section button:active {

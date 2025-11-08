@@ -50,9 +50,11 @@ import { AppointmentsPaginatorComponent } from "../appointments-paginator/appoin
     @if (showCancellationModal()) {
       <pim-cancellation-modal
         (confirm)="handleCancellationConfirm($event)"
-        (close)="closeCancellationModal()"
+        (modalClose)="closeCancellationModal()"
       />
     }
+
+    <div class="footer"></div>
   </div>
   `,
   styles: `
@@ -79,13 +81,21 @@ import { AppointmentsPaginatorComponent } from "../appointments-paginator/appoin
     box-shadow:
       8px 0 15px -10px rgba(0, 0, 0, 0.2),
       -8px 0 15px -10px rgba(0, 0, 0, 0.2);
-    border-radius: 0 0 12px 12px;
     border-top: 4px solid #1bbdbf;
     gap: 1.5rem;
     padding: 2rem 3.45rem;
     display: flex;
     flex-wrap: wrap;
     min-height: 450px;
+  }
+
+  .footer {
+    height: 30px;
+    background-color: #1bbdbf;
+    border-radius: 0 0 12px 12px;
+    box-shadow:
+      8px 0 15px -10px rgba(0, 0, 0, 0.2),
+      -8px 0 15px -10px rgba(0, 0, 0, 0.2);
   }
   `
 })

@@ -69,7 +69,6 @@ import { AdvicesStateService } from '../../../core/services/states/advices.state
       width: 100%;
       padding: 2rem 8.4vw;
       padding-top: 65px;
-      background-color: #fcfcf9;
     }
 
     .grid-background {

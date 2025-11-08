@@ -15,6 +15,7 @@ import { TherapiesTabsComponent } from "./therapies-tabs/therapies-tabs.componen
     FooterComponent
   ],
   template: `
+  <div>
     <pim-header></pim-header>
     <pim-therapies-tabs></pim-therapies-tabs>
     <pim-grid-section
@@ -25,8 +26,13 @@ import { TherapiesTabsComponent } from "./therapies-tabs/therapies-tabs.componen
     >
     </pim-grid-section>
     <pim-footer></pim-footer>
+  </div>
   `,
-  styles: ``
+  styles: `
+  div {
+    background-color: #fcfcf9;
+  }
+  `
 })
 export default class TherapiesViewComponent {
 
