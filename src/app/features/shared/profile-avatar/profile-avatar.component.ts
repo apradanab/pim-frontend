@@ -66,7 +66,10 @@ export class ProfileAvatarComponent {
 
   faUserCircle = faUserCircle;
 
-  currentUser = computed<User | null>(() => this.usersService.usersState().currentUser);
+  currentUser = computed<User | null>(() => {
+    const user = this.usersService.usersState().currentUser;
+    return user;
+  });
 
   navigateToProfile() {
     if (!this.isMenuButton()) {

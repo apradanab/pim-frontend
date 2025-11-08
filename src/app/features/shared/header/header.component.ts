@@ -110,6 +110,7 @@ import { ProfileAvatarComponent } from '../profile-avatar/profile-avatar.compone
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: relative;
     padding: 0 8.4vw;
     background-color: #ebece9;
     height: 90px;

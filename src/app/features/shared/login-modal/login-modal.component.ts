@@ -72,7 +72,7 @@ import { AuthStateService } from '../../../core/services/states/auth.state.servi
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 1000;
+      z-index: 10;
     }
 
     .modal-content {
@@ -159,6 +159,11 @@ import { AuthStateService } from '../../../core/services/states/auth.state.servi
     @media (max-width: 768px) {
       .modal-content {
         padding: 1.5rem;
+      }
+
+      .modal-header {
+        margin-left: -1.5rem;
+        margin-right: -1.5rem;
       }
     }
   `]
