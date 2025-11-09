@@ -48,4 +48,8 @@ export class AppointmentsRepoService {
       { notes }
     );
   }
+
+  deleteAppointment(therapyId: string, appointmenId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${therapyId}/${appointmenId}`);
+  }
 }
