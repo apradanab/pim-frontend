@@ -116,5 +116,18 @@ describe('AppointmentsRepoService', () => {
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({ notes });
     req.flush(mockResponse);
-  })
+  });
+
+  it('should delete an appointment', () => {
+    const therapyId = 't1';
+    const appointmentId = 'a1';
+
+    service.deleteAppointment(therapyId, appointmentId).subscribe((response) => {
+      expect(response).toBeNull();
+    });
+
+    const req = httpMock.expectOne(`${apiUrl}/${therapyId}/${appointmentId}`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null);
+  });
 });
