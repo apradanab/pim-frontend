@@ -5,7 +5,7 @@ import { DateTimeService } from '../../../core/services/utils/date-time.service'
 import { UsersStateService } from '../../../core/services/states/users.state.service';
 import { TherapiesStateService } from '../../../core/services/states/therapies.state.service';
 import { signal } from '@angular/core';
-import { AppointmentStatus } from '../../../models/appointment.model';
+import { Appointment, AppointmentStatus } from '../../../models/appointment.model';
 
 describe('AppointmentsListComponent', () => {
   let fixture: ComponentFixture<AppointmentsListComponent>;
@@ -48,7 +48,14 @@ describe('AppointmentsListComponent', () => {
     timeToMinutes: jasmine.createSpy('timeToMinutes').and.callFake((time: string) => {
       const [h, m] = time.split(':').map(Number);
       return h * 60 + m;
-    })
+    }),
+    sortAppointments: jasmine.createSpy('sortAppointments').and.callFake((appointments: Appointment[]) =>
+      [...appointments].sort((a, b) => {
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
+        return dateB - dateA;
+      })
+    )
   };
 
   beforeEach(async () => {
