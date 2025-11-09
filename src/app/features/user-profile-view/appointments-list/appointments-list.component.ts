@@ -126,16 +126,7 @@ export class AppointmentsListComponent {
       return [];
     }
 
-    return [...appointments].sort((a, b) => {
-      const dateA = this.dateTimeService.parseDateString(a.date);
-      const dateB = this.dateTimeService.parseDateString(b.date);
-
-      if (dateA.getTime() !== dateB.getTime()) {
-        return dateB.getTime() - dateA.getTime();
-      }
-
-      return this.dateTimeService.timeToMinutes(a.startTime) - this.dateTimeService.timeToMinutes(b.startTime);
-    });
+    return this.dateTimeService.sortAppointments(appointments);
   });
 
   paginatedAppointments = computed(() => {
