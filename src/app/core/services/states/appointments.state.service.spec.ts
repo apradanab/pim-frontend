@@ -32,7 +32,8 @@ describe('AppointmentsStateService', () => {
       'requestAppointment',
       'joinGroupAppointment',
       'leaveGroupAppointment',
-      'requestCancellation'
+      'requestCancellation',
+      'deleteAppointment'
     ]);
 
     mockUsersStateService = jasmine.createSpyObj('UsersStateService', ['loadCurrentUser'], {
@@ -187,4 +188,38 @@ describe('AppointmentsStateService', () => {
       expect(consoleSpy).toHaveBeenCalled();
     });
   });
+
+  describe('deleteAppointment', () => {
+    it('should call repo and remove the appointemnt by its ID from state on success', () => {
+      const initialAppointments: Appointment[] = [
+        { therapyId: 't1', appointmentId: appointmentId, date: '2025-11-08', startTime: '10:00', endTime: '11:00', status: AppointmentStatus.AVAILABLE, createdAt: '' },
+        { therapyId: 't1', appointmentId: 'other', date: '2025-11-09', startTime: '12:00', endTime: '13:00', status: AppointmentStatus.AVAILABLE, createdAt: '' }
+      ];
+
+      mockRepo.getAllAppointments.and.returnValue(of(initialAppointments));
+      service.loadAllAppointments();
+
+      mockRepo.getUserAppointments.and.returnValue(of(initialAppointments));
+      service.loadUserAppointments('1');
+
+      mockRepo.deleteAppointment.and.returnValue(of(void 0));
+      service.deleteAppointment(therapyId, appointmentId);
+
+      expect(mockRepo.deleteAppointment).toHaveBeenCalledWith(therapyId, appointmentId);
+
+      const state = service.appointmentsState();
+      expect(state.availableAppointments.find(a => a.appointmentId === appointmentId)).toBeUndefined();
+      expect(state.userAppointments.find(a => a.appointmentId === appointmentId)).toBeUndefined();
+    });
+
+    it('should handle error', () => {
+      const consoleSpy = spyOn(console, 'error');
+      mockRepo.deleteAppointment = jasmine.createSpy().and.returnValue(throwError(() => new Error('Delete failed')));
+
+      service.deleteAppointment(therapyId, appointmentId);
+
+      expect(mockRepo.deleteAppointment).toHaveBeenCalledWith(therapyId, appointmentId);
+      expect(consoleSpy).toHaveBeenCalledWith('Error deleting appointment', appointmentId, jasmine.any(Error));
+    });
+  })
 });
