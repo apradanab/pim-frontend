@@ -79,4 +79,21 @@ export class AppointmentsStateService {
       error: (err: ApiError) => console.error('Error requesting cancellation:', err)
     });
   }
+
+  deleteAppointment = (therapyId: string, appointmentId: string) => {
+  return this.appointmentsRepo.deleteAppointment(therapyId, appointmentId).subscribe({
+      next: () => this.#state.update(s => ({
+        ...s,
+        availableAppointments: s.availableAppointments.filter(
+          apt => apt.appointmentId !== appointmentId
+        ),
+        userAppointments: s.userAppointments.filter(
+          apt => apt.appointmentId !== appointmentId
+        )
+      })),
+      error: (err) => {
+        console.error('Error deleting appointment', appointmentId, err);
+      }
+    });
+  }
 }
