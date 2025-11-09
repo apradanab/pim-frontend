@@ -1,5 +1,6 @@
 import { computed, Injectable, signal } from '@angular/core';
 import { WeekDay } from '../../../models/schedule.model';
+import { Appointment } from '../../../models/appointment.model';
 
 @Injectable({
   providedIn: 'root'
@@ -106,5 +107,19 @@ export class DateTimeService {
     });
 
     return formatted.replace(' de ', ' ').replace(',', ',');
+  }
+
+  public sortAppointments(appointments: Appointment[]): Appointment[] {
+    return appointments.slice().sort((a: Appointment, b: Appointment) => {
+
+      const timeA = this.timeToMinutes(a.startTime);
+      const timeB = this.timeToMinutes(b.startTime);
+      const dateA = this.parseDateString(a.date).getTime();
+      const dateB = this.parseDateString(b.date).getTime();
+
+      if (dateB !== dateA) return dateB - dateA;
+
+      return timeA -timeB;
+    });
   }
 }

@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { DateTimeService } from './date-time.service';
+import { Appointment, AppointmentStatus } from '../../../models/appointment.model';
 
 describe('DateTimeService', () => {
   let service: DateTimeService;
@@ -80,4 +81,19 @@ describe('DateTimeService', () => {
     expect(formattedDate).toContain('sábado');
     expect(formattedDate).toContain('25 octubre de 2025');
   });
+
+  describe('sortAppointments', () => {
+    const mockApts: Appointment[] = [
+      { appointmentId: 'a1', therapyId: 't1', date: '2025-11-10', startTime: '10:00', endTime: '11:00', status: AppointmentStatus.AVAILABLE, createdAt: ''},
+      { appointmentId: 'a2', therapyId: 't1', date: '2025-11-10', startTime: '09:00', endTime: '10:00', status: AppointmentStatus.AVAILABLE, createdAt: ''},
+      { appointmentId: 'a3', therapyId: 't2', date: '2025-11-11', startTime: '10:00', endTime: '11:00', status: AppointmentStatus.AVAILABLE, createdAt: ''},
+      { appointmentId: 'a4', therapyId: 't2', date: '2025-11-11', startTime: '09:00', endTime: '10:00', status: AppointmentStatus.AVAILABLE, createdAt: ''},
+    ];
+
+    it('should correctly apply date', () => {
+      const sorted = service.sortAppointments(mockApts);
+
+      expect(sorted.map(a => a.appointmentId)).toEqual(['a4', 'a3', 'a2', 'a1']);
+    });
+  })
 });
