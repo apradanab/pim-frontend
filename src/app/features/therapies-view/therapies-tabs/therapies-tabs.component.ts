@@ -22,7 +22,7 @@ import { AdvicesStateService } from '../../../core/services/states/advices.state
           <button class="tab-button"
                   [class.active]="activeTab() === i"
                   (click)="navigateToTab(i)"
-                  [style.background]="activeTab() === i ? getTherapyStyle(i).bgColor : '#ebece9'"
+                  [style.background]="activeTab() === i ? therapy.bgColor : '#ebece9'"
                   [style.color]="activeTab() === i ? 'white' : '#2f2929'">
             {{ therapy.title }}
             <span class="icon-circle" [style.background]="activeTab() === i ? 'rgba(255,255,255,0.3)' : 'white'">
@@ -34,7 +34,7 @@ import { AdvicesStateService } from '../../../core/services/states/advices.state
         }
       </div>
 
-      <div class="tab-content-wrapper" [style.border-top-color]="getTherapyStyle(activeTab()).bgColor">
+      <div class="tab-content-wrapper" [style.border-top-color]="getActiveTabBgColor()">
         <div class="tab-content">
           @if (therapies()[activeTab()]) {
             <div class="therapy-detail">
@@ -47,12 +47,12 @@ import { AdvicesStateService } from '../../../core/services/states/advices.state
             </div>
           }
         </div>
-        <div class="tab-footer" [style.background]="getTherapyStyle(activeTab()).bgColor">
+        <div class="tab-footer" [style.background]="getActiveTabBgColor()">
 
             <h4>Consejos relacionados</h4>
             @for (advice of relatedAdvices(); track advice.adviceId) {
               <button class="advice-button"
-                      [style.background]="getTherapyStyle(activeTab()).bgColor"
+                      [style.background]="getActiveTabBgColor()"
                       (click)="navigateToAdvice(advice.adviceId)">
                     {{ advice.title }}
               </button>
@@ -269,22 +269,7 @@ export class TherapiesTabsComponent {
   relatedAdvices = signal<Advice[]>([]);
   therapies = signal<Therapy[]>([]);
 
-  therapiesConfig = [
-    {
-      route: 'terapia-individual',
-      style: { bgColor: '#fea087', tags: ['de 3 a 20 años', 'pide cita', 'consulta horarios'] }
-    },
-    {
-      route: 'grupo-de-madres',
-      style: { bgColor: '#e0f15e', tags: ['grupos abiertos'] }
-    },
-    {
-      route: 'terapia-pedagogica',
-      style: { bgColor: '#b7a8ed', tags: ['personalizada', 'apoyo educativo'] }
-    }
-  ];
-
-  private readonly order = ['Terapia Individual', 'Grupo de Madres', 'Terapia Pedagógica'];
+  private readonly therapyRoutes = ['terapia-individual', 'grupo-de-madres', 'terapia-pedagogica'];
 
   constructor() {
     this.therapiesService.listTherapies();
@@ -292,7 +277,7 @@ export class TherapiesTabsComponent {
 
     this.route.paramMap.subscribe(params => {
       const therapyType = params.get('therapyType');
-      const tabIndex = this.therapiesConfig.findIndex(config => config.route === therapyType);
+      const tabIndex = this.therapyRoutes.findIndex(route => route === therapyType);
 
       if (tabIndex > -1) {
         this.activeTab.set(tabIndex);
@@ -320,7 +305,7 @@ export class TherapiesTabsComponent {
 
   navigateToTab(index: number) {
     this.activeTab.set(index);
-    this.router.navigate(['/terapias', this.therapiesConfig[index].route]);
+    this.router.navigate(['/terapias', this.therapyRoutes[index]]);
   }
 
   navigateToAdvice(adviceId: string) {
@@ -334,7 +319,8 @@ export class TherapiesTabsComponent {
     });
   }
 
-  getTherapyStyle(index: number) {
-    return this.therapiesConfig[index]?.style || this.therapiesConfig[0].style;
+  getActiveTabBgColor(): string {
+    const therapy = this.therapies()[this.activeTab()];
+    return therapy?.bgColor || '#ccc'
   }
 }

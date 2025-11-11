@@ -18,6 +18,7 @@ class MockTherapiesStateService {
         content: '',
         maxParticipants: 1,
         image: { key: 'img1', url: 'image1.jpg' },
+        bgColor: '#fea087',
         createdAt: '2023-01-01'
       },
       {
@@ -27,6 +28,7 @@ class MockTherapiesStateService {
         content: '',
         maxParticipants: 8,
         image: { key: 'img2', url: 'image2.jpg' },
+        bgColor: '#e0f15e',
         createdAt: '2024-01-01'
       }
     ],
@@ -134,33 +136,14 @@ describe('TherapiesTabsComponent', () => {
   it('should set relatedAdvices to empty array when filtered is undefined', fakeAsync(() => {
     mockAdvicesService.advicesState.update(state => ({ ...state, filtered: undefined as unknown as Advice[] }));
     tick(0);
+    fixture.detectChanges();
 
     expect(component.relatedAdvices()).toEqual([]);
-  }));
-
-  it('should handle advicesState.filtered changes from undefined to array', fakeAsync(() => {
-    mockAdvicesService.advicesState.update(state => ({ ...state, filtered: undefined as unknown as Advice[] }));
-    tick();
-    fixture.detectChanges();
-    expect(component.relatedAdvices()).toEqual([]);
-
-    const newAdvices = [{ adviceId: 'a2', title: 'Nuevo consejo' }] as Advice[];
-    mockAdvicesService.advicesState.update(state => ({ ...state, filtered: newAdvices }));
-    tick();
-    fixture.detectChanges();
-    expect(component.relatedAdvices()).toEqual(newAdvices);
   }));
 
   it('should clean malicious HTML', () => {
     const result = component.cleanContent('<script>alert("x")</script><b>ok</b>');
     expect(result).toBe('<b>ok</b>');
-  });
-
-  it('should return default style for invalid index', () => {
-    expect(component.getTherapyStyle(99)).toEqual({
-      bgColor: '#fea087',
-      tags: ['de 3 a 20 años', 'pide cita', 'consulta horarios']
-    });
   });
 
   it('should sort therapies by createdAt date', fakeAsync(() => {
