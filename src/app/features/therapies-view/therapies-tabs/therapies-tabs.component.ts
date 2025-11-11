@@ -277,7 +277,7 @@ export class TherapiesTabsComponent {
 
     this.route.paramMap.subscribe(params => {
       const therapyType = params.get('therapyType');
-      const tabIndex = this.therapyRoutes.findIndex(route => route === therapyType);
+      const tabIndex = this.therapyRoutes.indexOf(therapyType!);
 
       if (tabIndex > -1) {
         this.activeTab.set(tabIndex);

@@ -97,12 +97,12 @@ import { ContactModalComponent } from "../../../shared/contact-modal/contact-mod
     transition: all 0.2s ease;
     position: relative;
     top: 16px;
-    z-index: 1;
   }
 
   .intro-section button:active {
     background: #e8512b;
-    box-shadow: inset 0px 6px 2px #aa3e22;
+    box-shadow: inset 0px 3px 2px #aa3e22;
+    transform: translateY(2px);
   }
 
   @media(max-width: 768px) {
