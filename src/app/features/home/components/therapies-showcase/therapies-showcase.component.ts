@@ -1,7 +1,7 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { Therapy, TherapyStyle } from '../../../../models/therapy.model';
+import { Therapy } from '../../../../models/therapy.model';
 import { Router } from '@angular/router';
 import { ImageService } from '../../../../core/services/utils/image.service';
 import { TherapiesStateService } from '../../../../core/services/states/therapies.state.service';
@@ -28,7 +28,7 @@ import { TherapiesStateService } from '../../../../core/services/states/therapie
 
       <div class="therapies-grid">
         @for (therapy of therapies(); track therapy.therapyId; let i = $index) {
-          <div class="therapy-box" [style.background]="getTherapyStyle(i).bgColor">
+          <div class="therapy-box" [style.background]="therapy.bgColor">
             <div class="therapy-header">
               <h3>{{ therapy.description }}</h3>
               <button class="therapy-button"
@@ -40,7 +40,7 @@ import { TherapiesStateService } from '../../../../core/services/states/therapie
               </button>
             </div>
             <div class="tags">
-              @for (tag of getTherapyStyle(i).tags; track tag; let tagIndex = $index) {
+              @for (tag of getTherapyTags(i); track tag; let tagIndex = $index) {
                 <span class="tag tag-{{tagIndex + 1}} tag-pos-{{i}}-{{tagIndex}}">{{ tag }}</span>
               }
             </div>
@@ -109,7 +109,8 @@ import { TherapiesStateService } from '../../../../core/services/states/therapie
 
     .cta-button:active {
       background: #e8512b;
-      box-shadow: inset 0px 6px 2px #aa3e22;
+      box-shadow: inset 0px 3px 2px #aa3e22;
+      transform: translateY(2px);
     }
 
     .therapies-grid {
@@ -193,7 +194,7 @@ import { TherapiesStateService } from '../../../../core/services/states/therapie
     .tag-3 { background: #b7a8ed; }
     .tag-pos-0-0 { top: 190px; left: 20px; }
     .tag-pos-0-1 { top: 240px; left: 140px; }
-    .tag-pos-0-2 { top: 165px; left: 190px; }
+    .tag-pos-0-2 { top: 165px; left: 180px; }
     .tag-pos-1-0 { top: 80px; left: 20px; }
     .tag-pos-2-0 { top: 210px; left: 170px; }
     .tag-pos-2-1 { top: 160px; left: 40px; }
@@ -316,10 +317,10 @@ export class TherapiesShowcaseComponent {
   readonly circleStar = inject(ImageService).icons.circleStar;
   faChevron = faChevronRight;
 
-  therapyStyles: TherapyStyle[] = [
-    { bgColor: '#fea087', tags: ['de 3 a 20 años', 'pide cita', 'consulta horarios'] },
-    { bgColor: '#e0f15e', tags: ['grupos abiertos'] },
-    { bgColor: '#b7a8ed', tags: ['personalizada' ,'apoyo educativo'] }
+  therapyTags: string[][] = [
+    ['de 3 a 20 años', 'pide cita', 'consulta horarios'],
+    ['grupos abiertos'],
+    ['personalizada' ,'apoyo educativo']
   ];
 
   therapies = signal<Therapy[]>([]);
@@ -335,8 +336,8 @@ export class TherapiesShowcaseComponent {
     this.stateService.listTherapies();
   }
 
-  getTherapyStyle(index: number): TherapyStyle {
-    return this.therapyStyles[index % this.therapyStyles.length];
+  getTherapyTags(index: number): string[] {
+    return this.therapyTags[index % this.therapyTags.length];
   }
 
   navigateToTherapies() {
