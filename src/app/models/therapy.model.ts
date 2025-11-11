@@ -10,10 +10,6 @@ export type Therapy = {
     contentType?: string;
   };
   maxParticipants: number;
+  bgColor?: string;
   createdAt: string;
-};
-
-export type TherapyStyle = {
-  bgColor: string;
-  tags: string[];
 };
