@@ -154,8 +154,8 @@ import { ImageService } from '../../../core/services/utils/image.service';
 
   .cta-button:active {
     background: #e8512b;
-    box-shadow: inset 0px 6px 2px #aa3e22;
-    transform: translateY(1px);
+    box-shadow: inset 0px 3px 2px #aa3e22;
+    transform: translateY(2px);
   }
 
   @media (max-width: 768px) {
