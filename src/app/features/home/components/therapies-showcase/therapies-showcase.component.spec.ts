@@ -74,22 +74,9 @@ describe('TherapiesShowcaseComponent', () => {
     expect(mockTherapiesService.listTherapies).toHaveBeenCalled();
   });
 
-  it('should have correct therapy styles', () => {
-    expect(component.therapyStyles.length).toBe(3);
-    expect(component.therapyStyles[0].bgColor).toBe('#fea087');
-    expect(component.therapyStyles[1].tags).toContain('grupos abiertos');
-  });
-
-  it('should apply correct styles based on index', () => {
-    const style1 = component.getTherapyStyle(0);
-    const style2 = component.getTherapyStyle(1);
-    const style3 = component.getTherapyStyle(2);
-    const style4 = component.getTherapyStyle(3);
-
-    expect(style1.bgColor).toBe('#fea087');
-    expect(style2.bgColor).toBe('#e0f15e');
-    expect(style3.bgColor).toBe('#b7a8ed');
-    expect(style4.bgColor).toBe('#fea087');
+  it('should have correct therapy tags', () => {
+    expect(component.therapyTags.length).toBe(3);
+    expect(component.therapyTags[1]).toContain('grupos abiertos');
   });
 
   it('should sort therapies by createdAt date', fakeAsync(() => {
