@@ -42,7 +42,7 @@ import { lastValueFrom } from 'rxjs';
 
             <div class="actions">
               <button class="save-btn" (click)="submit()" [disabled]="therapyForm.invalid"><fa-icon [icon]="faSave"/>Guardar</button>
-              <button class="cancel-btn" (click)="cancel.emit()"><fa-icon [icon]="faTimes"/>Cancelar</button>
+              <button class="cancel-btn" (click)="cancelClick.emit()"><fa-icon [icon]="faTimes"/>Cancelar</button>
             </div>
         </div>
       </div>
@@ -206,7 +206,7 @@ export class TherapyEditFormComponent {
 
   therapy = input.required<Therapy>();
   update = output<Therapy>();
-  cancel = output<void>();
+  cancelClick = output<void>();
 
   therapyForm = this.fb.group({
     title: ['', Validators.required],
