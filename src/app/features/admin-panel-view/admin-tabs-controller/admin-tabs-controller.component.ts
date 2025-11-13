@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { TherapiesManagerComponent } from "../therapies-manager/therapies-manager.component";
+import { AdvicesManagerComponent } from "../advices-manager/advices-manager.component";
 
 @Component({
   selector: 'pim-admin-tabs-controller',
   standalone: true,
-  imports: [TherapiesManagerComponent],
+  imports: [TherapiesManagerComponent, AdvicesManagerComponent],
   template: `
     <div class="admin-tabs">
       <div class="grid-background"></div>
@@ -22,10 +23,10 @@ import { TherapiesManagerComponent } from "../therapies-manager/therapies-manage
 
       <div class="tabs-content">
         @if (activeTab === 'therapies') {
-          <pim-therapies-manager></pim-therapies-manager>
-        <!-- } @else if (activeTab === 'advices') {
+          <pim-therapies-manager/>
+        } @else if (activeTab === 'advices') {
           <pim-advices-manager></pim-advices-manager>
-        } @else if (activeTab === 'users') {
+        <!-- } @else if (activeTab === 'users') {
           <pim-users-manager></pim-users-manager>
         } @else if (activeTab === 'appointments') {
           <pim-appointments-manager></pim-appointments-manager> -->
@@ -35,14 +36,13 @@ import { TherapiesManagerComponent } from "../therapies-manager/therapies-manage
   `,
   styles: `
   .admin-tabs {
-      position: relative;
-      font-family: 'Carlito', sans-serif;
-      width: 100%;
-      padding: 2rem 8.4vw;
-      padding-top: 65px;
-          background-color: #fcfcf9;
-
-    }
+    position: relative;
+    font-family: 'Carlito', sans-serif;
+    width: 100%;
+    padding: 2rem 8.4vw;
+    padding-top: 65px;
+    background-color: #fcfcf9;
+  }
 
   .grid-background {
     position: absolute;
