@@ -27,4 +27,13 @@ export class AdvicesRepoService {
   createAdvice(advice: Advice): Observable<Advice> {
     return this.http.post<Advice>(`${this.therapiesUrl}/${advice.therapyId}/advices`, advice);
   }
+
+  updateAdvice(id: string, advice: Partial<Advice>): Observable<Advice> {
+    const therapyId = advice.therapyId;
+    return this.http.patch<Advice>(`${this.therapiesUrl}/${therapyId}/advices/${id}`, advice);
+  }
+
+  deleteAdvice(id: string, therapyId: string): Observable<void> {
+    return this.http.delete<void>(`${this.therapiesUrl}/${therapyId}/advices/${id}`);
+  }
 }

@@ -27,7 +27,9 @@ describe('AdvicesStateService', () => {
       'listAdvices',
       'getAdvice',
       'listAdvicesByTherapy',
-      'createAdvice'
+      'createAdvice',
+      'updateAdvice',
+      'deleteAdvice'
     ]);
 
     spyOn(console, 'error');
@@ -139,6 +141,129 @@ describe('AdvicesStateService', () => {
       tick();
 
       expect(console.error).toHaveBeenCalledWith('Error creating advice:', 'Bad Request');
+    }));
+  });
+
+  describe('updateAdvice', () => {
+    it('should update an advice in list, filtered, and current', fakeAsync(() => {
+      const newAdvice: Advice = { ...mockAdvice };
+      mockRepo.createAdvice.and.returnValue(of(newAdvice));
+      service.createAdvice(newAdvice);
+      tick();
+
+      const updatedAdvice: Advice = { ...mockAdvice, title: 'Updated Title' };
+      mockRepo.updateAdvice.and.returnValue(of(updatedAdvice));
+
+      service.updateAdvice('1', updatedAdvice);
+      tick();
+
+      const state = service.advicesState();
+      expect(state.list[0].title).toBe('Updated Title');
+      expect(state.current?.title).toBe('Updated Title');
+    }));
+
+    it('should update filtered advices as well', fakeAsync(() => {
+      const newAdvice: Advice = { ...mockAdvice };
+      const filteredAdvice: Advice = { ...mockAdvice, adviceId: '2' };
+
+      mockRepo.createAdvice.and.returnValue(of(newAdvice));
+      service.createAdvice(newAdvice);
+      tick();
+
+      mockRepo.listAdvicesByTherapy.and.returnValue(of([newAdvice, filteredAdvice]));
+      service.listAdvicesByTherapy('1');
+      tick();
+
+      const updatedAdvice: Advice = { ...newAdvice, title: 'Updated Title' };
+      mockRepo.updateAdvice.and.returnValue(of(updatedAdvice));
+      service.updateAdvice('1', updatedAdvice);
+      tick();
+
+      const state = service.advicesState();
+      expect(state.filtered.find(a => a.adviceId === '1')?.title).toBe('Updated Title');
+    }));
+
+    it('should not change other advices in list when updating', fakeAsync(() => {
+      const otherAdvice: Advice = { ...mockAdvice, adviceId: '99', title: 'Other' };
+
+      mockRepo.createAdvice.and.returnValue(of(mockAdvice));
+      service.createAdvice(mockAdvice);
+      tick();
+
+      mockRepo.createAdvice.and.returnValue(of(otherAdvice));
+      service.createAdvice(otherAdvice);
+      tick();
+
+      const updatedAdvice: Advice = { ...mockAdvice, title: 'Updated' };
+      mockRepo.updateAdvice.and.returnValue(of(updatedAdvice));
+
+      service.updateAdvice('1', updatedAdvice);
+      tick();
+
+      const state = service.advicesState();
+
+      expect(state.list.find(a => a.adviceId === '1')?.title).toBe('Updated');
+      expect(state.list.find(a => a.adviceId === '99')?.title).toBe('Other');
+    }));
+
+
+    it('should handle error when updating advice', fakeAsync(() => {
+      const error: ApiError = { status: 404, message: 'Not Found' };
+      mockRepo.updateAdvice.and.returnValue(throwError(() => error));
+
+      service.updateAdvice('1', { title: 'Updated Title' });
+      tick();
+
+      expect(console.error).toHaveBeenCalledWith('Error updating therapy:', 'Not Found');
+    }));
+  });
+
+  describe('deleteAdvice', () => {
+    it('should delete an advice from list, filtered, and current', fakeAsync(() => {
+      const newAdvice: Advice = { ...mockAdvice };
+      mockRepo.createAdvice.and.returnValue(of(newAdvice));
+      service.createAdvice(newAdvice);
+      tick();
+
+      mockRepo.deleteAdvice.and.returnValue(of(void 0));
+      service.deleteAdvice(newAdvice);
+      tick();
+
+      const state = service.advicesState();
+      expect(state.list).toEqual([]);
+      expect(state.current).toBeNull();
+    }));
+
+    it('should delete advice from filtered and handle current correctly', fakeAsync(() => {
+      const newAdvice: Advice = { ...mockAdvice };
+      const filteredAdvice: Advice = { ...mockAdvice, adviceId: '2' };
+
+      mockRepo.createAdvice.and.returnValue(of(newAdvice));
+      service.createAdvice(newAdvice);
+      tick();
+
+      mockRepo.listAdvicesByTherapy.and.returnValue(of([newAdvice, filteredAdvice]));
+      service.listAdvicesByTherapy('1');
+      tick();
+
+      mockRepo.deleteAdvice.and.returnValue(of(void 0));
+      service.deleteAdvice(newAdvice);
+      tick();
+
+      const state = service.advicesState();
+      expect(state.list.find(a => a.adviceId === '1')).toBeUndefined();
+      expect(state.filtered.find(a => a.adviceId === '1')).toBeUndefined();
+      expect(state.current).toBeNull();
+    }));
+
+    it('should handle error when deleting advice', fakeAsync(() => {
+      const error: ApiError = { status: 403, message: 'Forbidden' };
+      mockRepo.deleteAdvice.and.returnValue(throwError(() => error));
+
+      service.deleteAdvice(mockAdvice);
+      tick();
+
+      expect(console.error).toHaveBeenCalledWith('Error deleting advice:', 'Forbidden');
     }));
   })
 });

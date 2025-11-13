@@ -88,4 +88,27 @@ describe('AdvicesRepoService', () => {
     expect(req.request.body).toEqual(newAdvice);
     req.flush(newAdvice);
   });
+
+  it('should update an advice', () => {
+    const updatedAdvice: Advice = { ...mockAdvice, title: 'Updated Title' };
+
+    service.updateAdvice('1', updatedAdvice).subscribe(advice => {
+      expect(advice).toEqual(updatedAdvice);
+    });
+
+    const req = httpTestingController.expectOne(`${service['therapiesUrl']}/1/advices/1`);
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.body).toEqual(updatedAdvice);
+    req.flush(updatedAdvice);
+  });
+
+  it('should delete an advice', () => {
+    service.deleteAdvice('1', '1').subscribe(response => {
+      expect(response).toBeNull();
+    });
+
+    const req = httpTestingController.expectOne(`${service['therapiesUrl']}/1/advices/1`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null);
+  });
 });
