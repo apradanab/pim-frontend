@@ -13,7 +13,7 @@ import { ImageService } from '../../../../core/services/utils/image.service';
       <div class="video-wrapper">
         <video
           class="video"
-          [src]="imageService.local.tourVideo"
+          [src]="imageService.videos.tourVideo"
           autoplay
           loop
           [muted]="true"

@@ -9,7 +9,10 @@ export class ImageService {
 
   readonly local = {
     favicon: '/assets/logo.svg',
-    tourVideo: '/assets/tour-video.mp4'
+  };
+
+  readonly videos = {
+    tourVideo: this.mediaService.getImageUrl('static/tour-video.mp4')
   };
 
   readonly images = {
@@ -19,6 +22,7 @@ export class ImageService {
   }
 
   readonly icons = {
+    favicon: this.mediaService.getImageUrl('static/pim-logo.svg'),
     orangeLogo: this.mediaService.getImageUrl('static/pim-logo-orange.svg'),
     purpleLogo: this.mediaService.getImageUrl('static/pim-logo-purple.svg'),
     greenLogo: this.mediaService.getImageUrl('static/pim-logo-green.svg'),

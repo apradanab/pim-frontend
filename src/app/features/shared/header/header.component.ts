@@ -19,7 +19,7 @@ import { ProfileAvatarComponent } from '../profile-avatar/profile-avatar.compone
           (click)="navigateToHome()"
           (keyup.enter)="navigateToHome()"
           tabindex="0">
-        <img [src]="imageService.local.favicon" width="150" height="150" alt="Logo" class="logo-icon">
+        <img [src]="imageService.icons.favicon" width="150" height="150" alt="Logo" class="logo-icon">
         <div class="logo-text">
           <span>Psicología</span>
           <span>Infantojuvenil</span>
