@@ -38,3 +38,10 @@ export type UserLoginDto = {
   email: string;
   password: string;
 };
+
+export interface ProfileFormValue {
+  name: string;
+  email: string;
+  currentPassword?: string;
+  newPassword?: string;
+}
