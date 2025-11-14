@@ -13,3 +13,11 @@ export type Therapy = {
   bgColor?: string;
   createdAt: string;
 };
+
+export interface TherapyFormValue {
+  title: string;
+  description: string;
+  content: string;
+  maxParticipants: number;
+  bgColor: string;
+}
