@@ -12,3 +12,9 @@ export type Advice = {
   };
   createdAt: string;
 }
+
+export interface AdviceFormValue {
+  title: string;
+  description: string;
+  content: string;
+}
