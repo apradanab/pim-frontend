@@ -322,7 +322,7 @@ export class EditProfileModalComponent extends BaseEditForm<User> {
 
   readonly currentUser = computed(() => this.usersState.usersState().currentUser);
 
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     name: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
     currentPassword: [''],
@@ -370,12 +370,11 @@ export class EditProfileModalComponent extends BaseEditForm<User> {
 
     try {
       const imageInfo = await this.handleImageUpload();
-
       const formValue = this.form.getRawValue() as ProfileFormValue;
 
       const payload: UpdateUserInput = {
-        name: formValue.name!,
-        email: formValue.email!
+        name: formValue.name,
+        email: formValue.email
       }
 
       if (imageInfo) payload.avatarKey = imageInfo.key;
