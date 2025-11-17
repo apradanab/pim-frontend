@@ -1,11 +1,11 @@
 import { Component, computed, effect, inject, output, signal } from '@angular/core';
 import { UsersStateService } from '../../../core/services/states/users.state.service';
-import { MediaService } from '../../../core/services/utils/media.service';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { lastValueFrom } from 'rxjs';
-import { UpdateUserInput } from '../../../models/user.model';
+import { ProfileFormValue, UpdateUserInput, User } from '../../../models/user.model';
+import { BaseEditForm } from '../../shared/base-edit-form/base-edit-form';
+import { ImageInfo, UploadFolder } from '../../../models/form.model';
 
 @Component({
   selector: 'pim-edit-profile-modal',
@@ -309,9 +309,8 @@ import { UpdateUserInput } from '../../../models/user.model';
   }
   `
 })
-export class EditProfileModalComponent {
+export class EditProfileModalComponent extends BaseEditForm<User> {
   private readonly usersState = inject(UsersStateService);
-  private readonly mediaService = inject(MediaService);
   private readonly fb = inject(FormBuilder);
 
   modalClosed = output<void>();
@@ -320,8 +319,6 @@ export class EditProfileModalComponent {
 
   showModal = signal(true);
   showPasswordFields = signal(false);
-  previewUrl = signal<string | null>(null);
-  file: File | null = null;
 
   readonly currentUser = computed(() => this.usersState.usersState().currentUser);
 
@@ -333,6 +330,8 @@ export class EditProfileModalComponent {
   })
 
   constructor () {
+    super();
+
     effect(() => {
       const user = this.currentUser();
       if (user && !this.form.dirty) {
@@ -340,8 +339,24 @@ export class EditProfileModalComponent {
           name: user.name,
           email: user.email
         });
+        this.previewUrl.set(user.avatar?.url);
+        this.file.set(null);
       }
     }, { allowSignalWrites: true });
+  }
+
+  override getForm(): FormGroup { return this.form }
+  override getCurrentItem(): User { return this.currentUser()! }
+  override getItemId(): string { return this.currentUser()!.userId }
+  override getUploadFolder(): UploadFolder { return 'avatar' }
+
+  override getCurrentImageKey(): string | undefined {
+    return this.currentUser()?.avatar?.key;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  override buildUpdatedItem(_formValue: object, _imageInfo: ImageInfo | undefined): User {
+    return this.currentUser()!;
   }
 
   togglePasswordFields() {
@@ -354,30 +369,20 @@ export class EditProfileModalComponent {
     if (!currentUser || this.form.invalid) return;
 
     try {
-      let avatarKey: string | undefined;
+      const imageInfo = await this.handleImageUpload();
 
-      if (this.file) {
-        const uploadResponse = await lastValueFrom(
-          this.mediaService.generateUploadUrl('avatar', currentUser.userId, this.file.type)
-        );
-
-        await this.mediaService.uploadFile(uploadResponse.uploadUrl, this.file);
-
-        avatarKey = uploadResponse.key;
-      }
+      const formValue = this.form.getRawValue() as ProfileFormValue;
 
       const payload: UpdateUserInput = {
-        name: this.form.value.name!,
-        email: this.form.value.email!
+        name: formValue.name!,
+        email: formValue.email!
       }
 
-      if (avatarKey) {
-        payload.avatarKey = avatarKey;
-      }
+      if (imageInfo) payload.avatarKey = imageInfo.key;
 
       if (this.showPasswordFields()) {
-        payload.currentPassword = this.form.value.currentPassword!;
-        payload.password = this.form.value.newPassword!;
+        payload.currentPassword = formValue.currentPassword!;
+        payload.password = formValue.newPassword!;
       }
 
       await this.usersState.updateUserProfile(currentUser.userId, payload);
@@ -385,16 +390,6 @@ export class EditProfileModalComponent {
       this.closeModal();
     } catch (error) {
       console.error('Error updating profile:', error)
-    }
-  }
-
-  handleFileChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.file = input.files[0];
-      const reader = new FileReader();
-      reader.onload = () => this.previewUrl.set(reader.result as string);
-      reader.readAsDataURL(this.file);
     }
   }
 
