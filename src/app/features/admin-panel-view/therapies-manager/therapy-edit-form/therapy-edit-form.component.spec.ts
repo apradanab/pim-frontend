@@ -10,7 +10,8 @@ class MockMediaService {
     of({ uploadUrl: 'https://upload.url', key: 'image-key' })
   );
   uploadFile = jasmine.createSpy('uploadFile').and.returnValue(Promise.resolve());
-  getImageUrl = jasmine.createSpy('getImageUrl').and.callFake((key: string) => `https://cdn/${key}`);
+  getImageUrl = jasmine.createSpy('getImageUrl').and.callFake((key: string, folder?: string) =>
+    folder ? `https://cdn/${folder}/${key}` : `https//cdn/${key}`);
 }
 
 describe('TherapyEditFormComponent', () => {
@@ -82,6 +83,13 @@ describe('TherapyEditFormComponent', () => {
     expect(component.previewUrl()).toBe(readerResult);
   }));
 
+  it('should return the current therapy item when calling getCurrentItem', () => {
+    const currentItem = component.getCurrentItem();
+
+    expect(currentItem).toBe(mockTherapy);
+    expect(currentItem.therapyId).toBe('1');
+  })
+
   it('should upload file and emit updated therapy on submit', async () => {
     spyOn(component.update, 'emit');
     const file = new File(['data'], 'upload.png', { type: 'image/png' });
@@ -91,9 +99,9 @@ describe('TherapyEditFormComponent', () => {
 
     expect(mediaService.generateUploadUrl).toHaveBeenCalledWith('therapy', mockTherapy.therapyId, file.type);
     expect(mediaService.uploadFile).toHaveBeenCalled();
-    expect(mediaService.getImageUrl).toHaveBeenCalledWith('image-key');
+    expect(mediaService.getImageUrl).toHaveBeenCalledWith('image-key', 'therapy');
     expect(component.update.emit).toHaveBeenCalledWith(jasmine.objectContaining({
-      image: { key: 'image-key', url: 'https://cdn/image-key' }
+      image: { key: 'image-key', url: 'https://cdn/therapy/image-key' }
     }));
   });
 
@@ -134,6 +142,6 @@ describe('TherapyEditFormComponent', () => {
 
     mediaService.generateUploadUrl = jasmine.createSpy().and.returnValue(of(Promise.reject('error')));
     await component.submit();
-    expect(console.error).toHaveBeenCalledWith('Error uploading image:', jasmine.anything());
+    expect(console.error).toHaveBeenCalledWith('Error uploading image for therapy:', jasmine.anything());
   });
 });

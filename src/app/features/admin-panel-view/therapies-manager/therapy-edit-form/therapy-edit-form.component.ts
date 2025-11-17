@@ -1,10 +1,10 @@
-import { Component, effect, inject, input, output, signal } from '@angular/core';
+import { Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { MediaService } from '../../../../core/services/utils/media.service';
-import { Therapy } from '../../../../models/therapy.model';
+import { Therapy, TherapyFormValue } from '../../../../models/therapy.model';
 import { faArrowUpFromBracket, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { lastValueFrom } from 'rxjs';
+import { BaseEditForm } from '../../../shared/base-edit-form/base-edit-form';
+import { ImageInfo } from '../../../../models/form.model';
 
 @Component({
   selector: 'pim-therapy-edit-form',
@@ -200,9 +200,8 @@ import { lastValueFrom } from 'rxjs';
   }
   `
 })
-export class TherapyEditFormComponent {
+export class TherapyEditFormComponent extends BaseEditForm<Therapy> {
   private readonly fb = inject(FormBuilder);
-  private readonly mediaService = inject(MediaService);
 
   therapy = input.required<Therapy>();
   update = output<Therapy>();
@@ -216,14 +215,13 @@ export class TherapyEditFormComponent {
     bgColor: ['#ccc', Validators.required]
   });
 
-  file = signal<File | null>(null);
-  previewUrl = signal<string | undefined>(undefined);
-
   faTimes = faTimes;
   faSave = faCheck;
   faUpload = faArrowUpFromBracket;
 
   constructor() {
+    super()
+
     effect(() => {
       const currentTherapy = this.therapy();
       this.therapyForm.patchValue({
@@ -238,54 +236,34 @@ export class TherapyEditFormComponent {
     }, { allowSignalWrites: true });
   }
 
-  handleFileChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if(input.files && input.files.length > 0) {
-      const selectedFile = input.files[0];
-      this.file.set(selectedFile);
+  override getForm() { return this.therapyForm }
+  override getCurrentItem() { return this.therapy() }
+  override getItemId() { return this.therapy().therapyId }
+  override getUploadFolder(): 'therapy' { return 'therapy' }
 
-      const reader = new FileReader();
-      reader.onload = () => this.previewUrl.set(reader.result as string);
-      reader.readAsDataURL(selectedFile);
-    }
+  override getCurrentImageKey(): string | undefined {
+    return this.therapy().image?.key;
+  }
+
+  override buildUpdatedItem(formValue: object, image: ImageInfo | undefined): Therapy {
+    const currentTherapy = this.therapy();
+    const values = formValue as  TherapyFormValue;
+
+    return {
+      ...currentTherapy,
+      title: values.title,
+      description: values.description,
+      content: values.content,
+      maxParticipants: values.maxParticipants,
+      bgColor: values.bgColor,
+      image: image
+    } as Therapy;
   }
 
   async submit() {
-    if (this.therapyForm.invalid) return;
-
-    const formValue = this.therapyForm.getRawValue();
-    const currentTherapy = this.therapy();
-    let imageKey: string | undefined = currentTherapy.image?.key;
-
-    try {
-      if (this.file()) {
-        const fileToUpload = this.file()!;
-        const uploadResponse = await lastValueFrom(
-          this.mediaService.generateUploadUrl('therapy', currentTherapy.therapyId, fileToUpload.type)
-        );
-
-        await this.mediaService.uploadFile(uploadResponse.uploadUrl, fileToUpload);
-
-        imageKey = uploadResponse.key;
-      }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      return;
+    const updatedAdvice = await this.submitBase();
+    if (updatedAdvice) {
+      this.update.emit(updatedAdvice)
     }
-
-    const updatedTherapy: Therapy = {
-      ...currentTherapy,
-      title: formValue.title!,
-      description: formValue.description!,
-      content: formValue.content!,
-      maxParticipants: formValue.maxParticipants!,
-      bgColor: formValue.bgColor!,
-      image: imageKey ? {
-        key: imageKey,
-        url: this.mediaService.getImageUrl(imageKey)
-      } : currentTherapy.image
-    }
-
-    this.update.emit(updatedTherapy);
   }
 }
