@@ -55,7 +55,7 @@ export abstract class BaseEditForm<T extends EditableItem> {
       } : undefined;
     } catch (error) {
       console.error(`Error uploading image for ${this.getUploadFolder()}:`, error);
-      throw new Error(`Failed to upload image for ${this.getUploadFolder()}`);
+      throw error;
     }
   }
 
@@ -70,6 +70,7 @@ export abstract class BaseEditForm<T extends EditableItem> {
       const updatedItem = this.buildUpdatedItem(formValue, imageInfo);
       return updatedItem;
     } catch (error) {
+      console.error('submitBase failed after image upload, returning null.');
       return null;
     }
   }
