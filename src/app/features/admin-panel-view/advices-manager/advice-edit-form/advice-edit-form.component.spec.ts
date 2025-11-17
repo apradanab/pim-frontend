@@ -10,7 +10,9 @@ class MockMediaService {
     of({ uploadUrl: 'https://upload.url', key: 'image-key' })
   );
   uploadFile = jasmine.createSpy('uploadFile').and.returnValue(Promise.resolve());
-  getImageUrl = jasmine.createSpy('getImageUrl').and.callFake((key: string) => `https://cdn/${key}`);
+  getImageUrl = jasmine.createSpy('getImageUrl').and.callFake((key: string, folder?: string) =>
+    `https://cdn/${folder}/${key}`
+  );
 }
 
 describe('AdviceEditFormComponent', () => {
@@ -82,6 +84,13 @@ describe('AdviceEditFormComponent', () => {
     expect(component.previewUrl()).toBe(readerResult);
   }));
 
+  it('should return the current advice item when calling getCurrentItem', () => {
+    const currentItem = component.getCurrentItem();
+
+    expect(currentItem).toBe(mockAdvice);
+    expect(currentItem.adviceId).toBe('a1');
+  })
+
   it('should upload file and emit updated advice on submit', async () => {
     spyOn(component.update, 'emit');
     const file = new File(['data'], 'upload.png', { type: 'image/png' });
@@ -91,9 +100,9 @@ describe('AdviceEditFormComponent', () => {
 
     expect(mediaService.generateUploadUrl).toHaveBeenCalledWith('advice', mockAdvice.adviceId, file.type);
     expect(mediaService.uploadFile).toHaveBeenCalled();
-    expect(mediaService.getImageUrl).toHaveBeenCalledWith('image-key');
+    expect(mediaService.getImageUrl).toHaveBeenCalledWith('image-key', 'advice');
     expect(component.update.emit).toHaveBeenCalledWith(jasmine.objectContaining({
-      image: { key: 'image-key', url: 'https://cdn/image-key' }
+      image: { key: 'image-key', url: 'https://cdn/advice/image-key' }
     }));
   });
 
@@ -105,6 +114,7 @@ describe('AdviceEditFormComponent', () => {
       image: undefined
     });
 
+    fixture.detectChanges();
     component.file.set(null);
 
     await component.submit();
@@ -132,6 +142,6 @@ describe('AdviceEditFormComponent', () => {
 
     mediaService.generateUploadUrl = jasmine.createSpy().and.returnValue(of(Promise.reject('error')));
     await component.submit();
-    expect(console.error).toHaveBeenCalledWith('Error updating image:', jasmine.anything());
+    expect(console.error).toHaveBeenCalledWith('Error uploading image for advice:', jasmine.anything());
   });
 });

@@ -1,10 +1,10 @@
-import { Component, effect, inject, input, output, signal } from '@angular/core';
+import { Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { MediaService } from '../../../../core/services/utils/media.service';
-import { Advice } from '../../../../models/advice.model';
+import { Advice, AdviceFormValue } from '../../../../models/advice.model';
 import { faArrowUpFromBracket, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { lastValueFrom } from 'rxjs';
+import { BaseEditForm } from '../../../shared/base-edit-form/base-edit-form';
+import { ImageInfo } from '../../../../models/form.model';
 
 @Component({
   selector: 'pim-advice-edit-form',
@@ -169,9 +169,8 @@ import { lastValueFrom } from 'rxjs';
   }
   `
 })
-export class AdviceEditFormComponent {
+export class AdviceEditFormComponent extends BaseEditForm<Advice>{
   private readonly fb = inject(FormBuilder);
-  private readonly mediaService = inject(MediaService);
 
   advice = input.required<Advice>();
   update = output<Advice>();
@@ -183,14 +182,13 @@ export class AdviceEditFormComponent {
     content: ['', Validators.required]
   });
 
-  file = signal<File | null>(null);
-  previewUrl = signal<string | undefined>(undefined);
-
   faTimes = faTimes;
   faSave = faCheck;
   faUpload = faArrowUpFromBracket;
 
   constructor () {
+    super()
+
     effect(() => {
       const currentAdvice = this.advice();
       this.adviceForm.patchValue({
@@ -198,57 +196,38 @@ export class AdviceEditFormComponent {
         description: currentAdvice.description,
         content: currentAdvice.content,
       }, { emitEvent: false });
+
       this.previewUrl.set(currentAdvice.image?.url);
       this.file.set(null);
     }, { allowSignalWrites: true });
   }
 
-  handleFileChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const selectedFile = input.files[0];
-      this.file.set(selectedFile);
+  override getForm() { return this.adviceForm }
+  override getCurrentItem() { return this.advice() }
+  override getItemId() { return this.advice().adviceId }
+  override getUploadFolder(): 'advice' { return 'advice' }
 
-      const reader = new FileReader();
-      reader.onload = () => this.previewUrl.set(reader.result as string);
-      reader.readAsDataURL(selectedFile);
-    }
+  override getCurrentImageKey(): string | undefined {
+    return this.advice().image?.key;
+  }
+
+  override  buildUpdatedItem(formValue: object, image: ImageInfo | undefined): Advice {
+    const currentAdvice = this.advice();
+    const values = formValue as AdviceFormValue;
+
+    return {
+      ...currentAdvice,
+      title: values.title,
+      description: values.description,
+      content: values.content,
+      image: image
+    } as Advice;
   }
 
   async submit() {
-    if (this.adviceForm.invalid) return;
-
-    const formValue = this.adviceForm.getRawValue();
-    const currentAdvice = this.advice();
-    let imageKey: string | undefined = currentAdvice.image?.key;
-
-    try {
-      if (this.file()) {
-        const fileToUpload = this.file()!;
-        const uploadResponse = await lastValueFrom(
-          this.mediaService.generateUploadUrl('advice', currentAdvice.adviceId, fileToUpload.type)
-        );
-
-        await this.mediaService.uploadFile(uploadResponse.uploadUrl, fileToUpload);
-
-        imageKey = uploadResponse.key;
-      }
-    } catch (error) {
-      console.error('Error updating image:', error);
-      return;
+    const updatedAdvice = await this.submitBase();
+    if (updatedAdvice) {
+      this.update.emit(updatedAdvice);
     }
-
-    const updatedAdvice: Advice = {
-      ...currentAdvice,
-      title: formValue.title!,
-      description: formValue.description!,
-      content: formValue.content!,
-      image: imageKey ? {
-        key: imageKey,
-        url: this.mediaService.getImageUrl(imageKey)
-      } : currentAdvice.image
-    }
-
-    this.update.emit(updatedAdvice);
   }
 }
