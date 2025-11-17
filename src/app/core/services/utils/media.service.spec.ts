@@ -1,8 +1,9 @@
 import { TestBed } from '@angular/core/testing';
-import { MediaService, UploadResponse } from './media.service';
+import { MediaService } from './media.service';
 import { HttpClient, provideHttpClient, withFetch } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { of } from 'rxjs';
+import { UploadResponse } from '../../../models/form.model';
 
 describe('MediaService', () => {
   let service: MediaService;
@@ -57,4 +58,12 @@ describe('MediaService', () => {
     const url = service.getImageUrl(key);
     expect(url).toContain(key);
   });
+
+  it('should return a valid image URL with folder', () => {
+    const key = 'test-image.webp';
+    const folder = 'therapy';
+    const url = service.getImageUrl(key, folder);
+    expect(url).toContain(folder);
+    expect(url).toContain(key);
+  })
 });

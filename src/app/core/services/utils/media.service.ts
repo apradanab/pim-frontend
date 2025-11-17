@@ -2,12 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { Observable } from 'rxjs';
-
-export interface UploadResponse {
-  uploadUrl: string;
-  viewUrl: string;
-  key: string;
-}
+import { UploadFolder, UploadResponse } from '../../../models/form.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +16,7 @@ export class MediaService {
   private readonly allowedTypes = ['image/jpeg','image/jpg','image/png','image/webp','image/svg'];
 
   generateUploadUrl(
-    type: 'therapy' | 'advice' | 'avatar',
+    type: UploadFolder,
     id: string,
     contentType: string
   ): Observable<UploadResponse> {
@@ -50,7 +45,10 @@ export class MediaService {
     }
   }
 
-  getImageUrl(key: string): string {
+  getImageUrl(key: string, folder?: UploadFolder): string {
+    if (folder) {
+      return `${this.cdnUrl}/${folder}/${key}`
+    }
     return `${this.cdnUrl}/${key}`
   }
 }
