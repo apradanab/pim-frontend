@@ -7,10 +7,21 @@ import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { UsersStateService } from '../../../core/services/states/users.state.service';
 import { MediaService } from '../../../core/services/utils/media.service';
+import { User } from '../../../models/user.model';
 
 class MockUsersStateService {
   usersState = signal({
-    currentUser: { userId: '123', name: 'Alice', email: 'alice@example.com' }
+    currentUser: {
+      userId: '123',
+      name: 'Alice',
+      email: 'alice@example.com',
+      avatar: {
+        key: 'avatar-key',
+        url: 'avatar.jpg'
+      },
+      role: 'USER',
+      approved: true
+    } as User,
   });
 
   updateUserProfile = jasmine.createSpy('updateUserProfile').and.returnValue(Promise.resolve());
@@ -21,6 +32,8 @@ class MockMediaService {
     of({ uploadUrl: 'https://upload.url', key: 'avatar-key' })
   );
   uploadFile = jasmine.createSpy('uploadFile').and.returnValue(Promise.resolve());
+  getImageUrl = jasmine.createSpy('getImageUrl').and.callFake((key: string, folder?: string) =>
+  folder ? `https://cdn/${folder}/${key}` : `https://cdn/${key}`)
 }
 
 
@@ -80,6 +93,19 @@ describe('EditProfileModalComponent', () => {
   });
 
   it('should call updateUserProfile without avatar or passwords', async () => {
+    usersState.usersState.set({
+      currentUser: {
+        userId: '123',
+        name: 'Alice',
+        email: 'alice@example.com',
+        role:'USER',
+        approved: true
+      } as User,
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
     const user = usersState.usersState().currentUser;
     component.form.setValue({
       name: 'Updated Name',
@@ -99,7 +125,7 @@ describe('EditProfileModalComponent', () => {
   it('should call mediaService and include avatarKey if file exists', async () => {
     const user = usersState.usersState().currentUser;
     const file = new File(['dummy'], 'avatar.jpg', { type: 'image/jpeg' });
-    component.file = file;
+    component.file.set(file);
 
     component.form.setValue({
       name: 'Alice',
@@ -120,6 +146,18 @@ describe('EditProfileModalComponent', () => {
   });
 
   it('should include passwords in payload if showPasswordFields is true', async () => {
+    usersState.usersState.set({
+      currentUser: {
+        userId: '123',
+        name: 'Alice',
+        email: 'alice@example.com',
+        role: 'USER',
+        approved: true
+      } as User,
+    });
+    fixture.detectChanges();
+    await fixture.whenStable();
+
     const user = usersState.usersState().currentUser;
     component.showPasswordFields.set(true);
     component.form.setValue({
@@ -186,13 +224,27 @@ describe('EditProfileModalComponent', () => {
 
     component.handleFileChange(mockEvent);
 
-    expect(component.file).toBe(testFile);
+    expect(component.file()).toBe(testFile);
     expect(mockFileReader.readAsDataURL).toHaveBeenCalledWith(testFile);
 
-    const loadEvent = { target: mockFileReader } as { target: FileReader };
-    (mockFileReader.onload as jasmine.Spy).call(mockFileReader, loadEvent);
+    (mockFileReader.onload as jasmine.Spy).call(mockFileReader);
     tick();
 
     expect(component.previewUrl()).toBe(readerResult);
   }));
+
+  it('should correctly implement BaseEDitForm getters', () => {
+    expect(component.getForm()).toBe(component.form);
+
+    const currentUser = usersState.usersState().currentUser!;
+
+    expect(component.getCurrentItem()).toBe(currentUser);
+    expect(component.getItemId()).toBe(currentUser.userId);
+    expect(component.getUploadFolder()).toBe('avatar');
+    expect(component.getCurrentImageKey()).toBe(currentUser.avatar!.key);
+
+    const builtItem = component.buildUpdatedItem({}, undefined);
+    expect(builtItem).toBe(currentUser);
+
+  });
 });
