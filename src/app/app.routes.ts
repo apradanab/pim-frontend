@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/guards/auth.guard';
+import { adminGuard, authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home', title: 'Redirección inicial'},
@@ -33,6 +33,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/user-profile-view/user-profile-view.component'),
     title: 'Perfil de usuario',
     canActivate: [authGuard]
+  },
+  {
+    path: 'admin',
+    loadComponent: () => import('./features/admin-panel-view/admin-panel-view.component'),
+    title: 'Panel de administrador',
+    canActivate: [adminGuard]
   },
   { path: '**', redirectTo: 'home', title: 'Redirección'}
 ];

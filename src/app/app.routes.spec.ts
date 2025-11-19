@@ -61,5 +61,14 @@ describe('App Routes', () => {
 
     const component = await route!.loadComponent!();
     expect(component).toBeDefined();
-  })
+  });
+
+  it('should lazy load AdminPanelViewComponent on /admin', async () => {
+    const route = routes.find(route => route.path === 'admin');
+    expect(route).toBeDefined();
+    expect(route?.loadComponent).toBeDefined();
+
+    const component = await route!.loadComponent!();
+    expect(component).toBeDefined();
+  });
 });
