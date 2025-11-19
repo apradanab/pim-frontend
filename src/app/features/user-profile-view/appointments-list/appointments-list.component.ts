@@ -126,7 +126,11 @@ export class AppointmentsListComponent {
       return [];
     }
 
-    return this.dateTimeService.sortAppointments(appointments);
+    return this.dateTimeService.sortItemsByDate(
+      appointments,
+      (apt) => apt.date,
+      (apt) => apt.startTime
+    );
   });
 
   paginatedAppointments = computed(() => {

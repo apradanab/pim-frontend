@@ -67,6 +67,17 @@ describe('DateTimeService', () => {
     expect(date.getDate()).toBe(25);
   });
 
+  it('parseDateString. Should handle ISO strings containing T', () => {
+    const isoDateString = '2025-10-26T14:01:01.005Z';
+    const date = service.parseDateString(isoDateString);
+
+    expect(date.getTime()).toBeGreaterThan(0);
+
+    expect(date.getUTCFullYear()).toBe(2025);
+    expect(date.getUTCMonth()).toBe(9);
+    expect(date.getUTCDate()).toBe(26);
+  })
+
   it('timeToMinutes. Should correctly convert a time string to minutes', () => {
     expect(service.timeToMinutes('9:00')).toBe(540);
     expect(service.timeToMinutes('10:30')).toBe(630);
@@ -82,7 +93,7 @@ describe('DateTimeService', () => {
     expect(formattedDate).toContain('25 octubre de 2025');
   });
 
-  describe('sortAppointments', () => {
+  describe('sortItemsByDate', () => {
     const mockApts: Appointment[] = [
       { appointmentId: 'a1', therapyId: 't1', date: '2025-11-10', startTime: '10:00', endTime: '11:00', status: AppointmentStatus.AVAILABLE, createdAt: ''},
       { appointmentId: 'a2', therapyId: 't1', date: '2025-11-10', startTime: '09:00', endTime: '10:00', status: AppointmentStatus.AVAILABLE, createdAt: ''},
@@ -90,10 +101,34 @@ describe('DateTimeService', () => {
       { appointmentId: 'a4', therapyId: 't2', date: '2025-11-11', startTime: '09:00', endTime: '10:00', status: AppointmentStatus.AVAILABLE, createdAt: ''},
     ];
 
-    it('should correctly apply date', () => {
-      const sorted = service.sortAppointments(mockApts);
+    it('should return an empty array if the input array is empty', () => {
+      expect(service.sortItemsByDate([], (item: Appointment) => item.date)).toEqual([]);
+    });
+
+    // it('should return an empty array if the input array is null')
+
+    it('should correctly sort appointments by date and time', () => {
+      const sorted = service.sortItemsByDate(
+        mockApts,
+        (apt: Appointment) => apt.date,
+        (apt: Appointment) => apt.startTime
+      );
 
       expect(sorted.map(a => a.appointmentId)).toEqual(['a4', 'a3', 'a2', 'a1']);
     });
+
+    it('should return 0 when items have the same date and timeSelector is not provided', () => {
+      const itemsWithSameDate: Appointment[] = [
+        { appointmentId: 'i1', therapyId: 't1', date: '2025-11-20', startTime: '10:00', endTime: '11:00', status: AppointmentStatus.AVAILABLE, createdAt: ''},
+        { appointmentId: 'i2', therapyId: 't2', date: '2025-11-20', startTime: '10:00', endTime: '11:00', status: AppointmentStatus.AVAILABLE, createdAt: ''},
+      ];
+
+      const sorted = service.sortItemsByDate(
+        itemsWithSameDate,
+        (apt: Appointment) => apt.date
+      );
+
+      expect(sorted.map((a: Appointment) => a.appointmentId)).toEqual(['i1', 'i2']);
+    })
   })
 });

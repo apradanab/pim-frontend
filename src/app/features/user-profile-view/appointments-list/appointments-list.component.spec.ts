@@ -49,12 +49,13 @@ describe('AppointmentsListComponent', () => {
       const [h, m] = time.split(':').map(Number);
       return h * 60 + m;
     }),
-    sortAppointments: jasmine.createSpy('sortAppointments').and.callFake((appointments: Appointment[]) =>
-      [...appointments].sort((a, b) => {
-        const dateA = new Date(a.date).getTime();
-        const dateB = new Date(b.date).getTime();
-        return dateB - dateA;
-      })
+    sortItemsByDate: jasmine.createSpy('sortItemsByDate').and.callFake(
+      (appointments: Appointment[]) =>
+        [...appointments].sort((a, b) => {
+          const dateA = new Date(a.date).getTime();
+          const dateB = new Date(b.date).getTime();
+          return dateB - dateA;
+        })
     )
   };
 
@@ -81,6 +82,11 @@ describe('AppointmentsListComponent', () => {
   it('should compute sorted appointments correctly', () => {
     const sorted = component.sortedAppointments();
     expect(sorted[0].date).toBe('2025-11-06');
+    const [, dateFn, timeFn] = mockDateTimeService.sortItemsByDate.calls.argsFor(0);
+    const apt = { date: '2025-11-06', startTime: '09:00' };
+
+    expect(dateFn(apt)).toBe('2025-11-06');
+    expect(timeFn(apt)).toBe('09:00');
   });
 
   it('should go to next and previous page correctly', () => {
