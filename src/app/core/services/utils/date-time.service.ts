@@ -1,6 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
 import { WeekDay } from '../../../models/schedule.model';
-import { Appointment } from '../../../models/appointment.model';
 
 @Injectable({
   providedIn: 'root'
@@ -88,6 +87,7 @@ export class DateTimeService {
   }
 
   public parseDateString(dateStr: string): Date {
+    if(dateStr.includes('T')) return new Date(dateStr);
     const [year, month, day] = dateStr.split('-').map(Number);
     return new Date(year, month -1, day);
   }
@@ -109,17 +109,27 @@ export class DateTimeService {
     return formatted.replace(' de ', ' ').replace(',', ',');
   }
 
-  public sortAppointments(appointments: Appointment[]): Appointment[] {
-    return appointments.slice().sort((a: Appointment, b: Appointment) => {
+  public sortItemsByDate<T>(
+    items: T[],
+    dateSelector: (item: T) => string,
+    timeSelector?: (item: T) => string
+  ): T[] {
+    if (!items || items.length === 0) return [];
 
-      const timeA = this.timeToMinutes(a.startTime);
-      const timeB = this.timeToMinutes(b.startTime);
-      const dateA = this.parseDateString(a.date).getTime();
-      const dateB = this.parseDateString(b.date).getTime();
+    return items.slice().sort((a: T, b: T) => {
+      const dateA = this.parseDateString(dateSelector(a)).getTime();
+      const dateB = this.parseDateString(dateSelector(b)).getTime();
 
       if (dateB !== dateA) return dateB - dateA;
 
-      return timeA -timeB;
-    });
+      if (timeSelector) {
+        const timeA = this.timeToMinutes(timeSelector(a));
+        const timeB = this.timeToMinutes(timeSelector(b));
+
+        return timeA - timeB;
+      }
+
+      return 0;
+    })
   }
 }
