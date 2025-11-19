@@ -74,6 +74,21 @@ describe('UsersRepoService', () => {
     req.flush(mockResponse);
   });
 
+  it('should call listUsers', () => {
+    const mockResponse: User[] = [
+      { userId: '1', name: 'Name', email: 'user1@test.com' } as User,
+      { userId: '2', name: 'Name', email: 'user2@test.com'  } as User,
+    ];
+
+    service.listUsers().subscribe((response) => {
+      expect(response).toEqual(mockResponse);
+    });
+
+    const req = http.expectOne(service['url']);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockResponse);
+  });
+
   it('should call updateUser', () => {
     const mockId = '123';
     const mockUpdateData: UpdateUserInput = {
@@ -107,6 +122,33 @@ describe('UsersRepoService', () => {
 
     const req = http.expectOne(`${service['authUrl']}/complete-registration`);
     expect(req.request.method).toBe('POST');
+    req.flush(mockResponse);
+  });
+
+  it('should call approveUser', () => {
+    const mockUserId = '123';
+    const mockResponse = { message: 'User approved' };
+
+    service.approveUser(mockUserId).subscribe((response) => {
+      expect(response).toEqual(mockResponse);
+    });
+
+    const req = http.expectOne(`${service['adminUrl']}/${mockUserId}/approve`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({});
+    req.flush(mockResponse);
+  });
+
+  it('should call deleteUser', () => {
+    const mockUserId = '456';
+    const mockResponse = { message: 'User deleted' };
+
+    service.deleteUser(mockUserId).subscribe((response) => {
+      expect(response).toEqual(mockResponse);
+    });
+
+    const req = http.expectOne(`${service['url']}/${mockUserId}`);
+    expect(req.request.method).toBe('DELETE');
     req.flush(mockResponse);
   });
 });
