@@ -3,7 +3,7 @@ import { UsersRepoService } from '../repos/users.repo.service';
 import { ApiError } from '../../interceptors/error.interceptor';
 import { UserState } from '../../../models/state.model';
 import { UpdateUserInput, User } from '../../../models/user.model';
-import { catchError, lastValueFrom, tap } from 'rxjs';
+import { catchError, lastValueFrom, map, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +26,26 @@ export class UsersStateService {
     }));
   }
 
+  listUsers = (): Promise<User[]> => {
+    this.#state.update(state => ({ ...state, error: null }));
+    return lastValueFrom(
+      this.usersRepo.listUsers().pipe(
+        tap((users: User[]) => {
+          this.#state.update(state => ({
+            ...state,
+            list: users,
+            error: null
+          }));
+        }),
+        catchError((err: ApiError) => {
+          console.error('Error listing users:', err.message);
+          this.#state.update(state => ({ ...state, list: [], error: err.message }));
+          throw err;
+        })
+      )
+    );
+  }
+
   completeRegistration = (data: {
     registrationToken: string;
     password: string;
@@ -43,6 +63,26 @@ export class UsersStateService {
     });
   }
 
+  approveUser = (userId: string): Promise<void> => {
+    return lastValueFrom(
+      this.usersRepo.approveUser(userId).pipe(
+        tap(() => {
+          this.#state.update(state => ({
+            ...state,
+            list: state.list.map(u =>
+              u.userId === userId ? { ...u, approved: true, role: 'USER' } : u
+            )
+          }));
+        }),
+        map(() => undefined),
+        catchError((err: ApiError) => {
+          console.error(`Error approving user ${userId}:`, err.message);
+          throw err;
+        })
+      )
+    )
+  }
+
   updateUserProfile = (userId: string, data: UpdateUserInput): Promise<User> => {
     return lastValueFrom(
       this.usersRepo.updateUser(userId, data).pipe(
@@ -58,5 +98,23 @@ export class UsersStateService {
         })
       )
     );
+  }
+
+  deleteUser = (userId: string): Promise<void> => {
+    return lastValueFrom(
+      this.usersRepo.deleteUser(userId).pipe(
+        tap(() => {
+          this.#state.update(state => ({
+            ...state,
+            list: state.list.filter(u => u.userId !== userId)
+          }));
+        }),
+        map(() => undefined),
+        catchError((err: ApiError) => {
+          console.error(`Error deleting user ${userId}:`, err.message);
+          throw err;
+        })
+      )
+    )
   }
 }
