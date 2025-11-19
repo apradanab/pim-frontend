@@ -1,11 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpInterceptorFn, HttpRequest, HttpEvent, HttpHandlerFn, HttpHeaders } from '@angular/common/http';
 import { authInterceptor } from './auth.interceptor';
-import { AuthStateService } from '../services/states/auth.state.service';
 import { Observable, of } from 'rxjs';
 
 describe('authInterceptor', () => {
-  let stateServiceMock: jasmine.SpyObj<AuthStateService>;
   let nextHandler: jasmine.Spy<HttpHandlerFn>;
   const mockRequest = new HttpRequest('GET', '/api/test');
 
@@ -13,52 +11,27 @@ describe('authInterceptor', () => {
     TestBed.runInInjectionContext(() => authInterceptor(req, next));
 
   beforeEach(() => {
-    stateServiceMock = jasmine.createSpyObj<AuthStateService>('AuthStateService', ['isLoggedIn', 'authState']);
-
-    stateServiceMock.authState.and.returnValue({
-      status: 'idle',
-      currentUser: null,
-      token: null,
-      error: null
-    });
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     nextHandler = jasmine.createSpy('nextHandler').and.callFake((_req: HttpRequest<unknown>) => {
       return of({} as HttpEvent<unknown>);
     });
 
-    TestBed.configureTestingModule({
-      providers: [
-        { provide: AuthStateService, useValue: stateServiceMock }
-      ]
-    });
+    spyOn(localStorage, 'getItem').and.returnValue(null);
+    spyOn(localStorage, 'setItem');
   });
 
   it('should add Authorization header when token exists', () => {
-    const testToken = 'test-token-123';
-    stateServiceMock.isLoggedIn.and.returnValue(true);
-    stateServiceMock.authState.and.returnValue({
-      status: 'success',
-      currentUser: null,
-      token: testToken,
-      error: null
-    });
+    (localStorage.getItem as jasmine.Spy).and.returnValue('test-token');
 
     interceptor(mockRequest, nextHandler);
 
     const interceptedRequest = nextHandler.calls.mostRecent().args[0] as HttpRequest<unknown>;
     expect(interceptedRequest.headers.has('Authorization')).toBeTrue();
-    expect(interceptedRequest.headers.get('Authorization')).toBe(`Bearer ${testToken}`);
+    expect(interceptedRequest.headers.get('Authorization')).toBe('Bearer test-token');
   });
 
   it('should not modify request when no token exists', () => {
-    stateServiceMock.isLoggedIn.and.returnValue(false);
-    stateServiceMock.authState.and.returnValue({
-      status: 'idle',
-      currentUser: null,
-      token: null,
-      error: null
-    });
+    (localStorage.getItem as jasmine.Spy).and.returnValue(null);
 
     interceptor(mockRequest, nextHandler);
 
@@ -67,40 +40,21 @@ describe('authInterceptor', () => {
   });
 
   it('should pass through login and create requests without modification', () => {
-    const testToken = 'test-token';
-    stateServiceMock.isLoggedIn.and.returnValue(true);
-    stateServiceMock.authState.and.returnValue({
-      status: 'success',
-      currentUser: null,
-      token: testToken,
-      error: null
-    });
+    (localStorage.getItem as jasmine.Spy).and.returnValue('some-token');
 
-    const loginRequest = new HttpRequest('POST', '/login', null, {
-      headers: new HttpHeaders()
-    });
+    const loginRequest = new HttpRequest('POST', '/login', null, { headers: new HttpHeaders() });
     interceptor(loginRequest, nextHandler);
-
     let interceptedRequest = nextHandler.calls.mostRecent().args[0] as HttpRequest<unknown>;
     expect(interceptedRequest.headers.has('Authorization')).toBeFalse();
 
-    const createRequest = new HttpRequest('POST', '/create', null, {
-      headers: new HttpHeaders()
-    });
+    const createRequest = new HttpRequest('POST', '/create', null, { headers: new HttpHeaders() });
     interceptor(createRequest, nextHandler);
-
     interceptedRequest = nextHandler.calls.mostRecent().args[0] as HttpRequest<unknown>;
     expect(interceptedRequest.headers.has('Authorization')).toBeFalse();
   });
 
-  it('should pass through the request when not logged in', () => {
-    stateServiceMock.isLoggedIn.and.returnValue(false);
-    stateServiceMock.authState.and.returnValue({
-      status: 'idle',
-      currentUser: null,
-      token: null,
-      error: null
-    });
+  it('should pass through the request when no token', () => {
+    (localStorage.getItem as jasmine.Spy).and.returnValue(null);
 
     const result = interceptor(mockRequest, nextHandler);
 
