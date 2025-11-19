@@ -11,6 +11,7 @@ export class UsersRepoService {
   private readonly http = inject(HttpClient);
   private readonly url = `${environment.apiUrl}/users`;
   private readonly authUrl = `${environment.apiUrl}/auth`;
+  private readonly adminUrl = `${environment.apiUrl}/admin/users`
 
   preregister(data: UserCreateDto): Observable<User> {
     return this.http.post<User>(`${this.authUrl}/register`, data);
@@ -22,6 +23,10 @@ export class UsersRepoService {
 
   getById(id: string): Observable<User> {
     return this.http.get<User>(`${this.url}/${id}`);
+  }
+
+  listUsers(): Observable<User[]> {
+    return this.http.get<User[]>(this.url);
   }
 
   updateUser(id: string, data: UpdateUserInput): Observable<User> {
@@ -39,5 +44,13 @@ export class UsersRepoService {
       `${this.authUrl}/complete-registration`,
       data
     );
+  }
+
+  approveUser(userId: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.adminUrl}/${userId}/approve`, {});
+  }
+
+  deleteUser(userId: string): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.url}/${userId}`);
   }
 }
