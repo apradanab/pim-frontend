@@ -1,8 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { CanActivateFn, Router, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
+import { CanActivateFn, Router, RouterStateSnapshot, ActivatedRouteSnapshot, GuardResult } from '@angular/router';
 import { authGuard, adminGuard } from './auth.guard';
 import { AuthStateService } from '../services/states/auth.state.service';
 import { User } from '../../models/user.model';
+import { firstValueFrom, Observable } from 'rxjs';
+import { AuthState } from '../../models/state.model';
 
 describe('Auth Guards', () => {
   let stateServiceMock: jasmine.SpyObj<AuthStateService>;
@@ -11,8 +13,14 @@ describe('Auth Guards', () => {
   const mockState = { url: '/protected' } as RouterStateSnapshot;
 
   beforeEach(() => {
-    stateServiceMock = jasmine.createSpyObj<AuthStateService>('AuthStateService', ['isLoggedIn', 'authState']);
+    stateServiceMock = jasmine.createSpyObj<AuthStateService>('AuthStateService', [
+      'isLoggedIn',
+      'authState',
+      'isReady'
+    ]);
     routerMock = jasmine.createSpyObj('Router', ['navigate']);
+
+    stateServiceMock.isReady.and.returnValue(true);
 
     TestBed.configureTestingModule({
       providers: [
@@ -22,66 +30,92 @@ describe('Auth Guards', () => {
     });
   });
 
-  describe('authGuard', () => {
-    const executeGuard: CanActivateFn = (...params) =>
-      TestBed.runInInjectionContext(() => authGuard(...params));
+  const executeGuard = (guard: CanActivateFn) => (route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<GuardResult> => {
+    return TestBed.runInInjectionContext(() => guard(route, state)) as Observable<GuardResult>;
+  };
 
-    it('should allow access when user is logged in', () => {
+  describe('authGuard', () => {
+    const authExecuteGuard = executeGuard(authGuard);
+
+    it('should allow access when user is logged in', async () => {
       stateServiceMock.isLoggedIn.and.returnValue(true);
       stateServiceMock.authState.and.returnValue({
         status: 'success',
-        currentUser: { userId: '1', name: 'Test', email: 'test@test.com', role: 'USER', approved: true, createdAt: '2024-01-01T00:00:00.000Z' },
+        currentUser: {} as User,
         token: 'mock-token',
         error: null
-      });
+      } as AuthState);
 
-      expect(executeGuard(mockRoute, mockState)).toBeTrue();
+      const result$ = authExecuteGuard(mockRoute, mockState);
+      const result = await firstValueFrom(result$);
+
+      expect(result).toBeTrue();
+      expect(routerMock.navigate).not.toHaveBeenCalled();
     });
 
-    it('should redirect when user is not logged in', () => {
+    it('should redirect when user is not logged in', async () => {
       stateServiceMock.isLoggedIn.and.returnValue(false);
-      expect(executeGuard(mockRoute, mockState)).toBeFalse();
+
+      const result$ = authExecuteGuard(mockRoute, mockState);
+      const result = await firstValueFrom(result$);
+
+      expect(result).toBeFalse();
+      expect(routerMock.navigate).toHaveBeenCalledWith(['/'], { queryParams: { returnUrl: mockState.url } });
     });
   });
 
   describe('adminGuard', () => {
-    const executeGuard: CanActivateFn = (...params) =>
-      TestBed.runInInjectionContext(() => adminGuard(...params));
+    const adminExecuteGuard = executeGuard(adminGuard);
 
     const createUser = (role: 'ADMIN' | 'USER'): User => ({
       userId: '1',
       name: 'Test User',
       email: 'test@test.com',
-      role: role,
+      role,
       approved: true,
       createdAt: '2024-01-01T00:00:00.000Z'
     });
 
-    it('should allow access when user is admin', () => {
+    it('should allow access when user is admin', async () => {
       stateServiceMock.isLoggedIn.and.returnValue(true);
       stateServiceMock.authState.and.returnValue({
         status: 'success',
         currentUser: createUser('ADMIN'),
         token: 'mock-token',
         error: null
-      });
-      expect(executeGuard(mockRoute, mockState)).toBeTrue();
+      } as AuthState);
+
+      const result$ = adminExecuteGuard(mockRoute, mockState);
+      const result = await firstValueFrom(result$);
+
+      expect(result).toBeTrue();
+      expect(routerMock.navigate).not.toHaveBeenCalled();
     });
 
-    it('should redirect when user is not admin', () => {
+    it('should redirect when user is not admin', async () => {
       stateServiceMock.isLoggedIn.and.returnValue(true);
       stateServiceMock.authState.and.returnValue({
         status: 'success',
         currentUser: createUser('USER'),
         token: 'mock-token',
         error: null
-      });
-      expect(executeGuard(mockRoute, mockState)).toBeFalse();
+      } as AuthState);
+
+      const result$ = adminExecuteGuard(mockRoute, mockState);
+      const result = await firstValueFrom(result$);
+
+      expect(result).toBeFalse();
+      expect(routerMock.navigate).toHaveBeenCalledWith(['/'], { queryParams: { returnUrl: mockState.url } });
     });
 
-    it('should redirect when user is not logged in', () => {
+    it('should redirect when user is not logged in', async () => {
       stateServiceMock.isLoggedIn.and.returnValue(false);
-      expect(executeGuard(mockRoute, mockState)).toBeFalse();
+
+      const result$ = adminExecuteGuard(mockRoute, mockState);
+      const result = await firstValueFrom(result$);
+
+      expect(result).toBeFalse();
+      expect(routerMock.navigate).toHaveBeenCalledWith(['/'], { queryParams: { returnUrl: mockState.url } });
     });
   });
 });
