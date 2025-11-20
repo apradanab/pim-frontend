@@ -1,8 +1,10 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoginModalComponent } from '../login-modal/login-modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCalendar, faChevronRight, faHeart, faHouse, faMessage, faUser } from '@fortawesome/free-solid-svg-icons';
+import { User } from '../../../models/user.model';
+import { UsersStateService } from '../../../core/services/states/users.state.service';
 
 @Component({
   selector: 'pim-mobile-sidebar',
@@ -132,6 +134,7 @@ import { faCalendar, faChevronRight, faHeart, faHouse, faMessage, faUser } from 
   `
 })
 export class MobileSidebarComponent {
+  private readonly userService = inject(UsersStateService);
   readonly router = inject(Router);
 
   active = input(false);
@@ -145,8 +148,20 @@ export class MobileSidebarComponent {
   faHouse = faHouse;
   faChevron = faChevronRight;
 
+  currentUser = computed<User | null>(() => {
+    return this.userService.usersState().currentUser;
+  })
+
+  isAdmin = computed<boolean>(() => {
+    return this.currentUser()?.role === 'ADMIN';
+  })
+
   navigateToProfile() {
-    this.router.navigate(['/perfil']);
+    if(this.isAdmin()) {
+      this.router.navigate(['/admin']);
+    } else {
+      this.router.navigate(['/perfil']);
+    }
   }
 
   navigateToTherapies() {

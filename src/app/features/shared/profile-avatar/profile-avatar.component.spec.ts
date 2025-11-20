@@ -43,7 +43,41 @@ describe('ProfileAvatarComponent', () => {
     expect(component.currentUser()).toEqual(mockUserState.currentUser);
   });
 
-  it('should navigate to /perfil when isMenuButton is false', () => {
+  it('should return early and NOT navigate when isMenuButton is true', () => {
+    mockUsersStateService.usersState.and.returnValue({
+      list: [],
+      currentUser: { role: 'USER' } as User,
+      error: null
+    });
+
+    spyOn(component, 'isMenuButton').and.returnValue(true);
+
+    component.navigateToProfile();
+
+    expect(mockRouter.navigate).not.toHaveBeenCalled();
+  });
+
+  it('should navigate to /admin when user is admin', () => {
+    mockUsersStateService.usersState.and.returnValue({
+      list: [],
+      currentUser: { role: 'ADMIN' } as User,
+      error: null
+    });
+
+    spyOn(component, 'isMenuButton').and.returnValue(false);
+
+    component.navigateToProfile();
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/admin']);
+  });
+
+  it('should navigate to /perfil when isMenuButton is false and user is not admin', () => {
+    mockUsersStateService.usersState.and.returnValue({
+      list: [],
+      currentUser: { role: 'USER' } as User,
+      error: null
+    });
+
     spyOn(component, 'isMenuButton').and.returnValue(false);
     component.navigateToProfile();
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/perfil']);
