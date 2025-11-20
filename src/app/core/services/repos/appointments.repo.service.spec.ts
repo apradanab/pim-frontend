@@ -126,7 +126,7 @@ describe('AppointmentsRepoService', () => {
       expect(response).toBeNull();
     });
 
-    const req = httpMock.expectOne(`${apiUrl}/${therapyId}/${appointmentId}`);
+    const req = httpMock.expectOne(`${apiUrl}/therapies/${therapyId}/appointments/${appointmentId}`);
     expect(req.request.method).toBe('DELETE');
     req.flush(null);
   });
