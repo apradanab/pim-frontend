@@ -1,8 +1,9 @@
-import { Component, input, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { Advice } from '../../../../models/advice.model';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { AdviceEditFormComponent } from "../advice-edit-form/advice-edit-form.component";
+import { ImageService } from '../../../../core/services/utils/image.service';
 
 @Component({
   selector: 'pim-advice-card',
@@ -31,7 +32,11 @@ import { AdviceEditFormComponent } from "../advice-edit-form/advice-edit-form.co
 
       <div class="card-side">
         <div class="card-side">
-          <img [src]="advice().image.url" alt="">
+          @if (advice().image.url) {
+            <img [src]="advice().image.url" [alt]="advice().title">
+          } @else {
+            <img [src]="images.icons.orangeLogo" alt="Placeholder de imagen">
+          }
         </div>
 
         <div class="actions">
@@ -139,6 +144,8 @@ import { AdviceEditFormComponent } from "../advice-edit-form/advice-edit-form.co
   `
 })
 export class AdviceCardComponent {
+  readonly images = inject(ImageService);
+
   advice = input.required<Advice>();
   therapyTitle = input<string>();
   edit = output<Advice>();
