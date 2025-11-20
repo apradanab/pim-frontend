@@ -1,28 +1,86 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MobileSidebarComponent } from './mobile-sidebar.component';
 import { Router } from '@angular/router';
+import { User } from '../../../models/user.model';
+import { computed, signal } from '@angular/core';
+import { UsersStateService } from '../../../core/services/states/users.state.service';
+
+class MockUser implements User {
+  role: 'USER' | 'ADMIN';
+  userId = 'test-id';
+  email = 'test@example.com';
+  name = 'Test User';
+  approved: boolean = true;
+
+  constructor(role: 'USER' | 'ADMIN') {
+    this.role = role;
+  }
+}
+
+class MockUsersStateService {
+  private currentUserSignal = signal<User | null>(null);
+
+  usersState = computed(() => ({
+    currentUser: this.currentUserSignal(),
+    isLoggedIn: !!this.currentUserSignal()
+  }));
+
+  setCurrentUser(user: User | null) {
+    this.currentUserSignal.set(user);
+  }
+}
+
+const mockRouter = {
+  navigate: jasmine.createSpy('navigate'),
+};
 
 describe('MobileSidebarComponent', () => {
   let component: MobileSidebarComponent;
   let fixture: ComponentFixture<MobileSidebarComponent>;
+  let usersStateService: MockUsersStateService;
   let router: Router;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [MobileSidebarComponent],
       providers: [
-        {
-          provide: Router,
-          useValue: {
-            navigate: jasmine.createSpy('navigate')
-          }
-        }
+        { provide: UsersStateService, useClass: MockUsersStateService },
+        { provide: Router, useValue: mockRouter },
       ]
     });
 
     fixture = TestBed.createComponent(MobileSidebarComponent);
     component = fixture.componentInstance;
+
+    usersStateService = TestBed.inject(UsersStateService) as unknown as MockUsersStateService;
     router = TestBed.inject(Router);
+
+    (router.navigate as jasmine.Spy).calls.reset();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  describe('navigateToProfile', () => {
+
+    it('should navigate to /perfil when the user is not an Admin', () => {
+      usersStateService.setCurrentUser(new MockUser('USER'));
+      fixture.detectChanges();
+
+      component.navigateToProfile();
+
+      expect(router.navigate).toHaveBeenCalledWith(['/perfil']);
+    });
+
+    it('should navigate to /admin when the user is an Admin', () => {
+      usersStateService.setCurrentUser(new MockUser('ADMIN'));
+      fixture.detectChanges();
+
+      component.navigateToProfile();
+
+      expect(router.navigate).toHaveBeenCalledWith(['/admin']);
+    });
   });
 
   it('should open login modal', () => {

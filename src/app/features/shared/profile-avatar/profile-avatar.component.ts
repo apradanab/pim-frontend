@@ -38,7 +38,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
       background-color: #ffffff;
       border: 4px solid rgba(81, 69, 69, 0.8);
       border-radius: 50px;
-      padding: 2px;
+      padding: 2.5px;
     }
 
     .profile-avatar-img {
@@ -71,9 +71,19 @@ export class ProfileAvatarComponent {
     return user;
   });
 
+  isAdmin = computed<boolean>(() => {
+    return this.currentUser()?.role === 'ADMIN';
+  })
+
   navigateToProfile() {
-    if (!this.isMenuButton()) {
-      this.router.navigate(['/perfil']);
+    if (this.isMenuButton()) {
+      return;
+    }
+
+    if (this.isAdmin()) {
+      this.router.navigate(['/admin']);
+    } else {
+      this.router.navigate(['/perfil'])
     }
   }
 }
