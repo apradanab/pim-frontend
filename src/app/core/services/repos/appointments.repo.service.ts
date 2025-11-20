@@ -50,6 +50,6 @@ export class AppointmentsRepoService {
   }
 
   deleteAppointment(therapyId: string, appointmenId: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${therapyId}/${appointmenId}`);
+    return this.http.delete<void>(`${this.apiUrl}/therapies/${therapyId}/appointments/${appointmenId}`);
   }
 }
