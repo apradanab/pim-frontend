@@ -14,12 +14,14 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
       <button class="avatar-display"
               tabindex="0"
               (click)="navigateToProfile()"
-              (keyup.enter)="navigateToProfile()">
-
-        @if (currentUser()?.avatar?.url) {
+              (keyup.enter)="navigateToProfile()"
+              [disabled]="isLoading()"
+      > @if (isLoading()) {
+          cargando
+        } @else if (currentUser()?.avatar?.url) {
           <img [src]="currentUser()?.avatar?.url"
-              alt="Avatar de usuario"
-              class="profile-avatar-img"/>
+                alt="Avatar de usuario"
+                class="profile-avatar-img"/>
         } @else {
           <fa-icon [icon]="faUserCircle" class="profile-icon"></fa-icon>
         }
@@ -66,14 +68,9 @@ export class ProfileAvatarComponent {
 
   faUserCircle = faUserCircle;
 
-  currentUser = computed<User | null>(() => {
-    const user = this.usersService.usersState().currentUser;
-    return user;
-  });
-
-  isAdmin = computed<boolean>(() => {
-    return this.currentUser()?.role === 'ADMIN';
-  })
+  currentUser = computed<User | null>(() => { return this.usersService.usersState().currentUser;});
+  isLoading = computed<boolean>(() => { return this.usersService.usersState().isLoading })
+  isAdmin = computed<boolean>(() => { return this.currentUser()?.role === 'ADMIN'; })
 
   navigateToProfile() {
     if (this.isMenuButton()) {
