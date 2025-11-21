@@ -15,6 +15,7 @@ export interface AuthState {
 export interface UserState {
   list: User[];
   currentUser: User | null;
+  isLoading: boolean;
   error: string | null;
 }
 
@@ -35,5 +36,6 @@ export interface AppointmentState {
   userAppointments: Appointment[];
   availableAppointments: Appointment[];
   current: Appointment | null;
+  isLoading: boolean;
   error: string | null;
 }
