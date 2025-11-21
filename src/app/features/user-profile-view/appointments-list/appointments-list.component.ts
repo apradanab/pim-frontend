@@ -184,7 +184,7 @@ export class AppointmentsListComponent {
       const userId = currentUser?.userId;
 
       if (userId) {
-        this.appointmentsService.loadUserAppointments(userId);
+        this.appointmentsService.getByUser(userId);
       }
 
       this.therapiesService.listTherapies();
