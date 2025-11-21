@@ -70,8 +70,8 @@ export abstract class BaseEditForm<T extends EditableItem> {
       const updatedItem = this.buildUpdatedItem(formValue, imageInfo);
       return updatedItem;
     } catch (error) {
-      console.error('submitBase failed after image upload, returning null.');
-      return null;
+      console.error('submitBase failed after image upload', error);
+      throw error;
     }
   }
 }
