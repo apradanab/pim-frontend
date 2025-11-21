@@ -22,13 +22,13 @@ describe('AppointmentsStateService', () => {
   const mockErrorResponse = { message: 'fail' };
 
   const createReloadSpy = () => {
-    return spyOn(service, 'loadUserAppointments').and.callThrough();
+    return spyOn(service, 'getByUser').and.callThrough();
   }
 
   beforeEach(() => {
     mockRepo = jasmine.createSpyObj('AppointmentsRepoService', [
-      'getAllAppointments',
-      'getUserAppointments',
+      'listAppointments',
+      'getByUser',
       'requestAppointment',
       'joinGroupAppointment',
       'leaveGroupAppointment',
@@ -49,7 +49,7 @@ describe('AppointmentsStateService', () => {
     });
 
     service = TestBed.inject(AppointmentsStateService);
-    mockRepo.getUserAppointments.and.returnValue(of([]));
+    mockRepo.getByUser.and.returnValue(of([]));
   });
 
   it('should be created', () => {
@@ -73,16 +73,16 @@ describe('AppointmentsStateService', () => {
     ];
 
     it('should update state on success', () => {
-      mockRepo.getAllAppointments.and.returnValue(of(appointments));
-      service.loadAllAppointments();
+      mockRepo.listAppointments.and.returnValue(of(appointments));
+      service.listAppointments();
       expect(service.appointmentsState().availableAppointments).toEqual(appointments);
       expect(service.appointmentsState().error).toBeNull();
     });
 
     it('should update state on error', () => {
       const error = { message: 'Network error' };
-      mockRepo.getAllAppointments.and.returnValue(throwError(() => error));
-      service.loadAllAppointments();
+      mockRepo.listAppointments.and.returnValue(throwError(() => error));
+      service.listAppointments();
       expect(service.appointmentsState().error).toBe(error.message);
     });
   });
@@ -103,16 +103,16 @@ describe('AppointmentsStateService', () => {
     ];
 
     it('should update state on success', () => {
-      mockRepo.getUserAppointments.and.returnValue(of(userAppointments));
-      service.loadUserAppointments('user1');
+      mockRepo.getByUser.and.returnValue(of(userAppointments));
+      service.getByUser('user1');
       expect(service.appointmentsState().userAppointments).toEqual(userAppointments);
       expect(service.appointmentsState().error).toBeNull();
     });
 
     it('should update state on error', () => {
       const error = { message: 'Network error' };
-      mockRepo.getUserAppointments.and.returnValue(throwError(() => error));
-      service.loadUserAppointments('user1');
+      mockRepo.getByUser.and.returnValue(throwError(() => error));
+      service.getByUser('user1');
       expect(service.appointmentsState().error).toBe(error.message);
     });
   });
@@ -196,11 +196,11 @@ describe('AppointmentsStateService', () => {
         { therapyId: 't1', appointmentId: 'other', date: '2025-11-09', startTime: '12:00', endTime: '13:00', status: AppointmentStatus.AVAILABLE, createdAt: '' }
       ];
 
-      mockRepo.getAllAppointments.and.returnValue(of(initialAppointments));
-      service.loadAllAppointments();
+      mockRepo.listAppointments.and.returnValue(of(initialAppointments));
+      service.listAppointments();
 
-      mockRepo.getUserAppointments.and.returnValue(of(initialAppointments));
-      service.loadUserAppointments('1');
+      mockRepo.getByUser.and.returnValue(of(initialAppointments));
+      service.getByUser('1');
 
       mockRepo.deleteAppointment.and.returnValue(of(void 0));
       service.deleteAppointment(therapyId, appointmentId);
