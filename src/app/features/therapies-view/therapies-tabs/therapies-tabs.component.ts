@@ -82,10 +82,10 @@ import { AdvicesStateService } from '../../../core/services/states/advices.state
         repeating-linear-gradient(90deg, #f4f2ed 0, #f4f2ed 1px, transparent 1px, transparent 100%),
         repeating-linear-gradient(0deg, #f4f2ed 0, #f4f2ed 1px, transparent 1px, transparent 100%);
       background-size: calc(100% / 16) calc(100% / 3);
+      background-color: white;
       border: 2px solid #f4f2ed;
       border-top: none;
       z-index: 0;
-      opacity: 0.8;
     }
 
     .tabs-header {

@@ -13,14 +13,13 @@ import { DateTimeService } from '../../../core/services/utils/date-time.service'
   template: `
     <div class="management">
 
-      @if (isLoading()) {
+      @if (usersState().isLoading) {
         <div class="loading-overlay">
           <fa-icon [icon]="faSpinner" size="2x"></fa-icon>
-          <span>Cargando...</span>
         </div>
       }
 
-      @if (usersState().error && !isLoading()) {
+      @if (usersState().error) {
         <div class="error">Error en la carga de usuarios: {{ usersState().error }}</div>
       } @else if (usersState().list.length > 0) {
         <div class="list">
@@ -32,7 +31,7 @@ import { DateTimeService } from '../../../core/services/utils/date-time.service'
             />
           }
         </div>
-      } @else if (!isLoading()) {
+      } @else if (!usersState().isLoading) {
         <div class="empty-state">No hay usuarios para mostrar.</div>
       }
 
@@ -97,7 +96,6 @@ export class UsersManagerComponent {
 
   usersState = this.stateService.usersState;
   userToDelete = signal<string | null>(null);
-  isLoading = signal(false);
 
   faSpinner = faSpinner;
 
@@ -108,17 +106,7 @@ export class UsersManagerComponent {
   });
 
   constructor() {
-    this.loadUsers();
-  }
-
-  async loadUsers() {
-    this.isLoading.set(true);
-
-    try {
-      await this.stateService.listUsers();
-    } finally {
-      this.isLoading.set(false);
-    }
+    this.stateService.listUsers();
   }
 
   async handleApprove(userId: string) {

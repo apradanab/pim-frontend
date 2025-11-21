@@ -42,3 +42,8 @@ export enum AppointmentStatus {
 export interface CancellationDetails {
   notes: string;
 }
+
+export interface AppointmentDeletionInfo {
+  therapyId: string;
+  appointmentId: string;
+}
