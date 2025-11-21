@@ -14,7 +14,7 @@ import { TherapyEditFormComponent } from "../therapy-edit-form/therapy-edit-form
         <pim-therapy-edit-form
           [therapy]="therapy()"
           (update)="handleUpdate($event)"
-          (cancel)="toggleEditMode()"
+          (cancelClick)="toggleEditMode()"
         />
       } @else {
         <div class="card-text-details">
@@ -54,6 +54,7 @@ import { TherapyEditFormComponent } from "../therapy-edit-form/therapy-edit-form
     border-radius: 1.5rem;
     padding: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-family: 'Carlito', sans-serif;
   }
 
   .card-text-details {

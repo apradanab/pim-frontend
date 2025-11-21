@@ -148,11 +148,11 @@ import { DateTimeService } from '../../../core/services/utils/date-time.service'
 
   .schedule-button fa-icon {
     padding: 0 10px 0 0;
-    color: #686d35ff;
   }
 
   .schedule-button:active {
-    background-color: #c3d060ff;
+    background-color: #cddb66ff;
+    color: white;
   }
 
   .edit-button {

@@ -66,7 +66,6 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
       border: 2px solid #f4f2ed;
       border-top: none;
       z-index: 0;
-      opacity: 0.8;
     }
 
     .header-section {
