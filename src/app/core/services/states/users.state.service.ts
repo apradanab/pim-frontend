@@ -14,7 +14,8 @@ export class UsersStateService {
   readonly #state = signal<UserState>({
     list: [],
     currentUser: null,
-    error: null
+    isLoading: false,
+    error: null,
   });
   usersState = this.#state.asReadonly();
 
@@ -27,19 +28,25 @@ export class UsersStateService {
   }
 
   listUsers = (): Promise<User[]> => {
-    this.#state.update(state => ({ ...state, error: null }));
+    this.#state.update(state => ({ ...state, error: null, isLoading: true }));
     return lastValueFrom(
       this.usersRepo.listUsers().pipe(
         tap((users: User[]) => {
           this.#state.update(state => ({
             ...state,
             list: users,
-            error: null
+            isLoading: false,
+            error: null,
           }));
         }),
         catchError((err: ApiError) => {
           console.error('Error listing users:', err.message);
-          this.#state.update(state => ({ ...state, list: [], error: err.message }));
+          this.#state.update(state => ({
+            ...state,
+            list: [],
+            error: err.message,
+            isLoading: false,
+          }));
           throw err;
         })
       )

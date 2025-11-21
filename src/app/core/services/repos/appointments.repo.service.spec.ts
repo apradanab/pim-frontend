@@ -33,7 +33,7 @@ describe('AppointmentsRepoService', () => {
   });
 
   it('should retrieve all appointments', () => {
-    service.getAllAppointments().subscribe((appointments) => {
+    service.listAppointments().subscribe((appointments) => {
       expect(appointments).toEqual(mockAppointments as Appointment[]);
     });
 
@@ -46,7 +46,7 @@ describe('AppointmentsRepoService', () => {
     const userId = 'u1';
     const relatedAppointments = mockAppointments.filter(a => a.userId === userId);
 
-    service.getUserAppointments(userId).subscribe((appointments) => {
+    service.getByUser(userId).subscribe((appointments) => {
       expect(appointments).toEqual(relatedAppointments as Appointment[]);
     });
 

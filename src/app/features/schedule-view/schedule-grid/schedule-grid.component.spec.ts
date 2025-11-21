@@ -37,7 +37,7 @@ class MockAppointmentsStateService {
   appointmentsState = signal({
     availableAppointments: mockAppointments,
   });
-  loadAllAppointments = jasmine.createSpy('loadAllAppointments');
+  listAppointments = jasmine.createSpy('listAppointments');
   requestAppointment = jasmine.createSpy('requestAppointment');
 }
 

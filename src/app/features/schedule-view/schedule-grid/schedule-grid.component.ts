@@ -168,7 +168,7 @@ export class ScheduleGridComponent {
     effect(() => {
       const weekDays = this.logicService.weekDays();
       if (weekDays.length > 0) {
-        this.aptsService.loadAllAppointments();
+        this.aptsService.listAppointments();
         this.therapyService.listTherapies();
         console.log('Appointments loaded:', weekDays);
       }

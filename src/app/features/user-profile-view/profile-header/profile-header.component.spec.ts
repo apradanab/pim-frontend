@@ -22,6 +22,7 @@ describe('ProfileHeaderComponent', () => {
       currentUser: null,
       list: [],
       error: null,
+      isLoading: false,
     });
 
     mockUsersStateService = jasmine.createSpyObj('UsersStateService', ['setCurrentUser', 'updateUserProfile'], {
@@ -74,6 +75,7 @@ describe('ProfileHeaderComponent', () => {
         currentUser: { createdAt: '2024-05-20T12:00:00Z' } as User,
         list: [],
         error: null,
+        isLoading: false,
       });
       mockDateTimeService.formatDisplayDate.and.returnValue('lunes 20 mayo, 2024');
 
@@ -90,6 +92,7 @@ describe('ProfileHeaderComponent', () => {
         currentUser: { name: 'Test' } as User,
         list: [],
         error: null,
+        isLoading: false,
       });
 
       fixture.detectChanges();
@@ -103,6 +106,7 @@ describe('ProfileHeaderComponent', () => {
         currentUser: null,
         list: [],
         error: null,
+        isLoading: false
       });
 
       fixture.detectChanges();
