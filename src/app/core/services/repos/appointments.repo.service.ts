@@ -11,11 +11,11 @@ export class AppointmentsRepoService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
 
-  getAllAppointments(): Observable<Appointment[]> {
+  listAppointments(): Observable<Appointment[]> {
     return this.http.get<Appointment[]>(`${this.apiUrl}/appointments`)
   }
 
-  getUserAppointments(userId: string): Observable<Appointment[]> {
+  getByUser(userId: string): Observable<Appointment[]> {
     const url = `${this.apiUrl}/users/${userId}/appointments`;
     return this.http.get<Appointment[]>(url);
   }
