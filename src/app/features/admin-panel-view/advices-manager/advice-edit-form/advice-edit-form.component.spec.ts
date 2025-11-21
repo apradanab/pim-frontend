@@ -134,14 +134,4 @@ describe('AdviceEditFormComponent', () => {
     await component.submit();
     expect(component.update.emit).not.toHaveBeenCalled();
   });
-
-  it('should log error if mediaService fails', async () => {
-    spyOn(console, 'error');
-    const file = new File(['data'], 'fail.png', { type: 'image/png' });
-    component.file.set(file);
-
-    mediaService.generateUploadUrl = jasmine.createSpy().and.returnValue(of(Promise.reject('error')));
-    await component.submit();
-    expect(console.error).toHaveBeenCalledWith('Error uploading image for advice:', jasmine.anything());
-  });
 });

@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { TherapiesManagerComponent } from "../therapies-manager/therapies-manager.component";
 import { AdvicesManagerComponent } from "../advices-manager/advices-manager.component";
+import { UsersManagerComponent } from "../users-manager/users-manager.component";
 
 @Component({
   selector: 'pim-admin-tabs-controller',
   standalone: true,
-  imports: [TherapiesManagerComponent, AdvicesManagerComponent],
+  imports: [TherapiesManagerComponent, AdvicesManagerComponent, UsersManagerComponent],
   template: `
     <div class="admin-tabs">
       <div class="grid-background"></div>
@@ -25,10 +26,10 @@ import { AdvicesManagerComponent } from "../advices-manager/advices-manager.comp
         @if (activeTab === 'therapies') {
           <pim-therapies-manager/>
         } @else if (activeTab === 'advices') {
-          <pim-advices-manager></pim-advices-manager>
-        <!-- } @else if (activeTab === 'users') {
-          <pim-users-manager></pim-users-manager>
-        } @else if (activeTab === 'appointments') {
+          <pim-advices-manager/>
+        } @else if (activeTab === 'users') {
+          <pim-users-manager/>
+        <!-- } @else if (activeTab === 'appointments') {
           <pim-appointments-manager></pim-appointments-manager> -->
         }
       </div>
@@ -72,7 +73,7 @@ import { AdvicesManagerComponent } from "../advices-manager/advices-manager.comp
   }
 
   .tab-button {
-    border: none;
+    border: 1px solid #dddddd4d;
     border-radius: 1.5rem 1.5rem 0 0;
     padding: 1rem 1.8rem;
     display: flex;

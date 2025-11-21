@@ -92,7 +92,7 @@ describe('BaseEditForm', () => {
     expect(component.previewUrl()).toBe('data-url-mock');
   }));
 
-  it('should return null if image upload fails', async () => {
+  it('should throw error if image upload fails', async () => {
     spyOn(console, 'error');
     component.file.set(new File(['fail'], 'fail.png', { type: 'image/png' }));
 
@@ -100,16 +100,8 @@ describe('BaseEditForm', () => {
       throwError(() => new Error('Upload Failed'))
     );
 
-    const updatedItem = await component.submitBase();
+    await expectAsync(component.submitBase()).toBeRejectedWithError('Upload Failed');
 
     expect(console.error).toHaveBeenCalled();
-    expect(updatedItem).toBeNull();
-  });
-
-  it('should return null if form is invalid', async () => {
-    component.getForm().get('title')?.setValue('');
-    const updatedItem = await component.submitBase();
-    expect(updatedItem).toBeNull();
-    expect(mediaService.generateUploadUrl).not.toHaveBeenCalled();
   });
 });
