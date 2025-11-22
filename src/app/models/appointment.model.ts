@@ -23,6 +23,15 @@ export interface Appointment {
   requestedAt?: string;
 }
 
+export interface AppointmentInput {
+  therapyId: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  maxParticipants?: number;
+  notes?: string;
+}
+
 export interface UserParticipant {
   userId: string;
   userEmail: string;
