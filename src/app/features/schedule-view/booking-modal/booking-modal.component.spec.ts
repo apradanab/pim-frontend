@@ -4,9 +4,11 @@ import { AppointmentsStateService } from '../../../core/services/states/appointm
 import { DateTimeService } from '../../../core/services/utils/date-time.service';
 import { Appointment, AppointmentStatus } from '../../../models/appointment.model';
 import { Therapy } from '../../../models/therapy.model';
+import { of, throwError } from 'rxjs';
 
 class MockAppointmentsStateService {
-  requestAppointment = jasmine.createSpy('requestAppointment');
+  requestAppointment = jasmine.createSpy('requestAppointment').and.returnValue(of(null));
+  joinGroupAppointment = jasmine.createSpy('joinGroupAppointment').and.returnValue(of(null));
 }
 
 class MockDateTimeService {
@@ -66,6 +68,13 @@ describe('BookingModalComponent', () => {
     expect(mockDateTimeService.formatDisplayDate).toHaveBeenCalledWith(mockAppointment.date);
   });
 
+  it('should evaluate isGroupAppt to false when maxParticipants is 0', () => {
+    const mockZeroParticipantAppt: Appointment = { ...mockAppointment, maxParticipants: 0 };
+    fixture.componentRef.setInput('appointment', mockZeroParticipantAppt);
+    fixture.detectChanges();
+    expect(component.isGroupAppt()).toBeFalse();
+  })
+
   it('should emit close when close button is clicked', () => {
     spyOn(component.modalClosed, 'emit');
 
@@ -119,4 +128,48 @@ describe('BookingModalComponent', () => {
     expect(component.bookingCompleted.emit).toHaveBeenCalled();
     expect(component.modalClosed.emit).toHaveBeenCalled();
   }));
+
+  it('should handle requestAppointment error and call onClose (single appointment)', () => {
+    spyOn(component, 'onClose');
+    spyOn(console, 'error');
+    spyOn(component.bookingCompleted, 'emit');
+    spyOn(component.modalClosed, 'emit');
+
+    const error = new Error('Test API Error');
+    mockAppointmentsService.requestAppointment.and.returnValue(throwError(() => error));
+
+    fixture.componentRef.setInput('appointment', mockAppointment);
+    fixture.detectChanges();
+
+    const confirmButton = fixture.nativeElement.querySelector('.confirm-button');
+    confirmButton.click();
+
+    expect(console.error).toHaveBeenCalledWith('Error request appointment:', error);
+    expect(component.onClose).toHaveBeenCalled();
+    expect(component.bookingCompleted.emit).not.toHaveBeenCalled();
+  });
+
+  it('should handle joinGroupAppointment error and call onClose (group appointment)', () => {
+    const mockGroupAppointment: Appointment = { ...mockAppointment, maxParticipants: 5 };
+    fixture.componentRef.setInput('appointment', mockGroupAppointment);
+    fixture.detectChanges();
+
+    spyOn(component, 'onClose');
+    spyOn(console, 'error');
+    spyOn(component.bookingCompleted, 'emit');
+    spyOn(component.modalClosed, 'emit');
+
+    const error = new Error('Test Group API Error');
+    mockAppointmentsService.joinGroupAppointment.and.returnValue(throwError(() => error));
+    mockAppointmentsService.requestAppointment.calls.reset();
+
+    const confirmButton = fixture.nativeElement.querySelector('.confirm-button');
+    confirmButton.click();
+
+    expect(mockAppointmentsService.joinGroupAppointment).toHaveBeenCalled();
+    expect(mockAppointmentsService.requestAppointment).not.toHaveBeenCalled();
+    expect(console.error).toHaveBeenCalledWith('Error join group:', error);
+    expect(component.onClose).toHaveBeenCalled();
+    expect(component.bookingCompleted.emit).not.toHaveBeenCalled();
+  })
 });

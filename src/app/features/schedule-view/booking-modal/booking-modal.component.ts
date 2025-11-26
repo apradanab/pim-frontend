@@ -1,4 +1,4 @@
-import { Component, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { DateTimeService } from '../../../core/services/utils/date-time.service';
 import { Appointment } from '../../../models/appointment.model';
 import { Therapy } from '../../../models/therapy.model';
@@ -35,14 +35,18 @@ import { faCircleCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
               <p> {{ dateTimeService.formatDisplayDate(appointment().date)}} </p>
               <p> {{appointment().startTime}} - {{appointment().endTime}} </p>
             </div>
-            <div class="note-field">
-              <label for="user-note"></label>
-              <textarea id="user-note"
-                        [(ngModel)]="note"
-                        rows="3"
-                        placeholder="Deja un mensaje">
-              </textarea>
-            </div>
+
+            @if (!isGroupAppt()) {
+              <div class="note-field">
+                <label for="user-note"></label>
+                <textarea id="user-note"
+                          [(ngModel)]="note"
+                          rows="3"
+                          placeholder="Deja un mensaje">
+                </textarea>
+              </div>
+            }
+
           </div>
         }
           <button class="confirm-button" (click)="onConfirm()">Confirmar reserva</button>
@@ -135,7 +139,6 @@ import { faCircleCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 
   .time-details {
     margin-top: 5px;
-    margin-bottom: -17px;
     color: #878484;
     font-size: 0.9rem;
     display: flex;
@@ -147,7 +150,7 @@ import { faCircleCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
   }
 
   .note-field {
-    margin-top: 20px;
+    margin-top: 10px;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -163,7 +166,7 @@ import { faCircleCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
     border-radius: 0.5rem;
     font-family: inherit;
     resize: vertical;
-    min-height: 80px;
+    height: 100px;
   }
 
   .confirm-button {
@@ -224,7 +227,7 @@ import { faCircleCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 })
 export class BookingModalComponent {
   readonly dateTimeService = inject(DateTimeService);
-  private readonly aptsService = inject(AppointmentsStateService);
+  private readonly apptsService = inject(AppointmentsStateService);
 
   appointment = input.required<Appointment>();
   therapy = input.required<Therapy | undefined>();
@@ -238,19 +241,32 @@ export class BookingModalComponent {
   faCircleCheck = faCircleCheck;
   faTimes = faTimes;
 
+  isGroupAppt = computed<boolean>(() => { return (this.appointment().maxParticipants || 1) > 1; });
+
   onConfirm() {
-    this.aptsService.requestAppointment(
-      this.appointment().therapyId,
-      this.appointment().appointmentId,
-      this.note().trim() || undefined
-    );
+    const appt = this.appointment();
+    const therapyId = appt.therapyId;
+    const apptId = appt.appointmentId;
+    const notes = !this.isGroupAppt() ? (this.note().trim() || undefined) : undefined;
 
-    this.isSuccess.set(true);
+    const bookingAction = this.isGroupAppt()
+      ? this.apptsService.joinGroupAppointment(therapyId, apptId)
+      : this.apptsService.requestAppointment(therapyId, apptId, notes);
 
-    setTimeout(() => {
-      this.bookingCompleted.emit();
-      this.modalClosed.emit();
-    }, 5000);
+    bookingAction.subscribe({
+      next: () => {
+        this.isSuccess.set(true);
+
+        setTimeout(() => {
+          this.bookingCompleted.emit();
+          this.modalClosed.emit();
+        }, 5000);
+      },
+      error: (err) => {
+        console.error(`Error ${this.isGroupAppt() ? 'join group' : 'request appointment'}:`, err);
+        this.onClose();
+      }
+    })
   }
 
   onClose() {
