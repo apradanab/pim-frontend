@@ -170,7 +170,6 @@ export class ScheduleGridComponent {
       if (weekDays.length > 0) {
         this.aptsService.listAppointments();
         this.therapyService.listTherapies();
-        console.log('Appointments loaded:', weekDays);
       }
     });
   }
@@ -209,5 +208,6 @@ export class ScheduleGridComponent {
     this.isModalOpen.set(false);
     this.selectedAppointment.set(null);
     this.selectedTherapy.set(undefined);
+    this.aptsService.listAppointments();
   }
 }
