@@ -71,6 +71,7 @@ describe('AppointmentCardComponent', () => {
     const statusCases = [
       { status: 'OCCUPIED', expected: { text: 'Confirmada', class: 'occupied' } },
       { status: 'COMPLETED', expected: { text: 'Completada', class: 'completed' } },
+      { status: 'CANCELLATION_PENDING', expected: { text: 'Pendiente', class: 'pending' } },
       { status: 'PENDING', expected: { text: 'Pendiente', class: 'pending' } },
       { status: 'CANCELLED', expected: { text: 'Cancelada', class: 'cancelled' } },
       { status: 'UNKNOWN', expected: { text: 'Desconocido', class: 'unknown' } },

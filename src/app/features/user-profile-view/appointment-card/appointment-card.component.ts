@@ -198,6 +198,8 @@ export class AppointmentCardComponent {
         return { text: 'Completada', class: 'completed' };
       case 'PENDING':
         return { text: 'Pendiente', class: 'pending' };
+      case 'CANCELLATION_PENDING':
+        return { text: 'Pendiente', class: 'pending' };
       case 'CANCELLED':
         return { text: 'Cancelada', class: 'cancelled' };
       case 'OCCUPIED':
