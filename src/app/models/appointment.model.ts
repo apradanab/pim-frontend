@@ -28,6 +28,7 @@ export interface AppointmentInput {
   date: string;
   startTime: string;
   endTime: string;
+  userEmail?: string;
   maxParticipants?: number;
   notes?: string;
 }
@@ -42,6 +43,7 @@ export interface UserParticipant {
 
 export enum AppointmentStatus {
   PENDING = 'PENDING',
+  CANCELLATION_PENDING = 'CANCELLATION_PENDING',
   OCCUPIED = 'OCCUPIED',
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
@@ -52,7 +54,36 @@ export interface CancellationDetails {
   notes: string;
 }
 
-export interface AppointmentDeletionInfo {
+export interface AppointmentKeys {
   therapyId: string;
   appointmentId: string;
+}
+
+export interface AppointmentDisplay extends Appointment{
+  therapyTitle: string;
+  userName: string;
+  participantsNames?: string[];
+}
+
+export interface FilterOptions {
+  availableMonths: string [];
+  therapies: {
+    id: string;
+    title: string;
+  }[];
+  users: {
+    email: string;
+    name: string;
+  }[];
+}
+
+export interface UserOption {
+  email: string;
+  name: string;
+}
+
+export interface FilterCriteria {
+  month?: string | null;
+  therapyId?: string | null;
+  userEmail?: string | null;
 }

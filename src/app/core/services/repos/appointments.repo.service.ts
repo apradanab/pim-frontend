@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment.development';
-import { Appointment } from '../../../models/appointment.model';
+import { Appointment, AppointmentInput } from '../../../models/appointment.model';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -18,6 +18,12 @@ export class AppointmentsRepoService {
   getByUser(userId: string): Observable<Appointment[]> {
     const url = `${this.apiUrl}/users/${userId}/appointments`;
     return this.http.get<Appointment[]>(url);
+  }
+
+  createAppt(data: AppointmentInput): Observable<Appointment> {
+    const therapyId = data.therapyId;
+    const url = `${this.apiUrl}/therapies/${therapyId}/appointments`;
+    return this.http.post<Appointment>(url, data);
   }
 
   requestAppointment(therapyId: string, appointmentId: string, notes?: string): Observable<{ message: string }> {
@@ -47,6 +53,28 @@ export class AppointmentsRepoService {
       `${this.apiUrl}/therapies/${therapyId}/appointments/${appointmentId}/actions/request-cancellation`,
       { notes }
     );
+  }
+
+  assignAppt(therapyId: string, apptId: string, userEmail: string): Observable<{ message: string }> {
+    const body = { userEmail };
+    return this.http.post<{ message: string }>(
+      `${this.apiUrl}/therapies/${therapyId}/appointments/${apptId}/actions/assign`,
+      body
+    );
+  }
+
+  approveAppt(therapyId: string, apptId: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${this.apiUrl}/therapies/${therapyId}/appointments/${apptId}/actions/approve`,
+      {}
+    );
+  }
+
+  approveCancellation(therapyId: string, apptId: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${this.apiUrl}/therapies/${therapyId}/appointments/${apptId}/actions/approve-cancellation`,
+      {}
+    )
   }
 
   deleteAppointment(therapyId: string, appointmenId: string): Observable<void> {

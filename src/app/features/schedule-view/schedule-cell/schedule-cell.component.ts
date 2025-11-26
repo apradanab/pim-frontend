@@ -118,10 +118,6 @@ export class ScheduleCellComponent {
     return this.isHovered();
   }
 
-  private readonly appointmentAtTime = computed(() =>
-    this.appointments().find(a => a.date === this.dateIso() && a.startTime === this.hour())
-  );
-
   private readonly appointmentsInRange = computed(() =>
     this.appointments().filter(appointment => {
       if (appointment.date !== this.dateIso()) return false;
@@ -133,12 +129,14 @@ export class ScheduleCellComponent {
   );
 
   mainAppointment = computed<Appointment | undefined>(() => {
-    return this.appointmentAtTime() || this.appointmentsInRange()[0];
+    return  this.appointmentsInRange()[0];
   });
 
   firstCellInAppointment = computed(() => {
     const appointment = this.mainAppointment();
-    return !!appointment && appointment.startTime === this.hour();
+    if (!appointment) return false;
+    const normalizedAppointmentStartTime = this.logicService.normalizeTime(appointment.startTime);
+    return normalizedAppointmentStartTime === this.hour();
   });
 
   lastCellInAppointment = computed(() => {
@@ -196,16 +194,22 @@ export class ScheduleCellComponent {
       [AppointmentStatus.OCCUPIED]: 'occupied',
       [AppointmentStatus.PENDING]: 'pending',
       [AppointmentStatus.COMPLETED]: 'completed',
-      [AppointmentStatus.CANCELLED]: 'cancelled'
+      [AppointmentStatus.CANCELLED]: 'cancelled',
+      [AppointmentStatus.CANCELLATION_PENDING]: 'pending'
     };
     return statusMap[status] || 'empty';
   }
 
   protected getAppointmentContent(appointment: Appointment): string {
+    const current = appointment.currentParticipants || 0;
+    const max = appointment.maxParticipants || 1;
+    const countText = max > 1 ? ` (${current}/${max})` : '';
+
     switch (appointment.status) {
       case 'AVAILABLE': return `<strong>Disponible</strong><br>${appointment.startTime}-${appointment.endTime}`;
-      case 'OCCUPIED':  return `Ocupada\n${appointment.currentParticipants}/${appointment.maxParticipants}`;
-      case 'PENDING':   return 'Pendiente';
+      case 'OCCUPIED':  return `Ocupada${countText}`;
+      case 'PENDING':   return `Pendiente${countText}`;
+      case 'CANCELLATION_PENDING': return 'Pendiente';
       case 'COMPLETED': return 'Completada';
       case 'CANCELLED': return 'Cancelada';
       default: return '';

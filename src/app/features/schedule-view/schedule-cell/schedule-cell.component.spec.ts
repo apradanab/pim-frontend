@@ -33,6 +33,9 @@ class MockScheduleLogicService {
     const index = mockHours.indexOf(hour);
     return mockHours[index + 1] || hour;
   }
+  normalizeTime(time: string): string {
+    return time
+  }
 }
 
 class TestScheduleCellComponent extends ScheduleCellComponent {
@@ -87,11 +90,11 @@ describe('ScheduleCellComponent', () => {
 
   describe('Appointments Logic', () => {
     it('should filter appointments by date', () => {
-      setupCell('10:00', [createAppointment()]);
+      setupCell(testHour, [createAppointment()]);
       expect(component.mainAppointment()?.appointmentId).toBe('a1');
 
       const appointmentsOtherDate = [createAppointment({ date: '2025-10-22' })];
-      setupCell('10:00', appointmentsOtherDate);
+      setupCell(testHour, appointmentsOtherDate);
       expect(component.mainAppointment()).toBeUndefined();
       expect(component.cellClass()).toBe('empty');
     });
@@ -111,7 +114,7 @@ describe('ScheduleCellComponent', () => {
 
   describe('Participants Count Logic', () => {
     it('should format participants count correctly', () => {
-      setupCell('10:00', [createAppointment({
+      setupCell(lastCellHour, [createAppointment({
         currentParticipants: 0,
         maxParticipants: 5,
         startTime: '10:00',
@@ -168,8 +171,17 @@ describe('ScheduleCellComponent', () => {
     };
 
     it('should apply correct class and content for PENDING status', () => {
-      testStatus(AppointmentStatus.PENDING, 'pending', 'Pendiente');
+      setupFirstCell();
+      testStatus(AppointmentStatus.PENDING, 'pending', 'Pendiente (1/5)');
     });
+
+    it('should apply correct class and content for CANCELLATION_PENDING status', () => {
+      setupFirstCell();
+      const appointment = createAppointment({ status: AppointmentStatus.CANCELLATION_PENDING });
+      setupCell(testHour, [appointment]);
+      expect(component.cellClass().startsWith('pending')).toBeTrue();
+      expect(component.getAppointmentContentPublic(appointment)).toBe('Pendiente');
+    })
 
     it('should apply correct class and content for CANCELLED status', () => {
       testStatus(AppointmentStatus.CANCELLED, 'cancelled', 'Cancelada');
@@ -182,6 +194,26 @@ describe('ScheduleCellComponent', () => {
     it('should return empty string for unknown status', () => {
       setupCell(testHour, [createAppointment({ status: 'UNEXPECTED' as AppointmentStatus })]);
       expect(component.getAppointmentContentPublic(createAppointment({ status: 'UNEXPECTED' as AppointmentStatus }))).toBe('');
+    });
+
+    it('should return empty countText when maxParticipants is 1', () => {
+      const appointment = createAppointment({
+        maxParticipants: 1,
+        currentParticipants: 1,
+        status: AppointmentStatus.OCCUPIED,
+      });
+      setupCell(testHour, [appointment]);
+      expect(component.getAppointmentContentPublic(appointment)).toBe('Ocupada');
+    });
+
+    it('should return empty countText when maxParticipants is undefined', () => {
+      const appointment = createAppointment({
+        maxParticipants: undefined,
+        currentParticipants: 1,
+        status: AppointmentStatus.OCCUPIED,
+      });
+      setupCell(testHour, [appointment]);
+      expect(component.getAppointmentContentPublic(appointment)).toBe('Ocupada');
     });
   });
 
