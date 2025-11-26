@@ -14,7 +14,7 @@ export class DateTimeService {
     '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
     '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
     '18:00', '18:30', '19:00', '19:30', '20:00'
-  ];
+  ].map(time => this.normalizeTime(time));
 
   readonly weekDays = computed<WeekDay[]>(() => this.getWeekDays(this.currentWeek()));
   readonly currentMonthLabel = computed(() => this.getMonthLabel(this.currentWeek()));
@@ -24,6 +24,10 @@ export class DateTimeService {
   public getNextHour(time: string): string {
     const index = this.hours.indexOf(time);
     return this.hours[index + 1] || '';
+  }
+
+  public normalizeTime(timeStr: string): string {
+    return timeStr.startsWith('0') ? timeStr.substring(1) : timeStr;
   }
 
   public moveWeek(offset: number) {
@@ -87,6 +91,7 @@ export class DateTimeService {
   }
 
   public parseDateString(dateStr: string): Date {
+    if(!dateStr || dateStr.trim() === '') return new Date(0);
     if(dateStr.includes('T')) return new Date(dateStr);
     const [year, month, day] = dateStr.split('-').map(Number);
     return new Date(year, month -1, day);
@@ -99,6 +104,7 @@ export class DateTimeService {
 
   public formatDisplayDate(dateStr: string): string {
     const date = this.parseDateString(dateStr);
+
     const formatted = date.toLocaleDateString('es-ES', {
       weekday: 'long',
       year: 'numeric',
@@ -107,6 +113,17 @@ export class DateTimeService {
     });
 
     return formatted.replace(' de ', ' ').replace(',', ',');
+  }
+
+  public formatShortDate(dateStr: string): string {
+    const date = this.parseDateString(dateStr);
+
+    return date.toLocaleDateString('es-ES', {
+      weekday: 'short',
+      year: '2-digit',
+      month: 'numeric',
+      day: 'numeric'
+    });
   }
 
   public sortItemsByDate<T>(

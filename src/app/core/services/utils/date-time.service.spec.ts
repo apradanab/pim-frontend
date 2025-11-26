@@ -58,6 +58,19 @@ describe('DateTimeService', () => {
     });
   });
 
+  it('normalizeTime. Should remove leading zero from time', () => {
+    expect(service.normalizeTime('09:30')).toBe('9:30');
+    expect(service.normalizeTime('9:30')).toBe('9:30');
+  });
+
+  it('parseDateString. Should return Date(0) when empty or blank string is provided', () => {
+    const d1 = service.parseDateString('');
+    const d2 = service.parseDateString('   ');
+
+    expect(d1.getTime()).toBe(0);
+    expect(d2.getTime()).toBe(0);
+  });
+
   it('parseDateString. Should parse date string correctly into Date object', () => {
     const dateString = '2025-10-25';
     const date = service.parseDateString(dateString);
@@ -92,6 +105,16 @@ describe('DateTimeService', () => {
     expect(formattedDate).toContain('sábado');
     expect(formattedDate).toContain('25 octubre de 2025');
   });
+
+  it('formatShortDate. Should format a date string into a short Spanish date', () => {
+    const dateString = '2025-10-25';
+    const formattedDate = service.formatShortDate(dateString);
+
+    expect(formattedDate).toContain('sáb');
+    expect(formattedDate).toContain('25');
+    expect(formattedDate).toContain('10');
+    expect(formattedDate).toContain('25');
+  })
 
   describe('sortItemsByDate', () => {
     const mockApts: Appointment[] = [
