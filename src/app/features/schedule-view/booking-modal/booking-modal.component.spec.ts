@@ -94,10 +94,12 @@ describe('BookingModalComponent', () => {
     const confirmButton = fixture.nativeElement.querySelector('.confirm-button');
     confirmButton.click();
 
+    fixture.detectChanges();
+
     expect(mockAppointmentsService.requestAppointment).toHaveBeenCalledWith(
       mockAppointment.therapyId,
       mockAppointment.appointmentId,
-      undefined
+      ''
     );
 
     tick(5000);
@@ -116,6 +118,8 @@ describe('BookingModalComponent', () => {
 
     const confirmButton = fixture.nativeElement.querySelector('.confirm-button');
     confirmButton.click();
+
+    fixture.detectChanges();
 
     expect(mockAppointmentsService.requestAppointment).toHaveBeenCalledWith(
       mockAppointment.therapyId,
@@ -171,5 +175,5 @@ describe('BookingModalComponent', () => {
     expect(console.error).toHaveBeenCalledWith('Error join group:', error);
     expect(component.onClose).toHaveBeenCalled();
     expect(component.bookingCompleted.emit).not.toHaveBeenCalled();
-  })
+  });
 });
