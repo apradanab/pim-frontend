@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ScheduleCellComponent } from "../schedule-cell/schedule-cell.component";
 import { Appointment } from '../../../models/appointment.model';
 import { DateTimeService } from '../../../core/services/utils/date-time.service';
@@ -140,11 +140,11 @@ import { BookingModalComponent } from "../booking-modal/booking-modal.component"
     }
   `
 })
-export class ScheduleGridComponent {
-  private readonly aptsService = inject(AppointmentsStateService);
+export class ScheduleGridComponent implements OnInit {
+  private readonly apptsService = inject(AppointmentsStateService);
   private readonly authService = inject(AuthStateService);
   protected readonly logicService = inject(DateTimeService);
-  protected readonly therapyService = inject(TherapiesStateService);
+  protected readonly therapiesService = inject(TherapiesStateService);
 
   isModalOpen = signal(false);
   selectedAppointment = signal<Appointment | null>(null);
@@ -153,10 +153,10 @@ export class ScheduleGridComponent {
   faClock = faClock;
   hoveredAppointmentId = signal<string | null>(null);
 
-  availableAppointments = computed(() => this.aptsService.appointmentsState().availableAppointments);
+  availableAppointments = computed(() => this.apptsService.appointmentsState().availableAppointments);
 
   therapiesMap = computed<Record<string, Therapy>>(() => {
-    const therapies: Therapy[] = this.therapyService.therapiesState().list;
+    const therapies: Therapy[] = this.therapiesService.therapiesState().list;
 
     return therapies.reduce((acc, t) => {
       acc[t.therapyId] = t;
@@ -164,14 +164,11 @@ export class ScheduleGridComponent {
     }, {} as Record<string, Therapy>);
   })
 
-  constructor() {
-    effect(() => {
-      const weekDays = this.logicService.weekDays();
-      if (weekDays.length > 0) {
-        this.aptsService.listAppointments();
-        this.therapyService.listTherapies();
-      }
-    });
+  ngOnInit(): void {
+    if (this.logicService.weekDays().length > 0) {
+      this.apptsService.listAppointments();
+      this.therapiesService.listTherapies();
+    }
   }
 
   onCellHover(event: {appointmentId: string | null; hover: boolean}) {
@@ -208,6 +205,6 @@ export class ScheduleGridComponent {
     this.isModalOpen.set(false);
     this.selectedAppointment.set(null);
     this.selectedTherapy.set(undefined);
-    this.aptsService.listAppointments();
+    this.apptsService.listAppointments();
   }
 }
