@@ -247,7 +247,7 @@ export class BookingModalComponent {
     const appt = this.appointment();
     const therapyId = appt.therapyId;
     const apptId = appt.appointmentId;
-    const notes = !this.isGroupAppt() ? (this.note().trim() || undefined) : undefined;
+    const notes = !this.isGroupAppt() ? (this.note().trim() || '') : undefined;
 
     const bookingAction = this.isGroupAppt()
       ? this.apptsService.joinGroupAppointment(therapyId, apptId)
@@ -259,7 +259,7 @@ export class BookingModalComponent {
 
         setTimeout(() => {
           this.bookingCompleted.emit();
-          this.modalClosed.emit();
+          this.onClose();
         }, 5000);
       },
       error: (err) => {
