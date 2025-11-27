@@ -68,8 +68,8 @@ describe('ScheduleGridComponent', () => {
   let component: ScheduleGridComponent;
   let fixture: ComponentFixture<ScheduleGridComponent>;
   let mockAppointmentsStateService: MockAppointmentsStateService;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let mockTherapiesStateService: MockTherapiesStateService;
+  let mockLogicService: MockScheduleLogicService;
   let mockAuthService: MockAuthStateService;
 
   beforeEach(async () => {
@@ -88,6 +88,7 @@ describe('ScheduleGridComponent', () => {
 
     mockAppointmentsStateService = TestBed.inject(AppointmentsStateService) as unknown as MockAppointmentsStateService;
     mockTherapiesStateService = TestBed.inject(TherapiesStateService) as unknown as MockTherapiesStateService;
+    mockLogicService = TestBed.inject(DateTimeService) as unknown as MockScheduleLogicService;
     mockAuthService = TestBed.inject(AuthStateService) as unknown as MockAuthStateService;
 
     fixture.detectChanges();
@@ -116,6 +117,25 @@ describe('ScheduleGridComponent', () => {
       expect(component.hoveredAppointmentId()).toBeNull();
     });
 
+  });
+
+  describe('ngOnInit', () => {
+    it('should call listAppointments and listTherapies if weekDays has elements', () => {
+      component.ngOnInit();
+      expect(mockAppointmentsStateService.listAppointments).toHaveBeenCalled();
+      expect(mockTherapiesStateService.listTherapies).toHaveBeenCalled();
+    });
+
+    it('should NOT call listAppointments and listTherapies if weekDays is empty', () => {
+      mockAppointmentsStateService.listAppointments.calls.reset();
+      mockTherapiesStateService.listTherapies.calls.reset();
+
+      mockLogicService.weekDays.set([]);
+
+      component.ngOnInit();
+      expect(mockAppointmentsStateService.listAppointments).not.toHaveBeenCalled();
+      expect(mockTherapiesStateService.listTherapies).not.toHaveBeenCalled();
+    });
   });
 
   describe('onCellClick', () => {
