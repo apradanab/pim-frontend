@@ -1,13 +1,15 @@
 import { TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { lastValueFrom, of, throwError } from 'rxjs';
 import { AppointmentsStateService } from './appointments.state.service';
 import { AppointmentsRepoService } from '../repos/appointments.repo.service';
-import { AppointmentStatus, Appointment } from '../../../models/appointment.model';
+import { AppointmentStatus, Appointment, AppointmentInput } from '../../../models/appointment.model';
 import { UsersStateService } from './users.state.service';
 import { signal } from '@angular/core';
 
 const mockUserState = {
-  currentUser: { userId: '1', email: 'test@example.com'}
+  get currentUser() {
+    return { userId: '1', email: 'test@example.com'}
+  }
 };
 
 describe('AppointmentsStateService', () => {
@@ -15,24 +17,23 @@ describe('AppointmentsStateService', () => {
   let mockRepo: jasmine.SpyObj<AppointmentsRepoService>;
   let mockUsersStateService: jasmine.SpyObj<UsersStateService>;
 
-  const userId = '1';
   const therapyId = '2';
   const appointmentId = '3';
   const mockSuccessResponse = { message: 'ok' };
   const mockErrorResponse = { message: 'fail' };
 
-  const createReloadSpy = () => {
-    return spyOn(service, 'getByUser').and.callThrough();
-  }
-
   beforeEach(() => {
     mockRepo = jasmine.createSpyObj('AppointmentsRepoService', [
       'listAppointments',
       'getByUser',
+      'createAppt',
       'requestAppointment',
       'joinGroupAppointment',
       'leaveGroupAppointment',
       'requestCancellation',
+      'assignAppt',
+      'approveAppt',
+      'approveCancellation',
       'deleteAppointment'
     ]);
 
@@ -56,8 +57,7 @@ describe('AppointmentsStateService', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('loadAllAppointments', () => {
-
+  describe('listAppointments', () => {
     const appointments: Appointment[] = [
       {
         appointmentId: '1',
@@ -72,22 +72,30 @@ describe('AppointmentsStateService', () => {
       }
     ];
 
-    it('should update state on success', () => {
+    it('should update state on success', async () => {
       mockRepo.listAppointments.and.returnValue(of(appointments));
-      service.listAppointments();
-      expect(service.appointmentsState().availableAppointments).toEqual(appointments);
-      expect(service.appointmentsState().error).toBeNull();
+
+      await service.listAppointments();
+
+      const state = service.appointmentsState();
+      expect(state.availableAppointments).toEqual(appointments);
+      expect(state.error).toBeNull();
+      expect(state.isLoading).toBeFalse();
     });
 
-    it('should update state on error', () => {
+    it('should update state on error', async () => {
       const error = { message: 'Network error' };
       mockRepo.listAppointments.and.returnValue(throwError(() => error));
-      service.listAppointments();
-      expect(service.appointmentsState().error).toBe(error.message);
+
+      await expectAsync(service.listAppointments()).toBeRejected();
+
+      const state = service.appointmentsState();
+      expect(state.error).toBe(error.message);
+      expect(state.isLoading).toBeFalse();
     });
   });
 
-  describe('loadUserAppointments', () => {
+  describe('getByUser', () => {
     const userAppointments: Appointment[] = [
       {
         appointmentId: '2',
@@ -117,75 +125,245 @@ describe('AppointmentsStateService', () => {
     });
   });
 
-  describe('requestAppointment', () => {
-    it('should call repo and reload user appointments', () => {
-      const reloadSpy = createReloadSpy();
-      const notes = 'nota';
-      mockRepo.requestAppointment.and.returnValue(of(mockSuccessResponse));
-      service.requestAppointment(therapyId, appointmentId, notes);
-      expect(mockRepo.requestAppointment).toHaveBeenCalledWith(therapyId, appointmentId, notes);
-      expect(reloadSpy).toHaveBeenCalledWith(userId);
+  describe('createAppt', () => {
+    const apptInput: AppointmentInput = {
+      date: '2025-11-28',
+      startTime: '14:00',
+      endTime: '15:00',
+      maxParticipants: 1,
+      therapyId: therapyId
+    };
+    const newAppt: Appointment = {
+      ...apptInput,
+      appointmentId: 'newId',
+      status: AppointmentStatus.AVAILABLE,
+      currentParticipants: 0,
+      createdAt: ''
+    };
+    const initialAppointments: Appointment[] = [
+      { appointmentId: 'oldId', date: '2025-11-08', startTime: '10:00', endTime: '11:00', status: AppointmentStatus.AVAILABLE, maxParticipants: 1, therapyId: 't1', currentParticipants: 0, createdAt: '' },
+    ];
+
+    beforeEach(() => {
+      mockRepo.listAppointments.and.returnValue(of(initialAppointments));
+      service.listAppointments();
     });
 
-    it('should handle error', () => {
-      const consoleSpy = spyOn(console, 'error');
+    it('should call repo and update state with new appointment on success', async () => {
+      mockRepo.createAppt.and.returnValue(of(newAppt));
+
+      const result = await service.createAppt(apptInput);
+
+      expect(mockRepo.createAppt).toHaveBeenCalledWith(apptInput);
+      expect(result).toEqual(newAppt);
+      const state = service.appointmentsState();
+      expect(state.availableAppointments.length).toBe(initialAppointments.length + 1);
+      expect(state.availableAppointments).toContain(newAppt);
+      expect(state.error).toBeNull();
+    });
+
+    it('should handle error', async () => {
+      const error = { message: 'Creation failed' };
+      mockRepo.createAppt.and.returnValue(throwError(() => error));
+
+      await expectAsync(service.createAppt(apptInput)).toBeRejected();
+      expect(service.appointmentsState().availableAppointments).toEqual(initialAppointments);
+    })
+  })
+
+  describe('requestAppointment', () => {
+    it('should call repo and return the response', async () => {
+      const notes = 'nota';
+      mockRepo.requestAppointment.and.returnValue(of(mockSuccessResponse));
+      const result = await lastValueFrom(service.requestAppointment(therapyId, appointmentId, notes));
+
+      expect(mockRepo.requestAppointment).toHaveBeenCalledWith(therapyId, appointmentId, notes);
+      expect(result).toEqual(mockSuccessResponse);
+    });
+
+    it('should handle error', async () => {
       mockRepo.requestAppointment.and.returnValue(throwError(() => mockErrorResponse));
-      service.requestAppointment(therapyId, appointmentId);
-      expect(consoleSpy).toHaveBeenCalled();
+      await expectAsync(lastValueFrom(service.requestAppointment(therapyId, appointmentId))).toBeRejectedWith(mockErrorResponse);
     });
   });
 
   describe('joinGroupAppointment', () => {
-    it('should call repo and reload user appointments', () => {
-      const reloadSpy = createReloadSpy();
+    it('should call repo and return response', async () => {
       mockRepo.joinGroupAppointment.and.returnValue(of(mockSuccessResponse));
-      service.joinGroupAppointment(therapyId, appointmentId);
+      const result = await lastValueFrom(service.joinGroupAppointment(therapyId, appointmentId));
       expect(mockRepo.joinGroupAppointment).toHaveBeenCalledWith(therapyId, appointmentId);
-      expect(reloadSpy).toHaveBeenCalledWith(userId);
+      expect(result).toEqual(mockSuccessResponse);
     });
 
-    it('should handle error', () => {
-      const consoleSpy = spyOn(console, 'error');
+    it('should handle error', async () => {
       mockRepo.joinGroupAppointment.and.returnValue(throwError(() => mockErrorResponse));
-      service.joinGroupAppointment(therapyId, appointmentId);
-      expect(consoleSpy).toHaveBeenCalled();
+      await expectAsync(lastValueFrom(service.joinGroupAppointment(therapyId, appointmentId))).toBeRejectedWith(mockErrorResponse);
     });
   });
 
   describe('leaveGroupAppointment', () => {
-    it('should call repo and reload user appointments', () => {
-      const reloadSpy = createReloadSpy();
+    it('should call repo and return the response', async () => {
       const cancellationReason = 'Not attending';
       mockRepo.leaveGroupAppointment.and.returnValue(of(mockSuccessResponse));
-      service.leaveGroupAppointment(therapyId, appointmentId, cancellationReason);
+      const result = await lastValueFrom(service.leaveGroupAppointment(therapyId, appointmentId, cancellationReason));
       expect(mockRepo.leaveGroupAppointment).toHaveBeenCalledWith(therapyId, appointmentId, cancellationReason);
-      expect(reloadSpy).toHaveBeenCalledWith(userId);
+      expect(result).toEqual(mockSuccessResponse);
     });
 
-    it('should handle error', () => {
-      const consoleSpy = spyOn(console, 'error');
+    it('should handle error', async () => {
       mockRepo.leaveGroupAppointment.and.returnValue(throwError(() => mockErrorResponse));
-      service.leaveGroupAppointment(therapyId, appointmentId);
-      expect(consoleSpy).toHaveBeenCalled();
+      await expectAsync(lastValueFrom(service.leaveGroupAppointment(therapyId, appointmentId))).toBeRejectedWith(mockErrorResponse);
     });
   });
 
   describe('requestCancellation', () => {
-    it('should call repo and reload user appointments', () => {
-      const reloadSpy = createReloadSpy();
+    it('should call repo and return the response', async () => {
       const notes = 'notes';
       mockRepo.requestCancellation.and.returnValue(of(mockSuccessResponse));
-      service.requestCancellation(therapyId, appointmentId, notes);
+      const result = await lastValueFrom(service.requestCancellation(therapyId, appointmentId, notes));
       expect(mockRepo.requestCancellation).toHaveBeenCalledWith(therapyId, appointmentId, notes);
-      expect(reloadSpy).toHaveBeenCalledWith(userId);
+      expect(result).toEqual(mockSuccessResponse);
     });
 
-    it('should handle error', () => {
-      const consoleSpy = spyOn(console, 'error');
+    it('should handle error', async () => {
       const notes = 'notes';
       mockRepo.requestCancellation.and.returnValue(throwError(() => mockErrorResponse));
-      service.requestCancellation(therapyId, appointmentId, notes);
-      expect(consoleSpy).toHaveBeenCalled();
+      await expectAsync(lastValueFrom(service.requestCancellation(therapyId, appointmentId, notes))).toBeRejectedWith(mockErrorResponse);
+    });
+  });
+
+  describe('assignAppt', () => {
+    const userEmail = 'user@example.com';
+    const appointmentToAssign: Appointment = {
+      therapyId: therapyId,
+      appointmentId: appointmentId,
+      date: '2025-11-08',
+      startTime: '10:00',
+      endTime: '11:00',
+      status: AppointmentStatus.AVAILABLE,
+      currentParticipants: 0,
+      maxParticipants: 1,
+      createdAt: ''
+    };
+    const initialAppointments: Appointment[] = [
+      appointmentToAssign,
+      { therapyId: 't1', appointmentId: 'other', date: '2025-11-09', startTime: '12:00', endTime: '13:00', status: AppointmentStatus.AVAILABLE, currentParticipants: 0, maxParticipants: 1, createdAt: '' }
+    ];
+
+    beforeEach(() => {
+      mockRepo.listAppointments.and.returnValue(of(initialAppointments));
+      service.listAppointments();
+    });
+
+    it('should call repo and update appointment status and userEmail in state on success', async () => {
+      mockRepo.assignAppt.and.returnValue(of(mockSuccessResponse));
+
+      await service.assignAppt(therapyId, appointmentId, userEmail);
+
+      expect(mockRepo.assignAppt).toHaveBeenCalledWith(therapyId, appointmentId, userEmail);
+
+      const updatedAppointment = service.appointmentsState().availableAppointments.find(a => a.appointmentId === appointmentId);
+      expect(updatedAppointment?.status).toBe(AppointmentStatus.OCCUPIED);
+      expect(updatedAppointment?.userEmail).toBe(userEmail);
+      expect(service.appointmentsState().error).toBeNull();
+    });
+
+    it('should handle error and not change state', async () => {
+      mockRepo.assignAppt.and.returnValue(throwError(() => mockErrorResponse));
+
+      await expectAsync(service.assignAppt(therapyId, appointmentId, userEmail)).toBeRejected();
+
+      const updatedAppointment = service.appointmentsState().availableAppointments.find(a => a.appointmentId === appointmentId);
+      expect(updatedAppointment?.status).toBe(AppointmentStatus.AVAILABLE);
+      expect(updatedAppointment?.userEmail).toBeUndefined();
+    });
+  })
+
+  describe('approveAppt', () => {
+    const appointmentToApprove: Appointment = {
+      therapyId: therapyId,
+      appointmentId: appointmentId,
+      date: '2025-11-08',
+      startTime: '10:00',
+      endTime: '11:00',
+      status: AppointmentStatus.PENDING,
+      currentParticipants: 0,
+      maxParticipants: 1,
+      createdAt: ''
+    };
+    const initialAppointments: Appointment[] = [
+      appointmentToApprove,
+      { therapyId: 't1', appointmentId: 'other', date: '2025-11-09', startTime: '12:00', endTime: '13:00', status: AppointmentStatus.AVAILABLE, currentParticipants: 0, maxParticipants: 1, createdAt: '' }
+    ];
+
+    beforeEach(async () => {
+      mockRepo.listAppointments.and.returnValue(of(initialAppointments));
+      await service.listAppointments();
+    });
+
+    it('should call repo and update appointment status to OCCUPIED in state on success', async () => {
+      mockRepo.approveAppt.and.returnValue(of(mockSuccessResponse));
+
+      await service.approveAppt(therapyId, appointmentId);
+
+      expect(mockRepo.approveAppt).toHaveBeenCalledWith(therapyId, appointmentId);
+
+      const updatedAppointment = service.appointmentsState().availableAppointments.find(a => a.appointmentId === appointmentId);
+      expect(updatedAppointment?.status).toBe(AppointmentStatus.OCCUPIED);
+      expect(service.appointmentsState().error).toBeNull();
+    });
+
+    it('should handle error and not change state', async () => {
+      mockRepo.approveAppt.and.returnValue(throwError(() => mockErrorResponse));
+
+      await expectAsync(service.approveAppt(therapyId, appointmentId)).toBeRejected();
+
+      const updatedAppointment = service.appointmentsState().availableAppointments.find(a => a.appointmentId === appointmentId);
+      expect(updatedAppointment?.status).toBe(AppointmentStatus.PENDING);
+    });
+  })
+
+  describe('approveCancellation', () => {
+    const appointmentToCancel: Appointment = {
+      therapyId: therapyId,
+      appointmentId: appointmentId,
+      date: '2025-11-08',
+      startTime: '10:00',
+      endTime: '11:00',
+      status: AppointmentStatus.CANCELLATION_PENDING,
+      currentParticipants: 1,
+      maxParticipants: 1,
+      createdAt: ''
+    };
+    const initialAppointments: Appointment[] = [
+      appointmentToCancel,
+      { therapyId: 't1', appointmentId: 'other', date: '2025-11-09', startTime: '12:00', endTime: '13:00', status: AppointmentStatus.OCCUPIED, currentParticipants: 1, maxParticipants: 1, createdAt: '' }
+    ];
+
+    beforeEach(async () => {
+      mockRepo.listAppointments.and.returnValue(of(initialAppointments));
+      await service.listAppointments();
+    });
+
+    it('should call repo and update appointment status to CANCELLED in state on success', async () => {
+      mockRepo.approveCancellation.and.returnValue(of(mockSuccessResponse));
+
+      await service.approveCancellation(therapyId, appointmentId);
+
+      expect(mockRepo.approveCancellation).toHaveBeenCalledWith(therapyId, appointmentId);
+
+      const updatedAppointment = service.appointmentsState().availableAppointments.find(a => a.appointmentId === appointmentId);
+      expect(updatedAppointment?.status).toBe(AppointmentStatus.CANCELLED);
+      expect(service.appointmentsState().error).toBeNull();
+    });
+
+    it('should handle error and not change state', async () => {
+      mockRepo.approveCancellation.and.returnValue(throwError(() => mockErrorResponse));
+
+      await expectAsync(service.approveCancellation(therapyId, appointmentId)).toBeRejected();
+
+      const updatedAppointment = service.appointmentsState().availableAppointments.find(a => a.appointmentId === appointmentId);
+      expect(updatedAppointment?.status).toBe(AppointmentStatus.CANCELLATION_PENDING);
     });
   });
 
