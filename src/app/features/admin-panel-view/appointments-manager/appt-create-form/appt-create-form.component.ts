@@ -65,9 +65,6 @@ import { Therapy } from '../../../../models/therapy.model';
           <input id="endTime" type="time" formControlName="endTime" class="input-field" />
         </div>
       </div>
-
-
-
     </div>
 
     <div class="actions">
@@ -177,7 +174,7 @@ export class ApptCreateFormComponent implements OnInit {
       startTime: ['', [Validators.required]],
       endTime: ['', [Validators.required]],
       maxParticipants: [null, [Validators.min(1)]],
-      userEmail: [''] 
+      userEmail: ['']
     });
   }
 
