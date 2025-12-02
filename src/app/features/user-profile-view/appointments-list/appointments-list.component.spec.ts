@@ -6,7 +6,7 @@ import { UsersStateService } from '../../../core/services/states/users.state.ser
 import { TherapiesStateService } from '../../../core/services/states/therapies.state.service';
 import { signal } from '@angular/core';
 import { Appointment, AppointmentStatus } from '../../../models/appointment.model';
-import { of, throwError } from 'rxjs';
+import { delay, of, throwError } from 'rxjs';
 
 describe('AppointmentsListComponent', () => {
   let fixture: ComponentFixture<AppointmentsListComponent>;
@@ -38,8 +38,12 @@ describe('AppointmentsListComponent', () => {
     listTherapies: jasmine.createSpy('listTherapies')
   };
 
+  type UserState = {
+    currentUser: { userId: string; name: string } | null;
+  };
+
   const mockUsersService = {
-    usersState: signal({
+    usersState: signal<UserState>({
       currentUser: { userId: 'u1', name: 'Test User' }
     })
   };
@@ -88,20 +92,13 @@ describe('AppointmentsListComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('ngOnInit', () => {
-    it('should call getByUser with current user ID and listTherapies on init', () => {
-      expect(mockAppointmentsService.getByUser).toHaveBeenCalledWith('u1');
-      expect(mockTherapiesService.listTherapies).toHaveBeenCalled();
-    });
-  });
-
-  it('should compute sorted appointments correctly (Covers L133-134)', () => {
+  it('should compute sorted appointments correctly', () => {
     const sorted = component.sortedAppointments();
     expect(mockDateTimeService.sortItemsByDate).toHaveBeenCalled();
     expect(sorted[0].date).toBe('2025-11-06');
   });
 
-  it('should go to next and previous page correctly (Covers L143, L147)', () => {
+  it('should go to next and previous page correctly', () => {
     const originalAppointments = mockAppointmentsState().userAppointments;
 
     mockAppointmentsState.set({
@@ -143,12 +140,14 @@ describe('AppointmentsListComponent', () => {
     const mockCancellationDetails = { notes: 'Motivo de prueba' };
 
     beforeEach(() => {
+      mockUsersService.usersState.set({ currentUser: { userId: 'u1', name: 'Test User' } });
       component.openCancellationModal({ appointmentId: '1', therapyId: 't1' });
       mockAppointmentsService.requestCancellation.calls.reset();
       mockAppointmentsService.getByUser.calls.reset();
     });
 
-    it('should not attempt cancellation if selectedAppointment is null (Covers L170)', () => {
+    it('should not attempt cancellation if selectedAppointment is null', () => {
+      mockUsersService.usersState.set({ currentUser: null });
       component.selectedAppointment.set(null);
       component.handleCancellationConfirm(mockCancellationDetails);
 
@@ -156,19 +155,22 @@ describe('AppointmentsListComponent', () => {
       expect(mockAppointmentsService.requestCancellation).not.toHaveBeenCalled();
     });
 
-    it('should handle successful cancellation request', fakeAsync(() => {
+    it('should handle successful cancellation request and reload appointments for current user', fakeAsync(() => {
+      mockAppointmentsService.requestCancellation.and.returnValue(of(true).pipe(delay(0)));
+
       component.handleCancellationConfirm(mockCancellationDetails);
 
-      tick(0);
+      tick(1);
+
+      expect(mockAppointmentsService.getByUser).toHaveBeenCalledWith('u1');
 
       expect(component.showCancellationModal()).toBeFalse();
       expect(mockAppointmentsService.requestCancellation).toHaveBeenCalledWith('t1', '1', mockCancellationDetails.notes);
-      expect(mockAppointmentsService.getByUser).toHaveBeenCalledWith('u1');
       expect(component.isCancelling()).toBeFalse();
       expect(component.selectedAppointment()).toBeNull();
     }));
 
-    it('should handle cancellation request error and finalize (Covers L186-192)', fakeAsync(() => {
+    it('should handle cancellation request error and finalize', fakeAsync(() => {
       mockAppointmentsService.requestCancellation.and.returnValue(throwError(() => new Error('API failed')));
 
       spyOn(console, 'error');

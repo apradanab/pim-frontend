@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ConfirmationModalComponent } from "../../shared/confirmation-modal/confirmation-modal.component";
 import { UsersStateService } from '../../../core/services/states/users.state.service';
 import { UserCardComponent } from "./user-card/user-card.component";
@@ -90,7 +90,7 @@ import { DateTimeService } from '../../../core/services/utils/date-time.service'
     }
   `
 })
-export class UsersManagerComponent {
+export class UsersManagerComponent implements OnInit {
   private readonly stateService = inject(UsersStateService);
   private readonly dateTimeService = inject(DateTimeService);
 
@@ -105,7 +105,7 @@ export class UsersManagerComponent {
     return this.dateTimeService.sortItemsByDate(validUsers, (user) => user.createdAt!);
   });
 
-  constructor() {
+  ngOnInit(): void {
     this.stateService.listUsers();
   }
 
