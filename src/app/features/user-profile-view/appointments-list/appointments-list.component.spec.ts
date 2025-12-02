@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { AppointmentsListComponent } from './appointments-list.component';
 import { AppointmentsStateService } from '../../../core/services/states/appointments.state.service';
 import { DateTimeService } from '../../../core/services/utils/date-time.service';
@@ -6,21 +6,26 @@ import { UsersStateService } from '../../../core/services/states/users.state.ser
 import { TherapiesStateService } from '../../../core/services/states/therapies.state.service';
 import { signal } from '@angular/core';
 import { Appointment, AppointmentStatus } from '../../../models/appointment.model';
+import { of, throwError } from 'rxjs';
 
 describe('AppointmentsListComponent', () => {
   let fixture: ComponentFixture<AppointmentsListComponent>;
   let component: AppointmentsListComponent;
 
+  const mockAppointments = [
+    { appointmentId: '1', therapyId: 't1', date: '2025-11-05', startTime: '10:00', status: AppointmentStatus.OCCUPIED },
+    { appointmentId: '2', therapyId: 't2', date: '2025-11-06', startTime: '09:00', status: AppointmentStatus.PENDING },
+  ] as Appointment[];
+
+  const mockAppointmentsState = signal({
+    userAppointments: mockAppointments,
+    error: null
+  });
+
   const mockAppointmentsService = {
-    appointmentsState: signal({
-      userAppointments: [
-        { appointmentId: '1', therapyId: 't1', date: '2025-11-05', startTime: '10:00', status: AppointmentStatus.OCCUPIED },
-        { appointmentId: '2', therapyId: 't2', date: '2025-11-06', startTime: '09:00', status: AppointmentStatus.PENDING },
-      ],
-      error: null
-    }),
-    loadUserAppointments: jasmine.createSpy('loadUserAppointments'),
-    requestCancellation: jasmine.createSpy('requestCancellation')
+    appointmentsState: mockAppointmentsState,
+    getByUser: jasmine.createSpy('getByUser'),
+    requestCancellation: jasmine.createSpy('requestCancellation').and.returnValue(of(true))
   };
 
   const mockTherapiesService = {
@@ -41,25 +46,29 @@ describe('AppointmentsListComponent', () => {
 
   const mockDateTimeService = {
     formatDisplayDate: jasmine.createSpy('formatDisplayDate').and.callFake((date: string) => date),
-    parseDateString: jasmine.createSpy('parseDateString').and.callFake((date: string) => {
-      const [year, month, day] = date.split('-').map(Number);
-      return new Date(year, month - 1, day);
-    }),
-    timeToMinutes: jasmine.createSpy('timeToMinutes').and.callFake((time: string) => {
-      const [h, m] = time.split(':').map(Number);
-      return h * 60 + m;
-    }),
     sortItemsByDate: jasmine.createSpy('sortItemsByDate').and.callFake(
-      (appointments: Appointment[]) =>
+      (appointments: Appointment[], dateSelector: (a: Appointment) => string, timeSelector: (a: Appointment) => string) =>
         [...appointments].sort((a, b) => {
-          const dateA = new Date(a.date).getTime();
-          const dateB = new Date(b.date).getTime();
-          return dateB - dateA;
+          const dateA = dateSelector(a);
+          const dateB = dateSelector(b);
+          const timeA = timeSelector(a);
+          const timeB = timeSelector(b);
+
+          if (dateA !== dateB) return dateB.localeCompare(dateA);
+          return timeA.localeCompare(timeB);
         })
     )
   };
 
   beforeEach(async () => {
+    mockAppointmentsService.getByUser.calls.reset();
+    mockAppointmentsService.requestCancellation.calls.reset();
+    mockTherapiesService.listTherapies.calls.reset();
+    mockDateTimeService.sortItemsByDate.calls.reset();
+    mockDateTimeService.formatDisplayDate.calls.reset();
+
+    mockAppointmentsState.set({ userAppointments: mockAppointments, error: null });
+
     await TestBed.configureTestingModule({
       imports: [AppointmentsListComponent],
       providers: [
@@ -79,27 +88,31 @@ describe('AppointmentsListComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should compute sorted appointments correctly', () => {
-    const sorted = component.sortedAppointments();
-    expect(sorted[0].date).toBe('2025-11-06');
-    const [, dateFn, timeFn] = mockDateTimeService.sortItemsByDate.calls.argsFor(0);
-    const apt = { date: '2025-11-06', startTime: '09:00' };
-
-    expect(dateFn(apt)).toBe('2025-11-06');
-    expect(timeFn(apt)).toBe('09:00');
+  describe('ngOnInit', () => {
+    it('should call getByUser with current user ID and listTherapies on init', () => {
+      expect(mockAppointmentsService.getByUser).toHaveBeenCalledWith('u1');
+      expect(mockTherapiesService.listTherapies).toHaveBeenCalled();
+    });
   });
 
-  it('should go to next and previous page correctly', () => {
-    component.nextPage();
-    expect(component.currentPage()).toBe(1);
+  it('should compute sorted appointments correctly (Covers L133-134)', () => {
+    const sorted = component.sortedAppointments();
+    expect(mockDateTimeService.sortItemsByDate).toHaveBeenCalled();
+    expect(sorted[0].date).toBe('2025-11-06');
+  });
 
-    const originalState = mockAppointmentsService.appointmentsState();
+  it('should go to next and previous page correctly (Covers L143, L147)', () => {
+    const originalAppointments = mockAppointmentsState().userAppointments;
 
-    mockAppointmentsService.appointmentsState.set({
-      userAppointments: new Array(15).fill(originalState.userAppointments[0]),
+    mockAppointmentsState.set({
+      userAppointments: new Array(component.pageSize + 5).fill(originalAppointments[0]),
       error: null
     });
     fixture.detectChanges();
+
+    component.currentPage.set(1);
+    component.nextPage();
+    expect(component.currentPage()).toBe(2);
 
     component.nextPage();
     expect(component.currentPage()).toBe(2);
@@ -107,25 +120,67 @@ describe('AppointmentsListComponent', () => {
     component.previousPage();
     expect(component.currentPage()).toBe(1);
 
-    mockAppointmentsService.appointmentsState.set(originalState);
+    component.previousPage();
+    expect(component.currentPage()).toBe(1);
+
+    mockAppointmentsState.set({ userAppointments: originalAppointments, error: null });
     fixture.detectChanges();
   });
 
   it('should open and close cancellation modal', () => {
-    component.openCancellationModal({ appointmentId: '1', therapyId: 't1' });
+    const cancellationData = { appointmentId: '1', therapyId: 't1' };
+    component.openCancellationModal(cancellationData);
+
     expect(component.showCancellationModal()).toBeTrue();
-    expect(component.selectedAppointment()).toEqual({ appointmentId: '1', therapyId: 't1' });
+    expect(component.selectedAppointment()).toEqual(cancellationData);
 
     component.closeCancellationModal();
     expect(component.showCancellationModal()).toBeFalse();
     expect(component.selectedAppointment()).toBeNull();
   });
 
-  it('should call requestCancellation when confirming', () => {
-    component.openCancellationModal({ appointmentId: '1', therapyId: 't1' });
-    component.handleCancellationConfirm({ notes: 'Motivo de prueba' });
+  describe('handleCancellationConfirm', () => {
+    const mockCancellationDetails = { notes: 'Motivo de prueba' };
 
-    expect(mockAppointmentsService.requestCancellation)
-      .toHaveBeenCalledWith('t1', '1', 'Motivo de prueba');
+    beforeEach(() => {
+      component.openCancellationModal({ appointmentId: '1', therapyId: 't1' });
+      mockAppointmentsService.requestCancellation.calls.reset();
+      mockAppointmentsService.getByUser.calls.reset();
+    });
+
+    it('should not attempt cancellation if selectedAppointment is null (Covers L170)', () => {
+      component.selectedAppointment.set(null);
+      component.handleCancellationConfirm(mockCancellationDetails);
+
+      expect(component.isCancelling()).toBeFalse();
+      expect(mockAppointmentsService.requestCancellation).not.toHaveBeenCalled();
+    });
+
+    it('should handle successful cancellation request', fakeAsync(() => {
+      component.handleCancellationConfirm(mockCancellationDetails);
+
+      tick(0);
+
+      expect(component.showCancellationModal()).toBeFalse();
+      expect(mockAppointmentsService.requestCancellation).toHaveBeenCalledWith('t1', '1', mockCancellationDetails.notes);
+      expect(mockAppointmentsService.getByUser).toHaveBeenCalledWith('u1');
+      expect(component.isCancelling()).toBeFalse();
+      expect(component.selectedAppointment()).toBeNull();
+    }));
+
+    it('should handle cancellation request error and finalize (Covers L186-192)', fakeAsync(() => {
+      mockAppointmentsService.requestCancellation.and.returnValue(throwError(() => new Error('API failed')));
+
+      spyOn(console, 'error');
+
+      component.handleCancellationConfirm(mockCancellationDetails);
+
+      tick(0);
+
+      expect(console.error).toHaveBeenCalledWith('Error requesting cancellation:', jasmine.any(Error));
+      expect(mockAppointmentsService.getByUser).not.toHaveBeenCalled();
+      expect(component.isCancelling()).toBeFalse();
+      expect(component.selectedAppointment()).toBeNull();
+    }));
   });
 });
