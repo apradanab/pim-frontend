@@ -97,7 +97,7 @@ export class AppointmentsListComponent {
   filterCriteria = signal<FilterCriteria>({});
 
   therapiesForForm = computed(() => this.therapiesState().list);
-  private therapyMap = computed<Map<string, string>>(() => {
+  private readonly therapyMap = computed<Map<string, string>>(() => {
     const map = new Map<string, string>();
     for (const therapy of this.therapiesState().list) {
       map.set(therapy.therapyId, therapy.title);
@@ -110,7 +110,7 @@ export class AppointmentsListComponent {
       .map(u => ({ email: u.email || '', name: u.name || '' }))
       .filter(u => !!u.email && !!u.name)
   );
-  private userMap = computed<Map<string, string>>(() => {
+  private readonly userMap = computed<Map<string, string>>(() => {
     const map = new Map<string, string>();
     for (const user of this.usersState().list) {
       if (user.email && user.name) {
@@ -136,7 +136,7 @@ export class AppointmentsListComponent {
         uniqueMonths.add(appt.date.substring(0, 7));
       }
     }
-    const availableMonths = Array.from(uniqueMonths).sort();
+    const availableMonths = Array.from(uniqueMonths).sort((a, b) => a.localeCompare(b));
 
     return {
       availableMonths,
