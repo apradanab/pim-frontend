@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { AppointmentsStateService } from '../../../core/services/states/appointments.state.service';
 import { DateTimeService } from '../../../core/services/utils/date-time.service';
 import { UsersStateService } from '../../../core/services/states/users.state.service';
@@ -8,6 +8,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CancellationModalComponent } from "../cancellation-modal/cancellation-modal.component";
 import { CancellationDetails } from '../../../models/appointment.model';
 import { AppointmentsPaginatorComponent } from "../appointments-paginator/appointments-paginator.component";
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'pim-appointments-list',
@@ -99,7 +100,7 @@ import { AppointmentsPaginatorComponent } from "../appointments-paginator/appoin
   }
   `
 })
-export class AppointmentsListComponent {
+export class AppointmentsListComponent implements OnInit {
   private readonly appointmentsService = inject(AppointmentsStateService);
   private readonly usersService = inject(UsersStateService);
   private readonly therapiesService = inject(TherapiesStateService);
@@ -107,6 +108,7 @@ export class AppointmentsListComponent {
 
   readonly pageSize = 12;
   currentPage = signal(1);
+  isCancelling = signal(false);
 
   showCancellationModal = signal(false);
   selectedAppointment = signal<{ appointmentId: string; therapyId: string } | null>(null);
@@ -165,29 +167,41 @@ export class AppointmentsListComponent {
 
   handleCancellationConfirm(cancellationDetails: CancellationDetails) {
     const appointment = this.selectedAppointment();
-    if (appointment) {
-      console.log('Cancelando cita:', appointment, 'motivo:', cancellationDetails.notes);
+    if (!appointment) return;
 
-      this.appointmentsService.requestCancellation(
-        appointment.therapyId,
-        appointment.appointmentId,
-        cancellationDetails.notes
-      );
-    }
-
+    this.isCancelling.set(true);
     this.closeCancellationModal();
+
+    this.appointmentsService.requestCancellation(
+      appointment.therapyId,
+      appointment.appointmentId,
+      cancellationDetails.notes
+    ).pipe(
+      finalize(() => {
+        this.isCancelling.set(false);
+        this.selectedAppointment.set(null);
+      })
+    ).subscribe({
+        next: () => {
+          const userId = this.usersService.usersState().currentUser?.userId;
+          if (userId) {
+            this.appointmentsService.getByUser(userId);
+          }
+        },
+        error: (err: unknown) => {
+          console.error('Error requesting cancellation:', err);
+        }
+      });
   }
 
-  constructor() {
-    effect(() => {
-      const currentUser = this.usersService.usersState().currentUser;
-      const userId = currentUser?.userId;
+  ngOnInit(): void {
+    const currentUser = this.usersService.usersState().currentUser;
+    const userId = currentUser?.userId;
 
-      if (userId) {
-        this.appointmentsService.getByUser(userId);
-      }
+    if (userId) {
+      this.appointmentsService.getByUser(userId);
+    }
 
-      this.therapiesService.listTherapies();
-    });
+    this.therapiesService.listTherapies();
   }
 }
