@@ -89,7 +89,7 @@ import { DateTimeService } from '../../../core/services/utils/date-time.service'
     width: 110px;
     height: 110px;
     border-radius: 50%;
-    object-fit: cover;
+    object-fit: fill;
     color: #514545;
   }
 
@@ -99,7 +99,7 @@ import { DateTimeService } from '../../../core/services/utils/date-time.service'
     color: #1bbdbf;
     font-size: 70px;
     position: relative;
-    bottom: 2px;
+    bottom: 6px;
   }
 
   .info-area {

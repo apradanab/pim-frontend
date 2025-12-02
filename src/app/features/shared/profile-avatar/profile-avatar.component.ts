@@ -47,7 +47,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
       width: 70px;
       height: 70px;
       border-radius: 50px;
-      object-fit: cover;
+      object-fit: fill;
     }
 
     .profile-icon {

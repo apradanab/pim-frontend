@@ -38,13 +38,9 @@ import { ImageService } from '../../../core/services/utils/image.service';
           <textarea formControlName="notes"
                     placeholder="Por favor, escribe aquí el motivo de cancelación"
                     class="notes-textarea"
-                    rows="4"
-                    maxlength="150"
+                    maxlength="250"
                     aria-required="true"
           ></textarea>
-          @if (cancellationForm.controls.notes.value) {
-            <p class="notes-count"> {{ cancellationForm.controls.notes.value.length }} </p>
-          }
         </div>
 
         <div class="cancellation-policy">
@@ -168,17 +164,12 @@ import { ImageService } from '../../../core/services/utils/image.service';
   }
 
   textarea {
+    height: 100px;
     padding: 0.75rem;
     border: 1px solid #ddd;
     border-radius: 0.5rem;
     font-family: 'Carlito', sans-serif;
     resize: vertical;
-  }
-
-  .notes-count {
-    font-size: 0.8rem;
-    color: #666;
-    text-align: right;
   }
 
   .cancellation-policy {
