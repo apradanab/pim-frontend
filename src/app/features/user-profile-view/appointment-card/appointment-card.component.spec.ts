@@ -23,8 +23,8 @@ describe('AppointmentCardComponent', () => {
   };
 
   beforeEach(async () => {
-    dateTimeServiceSpy = jasmine.createSpyObj('DateTimeService', ['formatDisplayDate']);
-    dateTimeServiceSpy.formatDisplayDate.and.returnValue('05/11/2025');
+    dateTimeServiceSpy = jasmine.createSpyObj('DateTimeService', ['formatShortDate']);
+    dateTimeServiceSpy.formatShortDate.and.returnValue('05 Nov');
 
     await TestBed.configureTestingModule({
       imports: [AppointmentCardComponent],
@@ -69,12 +69,12 @@ describe('AppointmentCardComponent', () => {
 
   it('should translate all status values correctly', () => {
     const statusCases = [
-      { status: 'OCCUPIED', expected: { text: 'Confirmada', class: 'occupied' } },
-      { status: 'COMPLETED', expected: { text: 'Completada', class: 'completed' } },
-      { status: 'CANCELLATION_PENDING', expected: { text: 'Pendiente', class: 'pending' } },
-      { status: 'PENDING', expected: { text: 'Pendiente', class: 'pending' } },
-      { status: 'CANCELLED', expected: { text: 'Cancelada', class: 'cancelled' } },
-      { status: 'UNKNOWN', expected: { text: 'Desconocido', class: 'unknown' } },
+      { status: 'OCCUPIED', expected: { text: 'Confirmada', class: 'occupied', color: '#b7a8ed' } },
+      { status: 'COMPLETED', expected: { text: 'Completada', class: 'completed', color: '#d1d1d1ff' } },
+      { status: 'CANCELLATION_PENDING', expected: { text: 'Pendiente', class: 'pending', color: '#fea087' } },
+      { status: 'PENDING', expected: { text: 'Pendiente', class: 'pending', color: '#fea087' } },
+      { status: 'CANCELLED', expected: { text: 'Cancelada', class: 'cancelled', color: '#f15e5eff' } },
+      { status: 'UNKNOWN', expected: { text: 'Desconocido', class: 'unknown', color: '#ddd' } },
     ] as const;
 
     for (const { status, expected } of statusCases) {

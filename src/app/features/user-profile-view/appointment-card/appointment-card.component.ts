@@ -10,15 +10,21 @@ import { faBan, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-i
   standalone: true,
   imports: [FontAwesomeModule],
   template: `
-    <div class="card" [class]="translatedStatus().class">
+    <div class="card" [class]="translatedStatus().class + '-color'">
 
-      <p>{{ dateTimeService.formatDisplayDate(appointment().date) }}</p>
-      <div class="time-status-row">
-      <p class="time">{{ appointment().startTime }} - {{ appointment().endTime }}</p>
-      <p class="status-badge" [class]="translatedStatus().class">{{ translatedStatus().text }}</p>
+      <div class="header">
+        <p class="title">{{ therapy().title }}</p>
+      </div>
+      <div class="time">
+        <p>{{ dateTimeService.formatShortDate(appointment().date) }}</p>
+        <p class="hour">{{ appointment().startTime }} - {{ appointment().endTime }}</p>
       </div>
 
-      <p class="title">{{ therapy().title }}</p>
+      <div class="info">
+      <p class="status-badge" [style.backgroundColor]="translatedStatus().color">{{ translatedStatus().text }}</p>
+      </div>
+
+
 
       @if (appointment().notes; as notes) {
 
@@ -51,54 +57,80 @@ import { faBan, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-i
   `,
   styles: `
   .card {
+    position: relative;
     display: flex;
     flex-direction: column;
     padding: 10px;
     min-height: 180px;
     width: 250px;
     border-radius: 20px;
+    border: 1px solid lightgray;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .card.occupied-color { border-left: 7px solid #b7a8ed; background-color: #f7f5ffff; }
+  .card.pending-color { border-left: 7px solid #fea087; background-color: #fffaf7ff; }
+  .card.completed-color { border-left: 7px solid #d1d1d1ff; background-color: #f7f7f7ff; }
+  .card.cancelled-color { border-left: 7px solid #f15e5eff; background-color: #fffafa; }
+
+  .header {
     position: relative;
-  }
-
-  .card.occupied { background-color: #d4c8ffff; color: #2e3235ff; border: 4px solid #c4bbe9b8; box-shadow: 0 0 4px 0 rgba(166, 158, 198, 0.5) }
-  .card.pending { background-color: #fbc3b4ff; color: #6c5203ff; border: 4px solid #e3beb4e8; box-shadow: 0 0 4px 0 rgba(200, 158, 148, 0.5) }
-  .card.completed { background-color: #c6c6c6ff; color: #093841ff; border: 4px solid #bbbabae6; box-shadow: 0 0 4px 0 rgba(175, 174, 174, 0.5) }
-  .card.cancelled { background-color: #fbc3b4ff; color: #5d161dff; border: 4px solid #c89e94ff; box-shadow: 0 0 4px 0 rgba(200, 158, 148, 0.5) }
-
-  .date {
-    font-size: 0.9rem;
-    font-weight: 700;
-  }
-
-  .time-status-row {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin-top: 0.5rem;
-  }
-
-  .time {
-    font-weight: 500;
-  }
-
-  .status-badge {
-    padding: 2px 8px;
-    border-radius: 12px;
-    margin-bottom: 5px;
-    font-size: 1.15rem;
-    background-color: white;
-    border: 1px solid #51454561;
   }
 
   .title {
+    display: inline-block;
+    justify-content: flex-end;
+    padding: 8px 10px 8px 30px;
+    border-radius: 20px 0 0 20px;
+    background-color: #e8e8e8ff;
+    margin-top: 4px;
+    position: absolute;
+    right: -10px;
+  }
+
+  .time {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-bottom: 1px solid #d1d1d1ff;
+    margin: 7px -10px 12px -10px;
     position: relative;
-    top: 7px;
+    top: 45px;
+  }
+
+  .date {
+    position: relative;
+    top: 5px;
+  }
+
+  .hour {
+    border-width: 2px 2px 1px;
+    border-style: solid;
+    border-color: #d1d1d1ff;
+    background-color: white;
+    padding: 3px 5px;
+  }
+
+  .info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 3px 14px 0 0;
+    position: relative;
+    top: 30px;
+  }
+
+  .status-badge {
+    padding: 6px 10px;
+    border-radius: 0 12px 12px 0;
+    position: relative;
+    left: -10px
   }
 
   .notes-area {
-    margin-top: 0.5rem;
+    margin-top: 2.4rem;
     min-width: 215px;
-    padding: 5px;
+    padding: 2px 5px;
     background-color: white;
     border-radius: 8px;
     border: 1px solid #51454585;
@@ -109,7 +141,9 @@ import { faBan, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-i
     position: absolute;
     top: 0;
     left: 0;
-    min-height: 100px;
+    height: 180px;
+    margin-top: 0;
+    border-radius: 16px;
     z-index: 2;
     padding: 10px;
     overflow-y: auto;
@@ -137,15 +171,13 @@ import { faBan, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-i
     cursor: pointer;
     padding: 4px 7px 2px;
     position: absolute;
-    bottom: 74px;
+    bottom: 50px;
     right: 19px;
     z-index: 3;
   }
 
   .toggle-notes-button.toggle-expanded-button {
-    position: absolute;
-    bottom: 164px;
-    right: 12px;
+    bottom: 178px;
   }
 
   .cancel-btn {
@@ -195,17 +227,17 @@ export class AppointmentCardComponent {
 
     switch (status) {
       case 'COMPLETED':
-        return { text: 'Completada', class: 'completed' };
+        return { text: 'Completada', class: 'completed', color: '#d1d1d1ff' };
       case 'PENDING':
-        return { text: 'Pendiente', class: 'pending' };
+        return { text: 'Pendiente', class: 'pending', color: '#fea087' };
       case 'CANCELLATION_PENDING':
-        return { text: 'Pendiente', class: 'pending' };
+        return { text: 'Pendiente', class: 'pending', color: '#fea087' };
       case 'CANCELLED':
-        return { text: 'Cancelada', class: 'cancelled' };
+        return { text: 'Cancelada', class: 'cancelled', color: '#f15e5eff' };
       case 'OCCUPIED':
-        return { text: 'Confirmada', class: 'occupied' };
+        return { text: 'Confirmada', class: 'occupied', color: '#b7a8ed' };
       default:
-        return { text: 'Desconocido', class: 'unknown'};
+        return { text: 'Desconocido', class: 'unknown', color: '#ddd' };
     }
   });
 
