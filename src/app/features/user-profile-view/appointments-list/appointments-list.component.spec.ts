@@ -50,6 +50,7 @@ describe('AppointmentsListComponent', () => {
 
   const mockDateTimeService = {
     formatDisplayDate: jasmine.createSpy('formatDisplayDate').and.callFake((date: string) => date),
+    formatShortDate: jasmine.createSpy('formatShortDate').and.returnValue('05 Nov'),
     sortItemsByDate: jasmine.createSpy('sortItemsByDate').and.callFake(
       (appointments: Appointment[], dateSelector: (a: Appointment) => string, timeSelector: (a: Appointment) => string) =>
         [...appointments].sort((a, b) => {
@@ -69,7 +70,6 @@ describe('AppointmentsListComponent', () => {
     mockAppointmentsService.requestCancellation.calls.reset();
     mockTherapiesService.listTherapies.calls.reset();
     mockDateTimeService.sortItemsByDate.calls.reset();
-    mockDateTimeService.formatDisplayDate.calls.reset();
 
     mockAppointmentsState.set({ userAppointments: mockAppointments, error: null });
 

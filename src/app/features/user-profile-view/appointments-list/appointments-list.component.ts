@@ -72,9 +72,11 @@ import { finalize } from 'rxjs';
     position: relative;
     right: -30px;
     padding: 0.8rem 1.8rem;
+    border: 1px solid #dddddd4d;
     border-radius: 1.5rem 1.5rem 0 0;
-    background-color: #1bbdbf;
+    background-color: #ebece9;
     width: fit-content;
+    box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.2);
   }
 
   .appointment-box {
@@ -82,7 +84,7 @@ import { finalize } from 'rxjs';
     box-shadow:
       8px 0 15px -10px rgba(0, 0, 0, 0.2),
       -8px 0 15px -10px rgba(0, 0, 0, 0.2);
-    border-top: 4px solid #1bbdbf;
+    border-top: 4px solid #ebece9;
     gap: 1.5rem;
     padding: 2rem 3.45rem;
     display: flex;
@@ -92,7 +94,7 @@ import { finalize } from 'rxjs';
 
   .footer {
     height: 30px;
-    background-color: #1bbdbf;
+    background-color: #ebece9;
     border-radius: 0 0 12px 12px;
     box-shadow:
       8px 0 15px -10px rgba(0, 0, 0, 0.2),
