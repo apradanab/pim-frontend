@@ -7,6 +7,7 @@ import { AuthStateService } from '../../../core/services/states/auth.state.servi
 import { EditProfileModalComponent } from "../edit-profile-modal/edit-profile-modal.component";
 import { faCalendar, faEnvelope, faPencil, faRightFromBracket, faUser } from '@fortawesome/free-solid-svg-icons';
 import { DateTimeService } from '../../../core/services/utils/date-time.service';
+import { ImageService } from '../../../core/services/utils/image.service';
 
 @Component({
   selector: 'pim-profile-header',
@@ -14,7 +15,10 @@ import { DateTimeService } from '../../../core/services/utils/date-time.service'
   imports: [FontAwesomeModule, EditProfileModalComponent],
   template: `
   <div class="profile-header">
-    <div class="background"></div>
+    <div class="background">
+      <img [src]="walkingChatIcon" alt="Icono de chat caminando" class="deco-icon walking-chat">
+      <img [src]="jumpingTriangleIcon" alt="Icono de triángulo corriendo" class="deco-icon running-triangle">
+    </div>
     <div class="profile-card">
       @if (currentUser()) {
         <div class="avatar-area">
@@ -64,6 +68,22 @@ import { DateTimeService } from '../../../core/services/utils/date-time.service'
       repeating-linear-gradient(90deg, #f4f2ed 0, #f4f2ed 1px, transparent 1px, transparent 100%),
       repeating-linear-gradient(0deg, #f4f2ed 0, #f4f2ed 1px, transparent 1px, transparent 100%);
     background-size: calc(100% / 14) calc(100% / 2);
+  }
+
+  .deco-icon {
+    position: absolute;
+  }
+
+  .walking-chat {
+    width: 150px;
+    top: 12vh;
+    right: 12vw;
+  }
+
+  .running-triangle {
+    width: 90px;
+    top: 15.5vh;
+    right: 34vw;
   }
 
   .profile-card {
@@ -201,6 +221,7 @@ export class ProfileHeaderComponent {
   private readonly usersState = inject(UsersStateService);
   private readonly authService = inject(AuthStateService);
   private readonly dateTimeService = inject(DateTimeService);
+  private readonly imageService = inject(ImageService);
   private readonly router = inject(Router);
 
   isModalOpen = signal(false);
@@ -210,6 +231,9 @@ export class ProfileHeaderComponent {
   faCalendar = faCalendar;
   faPencil = faPencil;
   faBracket = faRightFromBracket;
+
+  walkingChatIcon = this.imageService.icons.walkingChat;
+  jumpingTriangleIcon = this.imageService.icons.jumpingTriangle;
 
   currentUser = computed(() => this.usersState.usersState().currentUser);
 
