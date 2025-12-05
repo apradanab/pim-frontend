@@ -163,7 +163,7 @@ describe('CompleteRegistrationComponent', () => {
     expect(component.showLoginModal()).toBeFalse();
   });
 
-  it('should close registration modal and open login modal after 3,5s delay', fakeAsync(async () => {
+  it('should close registration modal and open login modal after 5s delay', fakeAsync(async () => {
     component.registrationToken = 'valid-token';
     component.form.setValue({ name: 'name', email: 'email@example.com', password: 'ValidPassword' });
 
@@ -175,7 +175,7 @@ describe('CompleteRegistrationComponent', () => {
 
     await component.submit();
 
-    tick(3500);
+    tick(5000);
 
     expect(component.closeModal).toHaveBeenCalled();
     expect(component.openLoginModal).toHaveBeenCalled();
