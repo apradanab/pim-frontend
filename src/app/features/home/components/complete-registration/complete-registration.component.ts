@@ -1,12 +1,13 @@
 import { Component, inject, signal, effect } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { faCircleCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { LoginModalComponent } from "../../../shared/login-modal/login-modal.component";
 import { UsersStateService } from '../../../../core/services/states/users.state.service';
 import { MediaService } from '../../../../core/services/utils/media.service';
 import { lastValueFrom } from 'rxjs';
+import { ImageService } from '../../../../core/services/utils/image.service';
 
 @Component({
   selector: 'pim-complete-registration',
@@ -66,7 +67,7 @@ import { lastValueFrom } from 'rxjs';
             </div>
 
             <div class="success">
-              <fa-icon class="success-icon" [icon]="faCircleCheck" />
+              <img [src]="triangle" alt="Icono confirmación">
               <h3>¡Registro completado!</h3>
 
                 <div class="login-container">
@@ -210,10 +211,10 @@ import { lastValueFrom } from 'rxjs';
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
 
-    .success-icon {
-      color: #e0f15e;
-      font-size: 3rem;
-      margin-bottom: 1rem;
+    img {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 0.8rem;
     }
 
     .login-container {
@@ -256,12 +257,13 @@ import { lastValueFrom } from 'rxjs';
 export default class CompleteRegistrationComponent {
   private readonly stateService = inject(UsersStateService);
   private readonly mediaService = inject(MediaService);
+  private readonly imageService = inject(ImageService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
 
-  faCircleCheck = faCircleCheck;
   faTimes = faTimes;
+  triangle = this.imageService.icons.happyTriangle;
 
   showModal = signal(false);
   success = signal(false);
@@ -315,7 +317,7 @@ export default class CompleteRegistrationComponent {
       setTimeout(() => {
         this.closeModal();
         this.openLoginModal();
-      }, 3500);
+      }, 5000);
 
     } catch (error) {
       console.error('Registration error:', error);
