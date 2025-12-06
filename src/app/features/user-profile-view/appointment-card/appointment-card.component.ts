@@ -47,10 +47,16 @@ import { faBan, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-i
         }
       }
 
-      @if (appointment().status === AppointmentStatus.OCCUPIED) {
-        <button class="cancel-btn" (click)="requestCancellation()">
-          <fa-icon [icon]="faBan"/>
-        </button>
+      @if (canBeModified()) {
+        @if (isGroupAppt()) {
+          <button class="cancel-btn" (click)="leaveGroup()">
+            <fa-icon [icon]="faBan"/>
+          </button>
+        } @else {
+          <button class="cancel-btn" (click)="requestCancellation()">
+            <fa-icon [icon]="faBan"/>
+          </button>
+        }
       }
 
     </div>
@@ -205,6 +211,7 @@ export class AppointmentCardComponent {
   therapiesMap = input.required<Record<string, Therapy>>();
 
   cancelRequest = output<{ appointmentId: string; therapyId: string }>();
+  leaveRequest = output<{ appointmentId: string; therapyId: string }>();
 
   faChevronDown = faChevronDown;
   faChevronUp = faChevronUp;
@@ -213,6 +220,12 @@ export class AppointmentCardComponent {
 
   isExpanded = signal(false);
   private readonly collapsedHeight = 40;
+
+  isGroupAppt = computed<boolean>(() => { return (this.appointment().maxParticipants || 0) > 1 });
+  canBeModified = computed<boolean>(() =>
+    this.appointment().status === this.AppointmentStatus.OCCUPIED ||
+    this.appointment().status === this.AppointmentStatus.AVAILABLE
+  );
 
   therapy = computed(() => this.therapiesMap()[this.appointment().therapyId]);
 
@@ -236,6 +249,8 @@ export class AppointmentCardComponent {
         return { text: 'Cancelada', class: 'cancelled', color: '#f15e5eff' };
       case 'OCCUPIED':
         return { text: 'Confirmada', class: 'occupied', color: '#b7a8ed' };
+      case 'AVAILABLE':
+        return { text: 'Confirmada', class: 'occupied', color: '#b7a8ed' }
       default:
         return { text: 'Desconocido', class: 'unknown', color: '#ddd' };
     }
@@ -247,6 +262,13 @@ export class AppointmentCardComponent {
 
   requestCancellation() {
     this.cancelRequest.emit({
+      appointmentId: this.appointment().appointmentId,
+      therapyId: this.appointment().therapyId
+    });
+  }
+
+  leaveGroup() {
+    this.leaveRequest.emit({
       appointmentId: this.appointment().appointmentId,
       therapyId: this.appointment().therapyId
     });
