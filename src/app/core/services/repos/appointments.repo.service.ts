@@ -41,10 +41,10 @@ export class AppointmentsRepoService {
     );
   }
 
-  leaveGroupAppointment(therapyId: string, appointmentId: string, cancellationReason?: string): Observable<{ message: string }> {
+  leaveGroupAppointment(therapyId: string, appointmentId: string): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(
       `${this.apiUrl}/therapies/${therapyId}/appointments/${appointmentId}/actions/leave-group`,
-      { cancellationReason }
+      {}
     );
   }
 

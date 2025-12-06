@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { lastValueFrom, of, throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { AppointmentsStateService } from './appointments.state.service';
 import { AppointmentsRepoService } from '../repos/appointments.repo.service';
 import { AppointmentStatus, Appointment, AppointmentInput } from '../../../models/appointment.model';
@@ -21,6 +21,18 @@ describe('AppointmentsStateService', () => {
   const appointmentId = '3';
   const mockSuccessResponse = { message: 'ok' };
   const mockErrorResponse = { message: 'fail' };
+
+  const mockInitialAppointment: Appointment = {
+    appointmentId: appointmentId,
+    date: '2025-11-08',
+    startTime: '10:00',
+    endTime: '11:00',
+    status: AppointmentStatus.AVAILABLE,
+    currentParticipants: 0,
+    maxParticipants: 1,
+    therapyId: therapyId,
+    createdAt: ''
+  };
 
   beforeEach(() => {
     mockRepo = jasmine.createSpyObj('AppointmentsRepoService', [
@@ -172,63 +184,127 @@ describe('AppointmentsStateService', () => {
   })
 
   describe('requestAppointment', () => {
+    const notes = 'nota';
+
+    beforeEach(async () => {
+      mockRepo.listAppointments.and.returnValue(of([mockInitialAppointment]));
+      await service.listAppointments();
+    });
+
+    it('should reject if appointment is not found in availables', async () => {
+      mockRepo.listAppointments.and.returnValue(of([]));
+      await service.listAppointments();
+
+      await expectAsync(service.requestAppointment(therapyId, appointmentId)).toBeRejectedWith(
+        new Error('Appointment not found in availables')
+      );
+
+      expect(mockRepo.requestAppointment).not.toHaveBeenCalled();
+      expect(service.appointmentsState().isLoading).toBeFalse();
+      expect(service.appointmentsState().error).toBeNull();
+    });
+
     it('should call repo and return the response', async () => {
-      const notes = 'nota';
       mockRepo.requestAppointment.and.returnValue(of(mockSuccessResponse));
-      const result = await lastValueFrom(service.requestAppointment(therapyId, appointmentId, notes));
+
+      const result = await service.requestAppointment(therapyId, appointmentId, notes);
 
       expect(mockRepo.requestAppointment).toHaveBeenCalledWith(therapyId, appointmentId, notes);
       expect(result).toEqual(mockSuccessResponse);
+      expect(service.appointmentsState().availableAppointments.length).toBe(0);
+      expect(service.appointmentsState().isLoading).toBeFalse();
     });
 
-    it('should handle error', async () => {
+    it('should handle error and update state on failure', async () => {
       mockRepo.requestAppointment.and.returnValue(throwError(() => mockErrorResponse));
-      await expectAsync(lastValueFrom(service.requestAppointment(therapyId, appointmentId))).toBeRejectedWith(mockErrorResponse);
+
+      await expectAsync(service.requestAppointment(therapyId, appointmentId)).toBeRejectedWith(mockErrorResponse);
+
+      expect(service.appointmentsState().error).toBe(mockErrorResponse.message);
+      expect(service.appointmentsState().isLoading).toBeFalse();
+      expect(service.appointmentsState().availableAppointments.length).toBe(1);
     });
   });
 
   describe('joinGroupAppointment', () => {
+    beforeEach(async () => {
+        mockRepo.listAppointments.and.returnValue(of([mockInitialAppointment]));
+        await service.listAppointments();
+    });
+
+    it('should reject if appointment is not found in availables', async () => {
+      mockRepo.listAppointments.and.returnValue(of([]));
+      await service.listAppointments();
+
+      await expectAsync(service.joinGroupAppointment(therapyId, appointmentId)).toBeRejectedWith(
+          new Error('Appointment not found in availables')
+      );
+
+      expect(mockRepo.joinGroupAppointment).not.toHaveBeenCalled();
+      expect(service.appointmentsState().isLoading).toBeFalse();
+      expect(service.appointmentsState().error).toBeNull();
+    });
+
     it('should call repo and return response', async () => {
       mockRepo.joinGroupAppointment.and.returnValue(of(mockSuccessResponse));
-      const result = await lastValueFrom(service.joinGroupAppointment(therapyId, appointmentId));
+      const result = await service.joinGroupAppointment(therapyId, appointmentId);
+
       expect(mockRepo.joinGroupAppointment).toHaveBeenCalledWith(therapyId, appointmentId);
       expect(result).toEqual(mockSuccessResponse);
+      expect(service.appointmentsState().isLoading).toBeFalse();
     });
 
     it('should handle error', async () => {
       mockRepo.joinGroupAppointment.and.returnValue(throwError(() => mockErrorResponse));
-      await expectAsync(lastValueFrom(service.joinGroupAppointment(therapyId, appointmentId))).toBeRejectedWith(mockErrorResponse);
+      await expectAsync(service.joinGroupAppointment(therapyId, appointmentId)).toBeRejectedWith(mockErrorResponse);
+
+      expect(service.appointmentsState().error).toBe(mockErrorResponse.message);
+      expect(service.appointmentsState().isLoading).toBeFalse();
     });
   });
 
   describe('leaveGroupAppointment', () => {
     it('should call repo and return the response', async () => {
-      const cancellationReason = 'Not attending';
       mockRepo.leaveGroupAppointment.and.returnValue(of(mockSuccessResponse));
-      const result = await lastValueFrom(service.leaveGroupAppointment(therapyId, appointmentId, cancellationReason));
-      expect(mockRepo.leaveGroupAppointment).toHaveBeenCalledWith(therapyId, appointmentId, cancellationReason);
+
+      const result = await service.leaveGroupAppointment(therapyId, appointmentId);
+
+      expect(mockRepo.leaveGroupAppointment).toHaveBeenCalledWith(therapyId, appointmentId);
       expect(result).toEqual(mockSuccessResponse);
     });
 
     it('should handle error', async () => {
       mockRepo.leaveGroupAppointment.and.returnValue(throwError(() => mockErrorResponse));
-      await expectAsync(lastValueFrom(service.leaveGroupAppointment(therapyId, appointmentId))).toBeRejectedWith(mockErrorResponse);
+      await expectAsync(service.leaveGroupAppointment(therapyId, appointmentId)).toBeRejectedWith(mockErrorResponse);
     });
   });
 
   describe('requestCancellation', () => {
+    const notes = 'notes';
+
+    const apptToCancel: Appointment = {
+      ...mockInitialAppointment,
+      status: AppointmentStatus.OCCUPIED,
+      currentParticipants: 1,
+    };
+
     it('should call repo and return the response', async () => {
-      const notes = 'notes';
       mockRepo.requestCancellation.and.returnValue(of(mockSuccessResponse));
-      const result = await lastValueFrom(service.requestCancellation(therapyId, appointmentId, notes));
-      expect(mockRepo.requestCancellation).toHaveBeenCalledWith(therapyId, appointmentId, notes);
+
+      const result = await service.requestCancellation(apptToCancel, notes);
+
+      expect(mockRepo.requestCancellation).toHaveBeenCalledWith(apptToCancel.therapyId, apptToCancel.appointmentId, notes);
       expect(result).toEqual(mockSuccessResponse);
+      expect(service.appointmentsState().isLoading).toBeFalse();
     });
 
-    it('should handle error', async () => {
-      const notes = 'notes';
+    it('should handle error and update state', async () => {
       mockRepo.requestCancellation.and.returnValue(throwError(() => mockErrorResponse));
-      await expectAsync(lastValueFrom(service.requestCancellation(therapyId, appointmentId, notes))).toBeRejectedWith(mockErrorResponse);
+
+      await expectAsync(service.requestCancellation(apptToCancel, notes)).toBeRejectedWith(mockErrorResponse);
+
+      expect(service.appointmentsState().error).toBe(mockErrorResponse.message);
+      expect(service.appointmentsState().isLoading).toBeFalse();
     });
   });
 
