@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { TherapiesManagerComponent } from "../therapies-manager/therapies-manager.component";
 import { AdvicesManagerComponent } from "../advices-manager/advices-manager.component";
 import { UsersManagerComponent } from "../users-manager/users-manager.component";
+import { AppointmentsManagerComponent } from "../appointments-manager/appointments-manager.component";
 
 @Component({
   selector: 'pim-admin-tabs-controller',
   standalone: true,
-  imports: [TherapiesManagerComponent, AdvicesManagerComponent, UsersManagerComponent],
+  imports: [TherapiesManagerComponent, AdvicesManagerComponent, UsersManagerComponent, AppointmentsManagerComponent],
   template: `
     <div class="admin-tabs">
       <div class="grid-background"></div>
@@ -29,8 +30,8 @@ import { UsersManagerComponent } from "../users-manager/users-manager.component"
           <pim-advices-manager/>
         } @else if (activeTab === 'users') {
           <pim-users-manager/>
-        <!-- } @else if (activeTab === 'appointments') {
-          <pim-appointments-manager></pim-appointments-manager> -->
+        } @else if (activeTab === 'appointments') {
+          <pim-appointments-manager></pim-appointments-manager>
         }
       </div>
     </div>
