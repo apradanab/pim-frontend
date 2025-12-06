@@ -26,7 +26,7 @@ describe('AppointmentsListComponent', () => {
 
   const mockAppointmentsService = {
     appointmentsState: mockAppointmentsState,
-    getByUser: jasmine.createSpy('getByUser'),
+    getByUser: jasmine.createSpy('getByUser').and.returnValue(Promise.resolve()),
     requestCancellation: jasmine.createSpy('requestCancellation').and.returnValue(of(true)),
     leaveGroupAppointment: jasmine.createSpy('leaveGroupAppointment'),
   };
