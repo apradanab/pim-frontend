@@ -4,11 +4,12 @@ import { AppointmentsStateService } from '../../../core/services/states/appointm
 import { DateTimeService } from '../../../core/services/utils/date-time.service';
 import { Appointment, AppointmentStatus } from '../../../models/appointment.model';
 import { Therapy } from '../../../models/therapy.model';
-import { of, throwError } from 'rxjs';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 class MockAppointmentsStateService {
-  requestAppointment = jasmine.createSpy('requestAppointment').and.returnValue(of(null));
-  joinGroupAppointment = jasmine.createSpy('joinGroupAppointment').and.returnValue(of(null));
+  requestAppointment = jasmine.createSpy('requestAppointment').and.returnValue(Promise.resolve(null));
+  joinGroupAppointment = jasmine.createSpy('joinGroupAppointment').and.returnValue(Promise.resolve(null));
 }
 
 class MockDateTimeService {
@@ -45,6 +46,8 @@ describe('BookingModalComponent', () => {
     await TestBed.configureTestingModule({
       imports: [BookingModalComponent],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: AppointmentsStateService, useClass: MockAppointmentsStateService },
         { provide: DateTimeService, useClass: MockDateTimeService }
       ]
@@ -102,7 +105,8 @@ describe('BookingModalComponent', () => {
       ''
     );
 
-    tick(5000);
+    tick();
+    tick(3500);
 
     expect(component.bookingCompleted.emit).toHaveBeenCalled();
     expect(component.modalClosed.emit).toHaveBeenCalled();
@@ -127,20 +131,21 @@ describe('BookingModalComponent', () => {
       testNote
     );
 
-    tick(5000);
+    tick();
+    tick(3500);
 
     expect(component.bookingCompleted.emit).toHaveBeenCalled();
     expect(component.modalClosed.emit).toHaveBeenCalled();
   }));
 
-  it('should handle requestAppointment error and call onClose (single appointment)', () => {
+  it('should handle requestAppointment error and call onClose (single appointment)', fakeAsync(() => {
     spyOn(component, 'onClose');
     spyOn(console, 'error');
     spyOn(component.bookingCompleted, 'emit');
     spyOn(component.modalClosed, 'emit');
 
     const error = new Error('Test API Error');
-    mockAppointmentsService.requestAppointment.and.returnValue(throwError(() => error));
+    mockAppointmentsService.requestAppointment.and.returnValue(Promise.reject(error));
 
     fixture.componentRef.setInput('appointment', mockAppointment);
     fixture.detectChanges();
@@ -148,12 +153,14 @@ describe('BookingModalComponent', () => {
     const confirmButton = fixture.nativeElement.querySelector('.confirm-button');
     confirmButton.click();
 
-    expect(console.error).toHaveBeenCalledWith('Error request appointment:', error);
+    tick();
+
+    expect(console.error).toHaveBeenCalledWith('Error request appointment', error);
     expect(component.onClose).toHaveBeenCalled();
     expect(component.bookingCompleted.emit).not.toHaveBeenCalled();
-  });
+  }));
 
-  it('should handle joinGroupAppointment error and call onClose (group appointment)', () => {
+  it('should handle joinGroupAppointment error and call onClose (group appointment)', fakeAsync(() => {
     const mockGroupAppointment: Appointment = { ...mockAppointment, maxParticipants: 5 };
     fixture.componentRef.setInput('appointment', mockGroupAppointment);
     fixture.detectChanges();
@@ -164,16 +171,18 @@ describe('BookingModalComponent', () => {
     spyOn(component.modalClosed, 'emit');
 
     const error = new Error('Test Group API Error');
-    mockAppointmentsService.joinGroupAppointment.and.returnValue(throwError(() => error));
+    mockAppointmentsService.joinGroupAppointment.and.returnValue(Promise.reject(error));
     mockAppointmentsService.requestAppointment.calls.reset();
 
     const confirmButton = fixture.nativeElement.querySelector('.confirm-button');
     confirmButton.click();
 
+    tick();
+
     expect(mockAppointmentsService.joinGroupAppointment).toHaveBeenCalled();
     expect(mockAppointmentsService.requestAppointment).not.toHaveBeenCalled();
-    expect(console.error).toHaveBeenCalledWith('Error join group:', error);
+    expect(console.error).toHaveBeenCalledWith('Error join group', error);
     expect(component.onClose).toHaveBeenCalled();
     expect(component.bookingCompleted.emit).not.toHaveBeenCalled();
-  });
+  }));
 });
