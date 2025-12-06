@@ -65,6 +65,7 @@ import { BookingModalComponent } from "../booking-modal/booking-modal.component"
       padding: 0 2rem;
       max-width: 1000px;
       margin: 0 auto;
+      margin-bottom: 30px;
       font-family: "Carlito", sans-serif;
     }
 
@@ -182,14 +183,8 @@ export class ScheduleGridComponent implements OnInit {
   onCellClick(event: { dateIso: string; time: string; appointment?: Appointment; status: string }) {
     const { appointment, status } = event;
 
-    console.log('Event Status:', status);
-    console.log('Is Appointment?', !!appointment);
-    console.log('Is Logged In:', this.authService.isLoggedIn());
+    if (status !== 'available' || !appointment) return;
 
-    if (status !== 'available' || !appointment) {
-      console.log('Cita no disponible para reservar');
-      return;
-    }
 
     if (!this.authService.isLoggedIn()) {
       return;
