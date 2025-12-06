@@ -27,10 +27,10 @@ export class AppointmentsStateService {
 
     return lastValueFrom(
       this.appointmentsRepo.listAppointments().pipe(
-        tap((apts: Appointment[]) => {
+        tap((appts: Appointment[]) => {
           this.#state.update(s => ({
             ...s,
-            availableAppointments: apts,
+            availableAppointments: appts,
             isLoading: false,
             error: null,
           }));
@@ -48,18 +48,30 @@ export class AppointmentsStateService {
     )
   }
 
-  getByUser = (userId: string) => {
-    this.appointmentsRepo.getByUser(userId).subscribe({
-      next: (appointments) => this.#state.update(s => ({
-        ...s,
-        userAppointments: appointments,
-        error: null
-      })),
-      error: (err: ApiError) => this.#state.update(s => ({
-        ...s,
-        error: err.message
-      }))
-    });
+  getByUser = (userId: string): Promise<Appointment[]> => {
+    this.#state.update(s => ({ ...s, error: null, isLoading: true }));
+
+    return lastValueFrom(
+      this.appointmentsRepo.getByUser(userId).pipe(
+        tap((appts: Appointment[]) => {
+          this.#state.update(s => ({
+            ...s,
+            userAppointments: appts,
+            isLoading: false,
+            error: null,
+          }));
+        }),
+        catchError((err: ApiError) => {
+          console.error('Error loading user appointments:', err.message);
+          this.#state.update(s => ({
+            ...s,
+            isLoading: false,
+            error: err.message,
+          }));
+          throw err;
+        })
+      )
+    );
   }
 
   createAppt = (data: AppointmentInput): Promise<Appointment> => {
@@ -80,20 +92,104 @@ export class AppointmentsStateService {
     )
   }
 
-  requestAppointment = (therapyId: string, appointmentId: string, notes?: string) => {
-    return this.appointmentsRepo.requestAppointment(therapyId, appointmentId, notes);
+  requestAppointment = (therapyId: string, appointmentId: string, notes?: string): Promise<{ message: string }> => {
+    const apptTorequest = this.#state().availableAppointments.find(
+      (appt) => appt.appointmentId === appointmentId
+    );
+
+    if (!apptTorequest) {
+      return Promise.reject(new Error('Appointment not found in availables'))
+    }
+
+    this.#state.update(s => ({ ...s, isLoading: true, error: null }));
+
+    return lastValueFrom(
+      this.appointmentsRepo.requestAppointment(therapyId, appointmentId, notes).pipe(
+        tap(() => {
+          this.#state.update(s => ({
+            ...s,
+            isLoading: false,
+            availableAppointments: s.availableAppointments.filter(appt => appt.appointmentId !== appointmentId),
+            error: null
+          }));
+        }),
+        catchError((err: ApiError) => {
+          this.#state.update(s => ({ ...s, isLoading: false, error: err.message }));
+          throw err;
+        })
+      )
+    );
   }
 
-  joinGroupAppointment = (therapyId: string, appointmentId: string) => {
-    return this.appointmentsRepo.joinGroupAppointment(therapyId, appointmentId);
+  requestCancellation = (appt: Appointment, notes: string): Promise<{ message: string }> => {
+    this.#state.update(s => ({ ...s, isLoading: true, error: null }));
+
+    return lastValueFrom(
+      this.appointmentsRepo.requestCancellation(
+        appt.therapyId,
+        appt.appointmentId,
+        notes
+      ).pipe(
+        tap(() => {
+          this.#state.update(s => ({
+            ...s,
+            isLoading: false,
+            error: null,
+          }));
+        }),
+        catchError((err: ApiError) => {
+          this.#state.update(s => ({ ...s, isLoading: false, error: err.message }));
+          throw err;
+        })
+      )
+    );
   }
 
-  leaveGroupAppointment = (therapyId: string, appointmentId: string, cancellationReason?: string) => {
-    return this.appointmentsRepo.leaveGroupAppointment(therapyId, appointmentId, cancellationReason);
+  joinGroupAppointment = (therapyId: string, appointmentId: string): Promise<{ message: string }> => {
+    const appointmentToJoin = this.#state().availableAppointments.find(
+      (appt) => appt.appointmentId === appointmentId
+    );
+
+    if (!appointmentToJoin) {
+      return Promise.reject(new Error("Appointment not found in availables"));
+    }
+
+    this.#state.update(s => ({ ...s, isLoading: true, error: null }));
+
+    return lastValueFrom(
+      this.appointmentsRepo.joinGroupAppointment(therapyId, appointmentId).pipe(
+        tap(() => {
+          this.#state.update(s => ({
+            ...s,
+            isLoading: false,
+            error: null,
+          }));
+        }),
+        catchError((err: ApiError) => {
+          this.#state.update(s => ({ ...s, isLoading: false, error: err.message }));
+          throw err;
+        })
+      )
+    );
   }
 
-  requestCancellation = (therapyId: string, appointmentId: string, notes: string) => {
-    return this.appointmentsRepo.requestCancellation(therapyId, appointmentId, notes);
+  leaveGroupAppointment = (therapyId: string, appointmentId: string): Promise<{ message: string }> => {
+    this.#state.update(s => ({ ...s, isLoading: true, error: null }));
+    return lastValueFrom(
+      this.appointmentsRepo.leaveGroupAppointment(therapyId, appointmentId).pipe(
+        tap(() => {
+          this.#state.update(s => ({
+            ...s,
+            isLoading: false,
+            error: null,
+          }));
+        }),
+        catchError((err: ApiError) => {
+          this.#state.update(s => ({ ...s, isLoading: false, error: err.message }));
+          throw err;
+        })
+      )
+    )
   }
 
   assignAppt = (therapyId: string, apptId: string, userEmail: string): Promise<{ message: string }> => {
