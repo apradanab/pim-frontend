@@ -32,7 +32,7 @@ import { ImageService } from '../../../core/services/utils/image.service';
         <div class="info-area">
           <h2> <fa-icon [icon]="faUser"/> {{ currentUser()?.name || currentUser()?.email || 'Usuario' }}</h2>
           <p> <fa-icon [icon]="faEnvelope"/> {{ currentUser()?.email }} </p>
-          <p> <fa-icon [icon]="faCalendar"/> Usuario desde: {{ formattedCreationDate() }} </p>
+          <p> <fa-icon [icon]="faCalendar"/> Desde: {{ formattedCreationDate() }} </p>
         </div>
 
         <svg class="profile-separator-svg" width="85%" height="2">

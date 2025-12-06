@@ -5,7 +5,8 @@ import { Therapy } from '../../../models/therapy.model';
 import { AppointmentsStateService } from '../../../core/services/states/appointments.state.service';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faCircleCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { ImageService } from '../../../core/services/utils/image.service';
 
 @Component({
   selector: 'pim-booking-modal',
@@ -62,10 +63,10 @@ import { faCircleCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
         </div>
         <div class="success-content">
           <div class="success-icon">
-            <fa-icon [icon]="faCircleCheck"></fa-icon>
+            <img [src]="triangle" alt="Icono confirmación">
           </div>
-          <h3>¡Cita reservada con éxito!</h3>
-          <p>Te enviaremos un correo de confirmación pronto</p>
+          <h3>¡Cita reservada!</h3>
+          <p>La cita será confirmada pronto. Revisa tu perfil</p>
         </div>
       }
     </div>
@@ -206,9 +207,12 @@ import { faCircleCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
   }
 
   .success-icon {
-    color: #e0f15e;
-    font-size: 3rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.8rem;
+  }
+
+  img {
+    width: 100px;
+    height: 100px;
   }
 
   .success-content h3 {
@@ -228,6 +232,7 @@ import { faCircleCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 export class BookingModalComponent {
   readonly dateTimeService = inject(DateTimeService);
   private readonly apptsService = inject(AppointmentsStateService);
+  private readonly imageService = inject(ImageService);
 
   appointment = input.required<Appointment>();
   therapy = input.required<Therapy | undefined>();
@@ -238,8 +243,8 @@ export class BookingModalComponent {
   note = signal<string>('');
   isSuccess = signal<boolean>(false);
 
-  faCircleCheck = faCircleCheck;
   faTimes = faTimes;
+  triangle = this.imageService.icons.happyTriangle;
 
   isGroupAppt = computed<boolean>(() => { return (this.appointment().maxParticipants || 1) > 1; });
 
@@ -253,19 +258,16 @@ export class BookingModalComponent {
       ? this.apptsService.joinGroupAppointment(therapyId, apptId)
       : this.apptsService.requestAppointment(therapyId, apptId, notes);
 
-    bookingAction.subscribe({
-      next: () => {
-        this.isSuccess.set(true);
+    bookingAction.then(() => {
+      this.isSuccess.set(true);
 
-        setTimeout(() => {
-          this.bookingCompleted.emit();
-          this.onClose();
-        }, 5000);
-      },
-      error: (err) => {
-        console.error(`Error ${this.isGroupAppt() ? 'join group' : 'request appointment'}:`, err);
+      setTimeout(() => {
+        this.bookingCompleted.emit();
         this.onClose();
-      }
+      }, 3500);
+    }).catch((err) => {
+      console.error(`Error ${this.isGroupAppt() ? 'join group' : 'request appointment'}`, err);
+      this.onClose();
     })
   }
 

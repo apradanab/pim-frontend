@@ -31,7 +31,8 @@ describe('CompleteRegistrationComponent', () => {
   beforeEach(async () => {
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
     mockStateService = jasmine.createSpyObj('StateService', ['completeRegistration']);
-    mockMediaService = jasmine.createSpyObj('MediaService', ['generateUploadUrl', 'uploadFile']);
+    mockMediaService = jasmine.createSpyObj('MediaService', ['generateUploadUrl', 'uploadFile', 'getImageUrl']);
+    mockMediaService.getImageUrl.and.returnValue('mock-image-url');
 
     mockActivatedRoute = {
       snapshot: {
