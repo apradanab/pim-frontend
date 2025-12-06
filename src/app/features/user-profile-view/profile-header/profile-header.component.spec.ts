@@ -7,6 +7,8 @@ import { DateTimeService } from '../../../core/services/utils/date-time.service'
 import { signal, WritableSignal } from '@angular/core';
 import { UserState } from '../../../models/state.model';
 import { User } from '../../../models/user.model';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('ProfileHeaderComponent', () => {
   let component: ProfileHeaderComponent;
@@ -36,6 +38,8 @@ describe('ProfileHeaderComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ProfileHeaderComponent],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: UsersStateService, useValue: mockUsersStateService },
         { provide: AuthStateService, useValue: mockAuthStateService },
         { provide: DateTimeService, useValue: mockDateTimeService },
