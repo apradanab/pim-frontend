@@ -112,19 +112,18 @@ describe('AppointmentsRepoService', () => {
     req.flush(mockResponse);
   });
 
-  it('should leave a group appointment with a cancellation reason', () => {
+  it('should leave a group appointment', () => {
     const therapyId = 't1';
     const appointmentId = '1';
-    const cancellationReason = 'Not available';
     const mockResponse = { message: 'Left group successfully' };
 
-    service.leaveGroupAppointment(therapyId, appointmentId, cancellationReason).subscribe((response) => {
+    service.leaveGroupAppointment(therapyId, appointmentId).subscribe((response) => {
       expect(response).toEqual(mockResponse);
     });
 
     const req = httpMock.expectOne(`${apiUrl}/therapies/${therapyId}/appointments/${appointmentId}/actions/leave-group`);
     expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual({ cancellationReason });
+    expect(req.request.body).toEqual({});
     req.flush(mockResponse);
   });
 
