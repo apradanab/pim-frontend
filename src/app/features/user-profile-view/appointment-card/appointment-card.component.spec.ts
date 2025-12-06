@@ -74,6 +74,7 @@ describe('AppointmentCardComponent', () => {
       { status: 'CANCELLATION_PENDING', expected: { text: 'Pendiente', class: 'pending', color: '#fea087' } },
       { status: 'PENDING', expected: { text: 'Pendiente', class: 'pending', color: '#fea087' } },
       { status: 'CANCELLED', expected: { text: 'Cancelada', class: 'cancelled', color: '#f15e5eff' } },
+      { status: 'AVAILABLE', expected: { text: 'Confirmada', class: 'occupied', color: '#b7a8ed' } },
       { status: 'UNKNOWN', expected: { text: 'Desconocido', class: 'unknown', color: '#ddd' } },
     ] as const;
 
@@ -110,4 +111,15 @@ describe('AppointmentCardComponent', () => {
 
     expect(component.needsExpansion()).toBeFalse();
   });
+
+  it('should emit leaveRequest when leaveGroup is called', () => {
+    spyOn(component.leaveRequest, 'emit');
+
+    component.leaveGroup();
+
+    expect(component.leaveRequest.emit).toHaveBeenCalledWith({
+        appointmentId: mockAppointment.appointmentId,
+        therapyId: mockAppointment.therapyId
+    });
+});
 });
