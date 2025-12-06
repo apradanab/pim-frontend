@@ -6,9 +6,9 @@ import { TherapiesStateService } from '../../../core/services/states/therapies.s
 import { AppointmentCardComponent } from "../appointment-card/appointment-card.component";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CancellationModalComponent } from "../cancellation-modal/cancellation-modal.component";
-import { CancellationDetails } from '../../../models/appointment.model';
+import { Appointment, CancellationDetails } from '../../../models/appointment.model';
 import { AppointmentsPaginatorComponent } from "../appointments-paginator/appointments-paginator.component";
-import { finalize } from 'rxjs';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'pim-appointments-list',
@@ -17,19 +17,19 @@ import { finalize } from 'rxjs';
   template: `
   <div class="appointments-section">
     <div class="tab-header">
-      <div class="icon-circle">
-        <pim-appointments-paginator
-        [currentPage]="currentPage()"
-        [totalItems]="sortedAppointments().length"
-        [pageSize]="pageSize"
-        (nextPage)="nextPage()"
-        (previousPage)="previousPage()"
-        />
-      </div>
+      <pim-appointments-paginator
+      [currentPage]="currentPage()"
+      [totalItems]="sortedAppointments().length"
+      [pageSize]="pageSize"
+      (nextPage)="nextPage()"
+      (previousPage)="previousPage()"
+      />
     </div>
 
-    @if (appointmentsState().error) {
-      <p class="error-message">Error al cargar las citas: {{ appointmentsState().error }}</p>
+    @if (appointmentsState().isLoading) {
+      <div class="loading-overlay">
+        <fa-icon [icon]="faSpinner"/>
+      </div>
     } @else if (sortedAppointments().length > 0) {
 
       <div class="appointment-box">
@@ -39,18 +39,19 @@ import { finalize } from 'rxjs';
               [appointment]="appointment"
               [therapiesMap]="therapiesMap()"
               (cancelRequest)="openCancellationModal($event)"
+              (leaveRequest)="handleLeaveGroup($event)"
             />
           </div>
         }
       </div>
 
-    } @else {
+    } @else if (!appointmentsState().isLoading) {
       <p>No tienes citas programadas.</p>
     }
 
     @if (showCancellationModal()) {
       <pim-cancellation-modal
-        (confirm)="handleCancellationConfirm($event)"
+        (confirm)="handleCancellationConfirm(selectedAppointment()!, $event)"
         (modalClose)="closeCancellationModal()"
       />
     }
@@ -77,6 +78,20 @@ import { finalize } from 'rxjs';
     background-color: #ebece9;
     width: fit-content;
     box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .loading-overlay {
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .loading-overlay fa-icon {
+    color: #1bbdbf;
+    font-size: 45px;
+    position: relative;
+    top: -35px;
   }
 
   .appointment-box {
@@ -111,9 +126,10 @@ export class AppointmentsListComponent implements OnInit {
   readonly pageSize = 12;
   currentPage = signal(1);
   isCancelling = signal(false);
-
   showCancellationModal = signal(false);
-  selectedAppointment = signal<{ appointmentId: string; therapyId: string } | null>(null);
+  selectedAppointment = signal<Appointment | null>(null);
+
+  faSpinner = faSpinner;
 
   appointmentsState = this.appointmentsService.appointmentsState;
   userAppointments = computed(() => this.appointmentsService.appointmentsState().userAppointments);
@@ -144,6 +160,7 @@ export class AppointmentsListComponent implements OnInit {
     return sorted.slice(start, end);
   });
 
+
   nextPage() {
     const totalPages = Math.ceil(this.sortedAppointments().length / this.pageSize);
     if (this.currentPage() < totalPages) {
@@ -157,45 +174,6 @@ export class AppointmentsListComponent implements OnInit {
     }
   }
 
-  openCancellationModal(cancellationData: { appointmentId: string; therapyId: string }) {
-    this.selectedAppointment.set(cancellationData);
-    this.showCancellationModal.set(true);
-  }
-
-  closeCancellationModal() {
-    this.showCancellationModal.set(false);
-    this.selectedAppointment.set(null);
-  }
-
-  handleCancellationConfirm(cancellationDetails: CancellationDetails) {
-    const appointment = this.selectedAppointment();
-    if (!appointment) return;
-
-    this.isCancelling.set(true);
-    this.closeCancellationModal();
-
-    this.appointmentsService.requestCancellation(
-      appointment.therapyId,
-      appointment.appointmentId,
-      cancellationDetails.notes
-    ).pipe(
-      finalize(() => {
-        this.isCancelling.set(false);
-        this.selectedAppointment.set(null);
-      })
-    ).subscribe({
-        next: () => {
-          const userId = this.usersService.usersState().currentUser?.userId;
-          if (userId) {
-            this.appointmentsService.getByUser(userId);
-          }
-        },
-        error: (err: unknown) => {
-          console.error('Error requesting cancellation:', err);
-        }
-      });
-  }
-
   ngOnInit(): void {
     const currentUser = this.usersService.usersState().currentUser;
     const userId = currentUser?.userId;
@@ -206,4 +184,68 @@ export class AppointmentsListComponent implements OnInit {
 
     this.therapiesService.listTherapies();
   }
+
+  private async finishAction() {
+    this.isCancelling.set(false);
+    this.selectedAppointment.set(null);
+
+    const userId = this.usersService.usersState().currentUser?.userId;
+    if (userId) {
+      await this.appointmentsService.getByUser(userId).catch(console.error);
+    }
+  }
+
+  openCancellationModal(cancellationData: { appointmentId: string; therapyId: string }) {
+    const appt = this.userAppointments().find(
+      a => a.appointmentId === cancellationData.appointmentId
+    );
+    if (!appt) return;
+
+    this.selectedAppointment.set(appt);
+    this.showCancellationModal.set(true);
+  }
+
+  closeCancellationModal() {
+    this.showCancellationModal.set(false);
+    this.selectedAppointment.set(null);
+  }
+
+  async handleCancellationConfirm(appointment: Appointment, cancellationDetails: CancellationDetails) {
+    if (!appointment) return;
+
+    this.isCancelling.set(true);
+    this.closeCancellationModal();
+
+    try {
+      await this.appointmentsService.requestCancellation(
+        appointment,
+        cancellationDetails.notes
+      );
+    } catch (err) {
+      console.error('Cancelling error', err);
+    } finally {
+      this.finishAction();
+    }
+  }
+
+  async handleLeaveGroup(cancellationData: { appointmentId: string; therapyId: string }) {
+    const appt = this.userAppointments().find(
+      a => a.appointmentId === cancellationData.appointmentId
+    );
+    if (!appt) return;
+
+    this.isCancelling.set(true);
+
+    try {
+      await this.appointmentsService.leaveGroupAppointment(
+        appt.therapyId,
+        appt.appointmentId
+      );
+    } catch (err) {
+      console.error('Leaving error:', err)
+    } finally {
+      this.finishAction();
+    }
+  }
+
 }

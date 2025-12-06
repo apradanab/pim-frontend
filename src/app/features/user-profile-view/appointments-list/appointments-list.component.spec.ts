@@ -1,4 +1,4 @@
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppointmentsListComponent } from './appointments-list.component';
 import { AppointmentsStateService } from '../../../core/services/states/appointments.state.service';
 import { DateTimeService } from '../../../core/services/utils/date-time.service';
@@ -6,7 +6,7 @@ import { UsersStateService } from '../../../core/services/states/users.state.ser
 import { TherapiesStateService } from '../../../core/services/states/therapies.state.service';
 import { signal } from '@angular/core';
 import { Appointment, AppointmentStatus } from '../../../models/appointment.model';
-import { delay, of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 
 describe('AppointmentsListComponent', () => {
   let fixture: ComponentFixture<AppointmentsListComponent>;
@@ -17,6 +17,8 @@ describe('AppointmentsListComponent', () => {
     { appointmentId: '2', therapyId: 't2', date: '2025-11-06', startTime: '09:00', status: AppointmentStatus.PENDING },
   ] as Appointment[];
 
+  const mockAppointment1 = mockAppointments.find(a => a.appointmentId === '1') as Appointment;
+
   const mockAppointmentsState = signal({
     userAppointments: mockAppointments,
     error: null
@@ -25,7 +27,8 @@ describe('AppointmentsListComponent', () => {
   const mockAppointmentsService = {
     appointmentsState: mockAppointmentsState,
     getByUser: jasmine.createSpy('getByUser'),
-    requestCancellation: jasmine.createSpy('requestCancellation').and.returnValue(of(true))
+    requestCancellation: jasmine.createSpy('requestCancellation').and.returnValue(of(true)),
+    leaveGroupAppointment: jasmine.createSpy('leaveGroupAppointment'),
   };
 
   const mockTherapiesService = {
@@ -68,6 +71,7 @@ describe('AppointmentsListComponent', () => {
   beforeEach(async () => {
     mockAppointmentsService.getByUser.calls.reset();
     mockAppointmentsService.requestCancellation.calls.reset();
+    mockAppointmentsService.leaveGroupAppointment.calls.reset();
     mockTherapiesService.listTherapies.calls.reset();
     mockDateTimeService.sortItemsByDate.calls.reset();
 
@@ -129,11 +133,23 @@ describe('AppointmentsListComponent', () => {
     component.openCancellationModal(cancellationData);
 
     expect(component.showCancellationModal()).toBeTrue();
-    expect(component.selectedAppointment()).toEqual(cancellationData);
+    expect(component.selectedAppointment()).toEqual(mockAppointment1);
 
     component.closeCancellationModal();
     expect(component.showCancellationModal()).toBeFalse();
     expect(component.selectedAppointment()).toBeNull();
+  });
+
+  it('should do nothing if appointment is not found in openCancellationModal', () => {
+    const nonExistentData = { appointmentId: '999', therapyId: 't1' };
+
+    component.selectedAppointment.set(mockAppointment1);
+    component.showCancellationModal.set(true);
+
+    component.openCancellationModal(nonExistentData);
+
+    expect(component.showCancellationModal()).toBeTrue();
+    expect(component.selectedAppointment()).toEqual(mockAppointment1);
   });
 
   describe('handleCancellationConfirm', () => {
@@ -146,43 +162,90 @@ describe('AppointmentsListComponent', () => {
       mockAppointmentsService.getByUser.calls.reset();
     });
 
-    it('should not attempt cancellation if selectedAppointment is null', () => {
+    it('should not attempt cancellation if selectedAppointment is null', async () => {
       mockUsersService.usersState.set({ currentUser: null });
       component.selectedAppointment.set(null);
-      component.handleCancellationConfirm(mockCancellationDetails);
+
+      await component.handleCancellationConfirm(component.selectedAppointment()!, mockCancellationDetails);
 
       expect(component.isCancelling()).toBeFalse();
       expect(mockAppointmentsService.requestCancellation).not.toHaveBeenCalled();
     });
 
-    it('should handle successful cancellation request and reload appointments for current user', fakeAsync(() => {
-      mockAppointmentsService.requestCancellation.and.returnValue(of(true).pipe(delay(0)));
+    it('should handle successful cancellation request and reload appointments for current user', async () => {
+      mockAppointmentsService.requestCancellation.and.returnValue(Promise.resolve({ message: 'ok' }));
 
-      component.handleCancellationConfirm(mockCancellationDetails);
-
-      tick(1);
+      await component.handleCancellationConfirm(mockAppointment1, mockCancellationDetails);
 
       expect(mockAppointmentsService.getByUser).toHaveBeenCalledWith('u1');
-
       expect(component.showCancellationModal()).toBeFalse();
-      expect(mockAppointmentsService.requestCancellation).toHaveBeenCalledWith('t1', '1', mockCancellationDetails.notes);
+      expect(mockAppointmentsService.requestCancellation).toHaveBeenCalledWith(mockAppointment1, mockCancellationDetails.notes);
       expect(component.isCancelling()).toBeFalse();
       expect(component.selectedAppointment()).toBeNull();
-    }));
+    });
 
-    it('should handle cancellation request error and finalize', fakeAsync(() => {
-      mockAppointmentsService.requestCancellation.and.returnValue(throwError(() => new Error('API failed')));
+    it('should handle cancellation request error and finalize', async () => {
+      mockAppointmentsService.requestCancellation.and.returnValue(Promise.reject(new Error('API failed')));
 
       spyOn(console, 'error');
 
-      component.handleCancellationConfirm(mockCancellationDetails);
+      await component.handleCancellationConfirm(mockAppointment1, mockCancellationDetails);
 
-      tick(0);
-
-      expect(console.error).toHaveBeenCalledWith('Error requesting cancellation:', jasmine.any(Error));
-      expect(mockAppointmentsService.getByUser).not.toHaveBeenCalled();
+      expect(console.error).toHaveBeenCalledWith('Cancelling error', jasmine.any(Error));
+      expect(mockAppointmentsService.getByUser).toHaveBeenCalled();
       expect(component.isCancelling()).toBeFalse();
       expect(component.selectedAppointment()).toBeNull();
-    }));
+    });
+  });
+
+  describe('handleLeaveGroup', () => {
+    const data = { appointmentId: '1', therapyId: 't1' };
+    const nonExistentData = { appointmentId: '999', therapyId: 't1' };
+
+    const leaveGroupSpy = mockAppointmentsService.leaveGroupAppointment as jasmine.Spy;
+
+    beforeEach(() => {
+        mockAppointmentsService.getByUser.calls.reset();
+        leaveGroupSpy.calls.reset();
+    });
+
+    it('should not proceed if appointment is not found in userAppointments', async () => {
+      await component.handleLeaveGroup(nonExistentData);
+
+      expect(component.isCancelling()).toBeFalse();
+      expect(leaveGroupSpy).not.toHaveBeenCalled();
+      expect(mockAppointmentsService.getByUser).not.toHaveBeenCalled();
+    });
+
+    it('should call leaveGroupAppointment, finalize action on success, and reload appointments', async () => {
+      leaveGroupSpy.and.returnValue(Promise.resolve({ message: 'Left' }));
+      mockAppointmentsService.getByUser.and.returnValue(Promise.resolve(mockAppointments));
+
+      const promise = component.handleLeaveGroup(data);
+
+      expect(component.isCancelling()).toBeTrue();
+
+      await promise;
+
+      expect(leaveGroupSpy).toHaveBeenCalledWith(data.therapyId, data.appointmentId);
+      expect(component.isCancelling()).toBeFalse();
+      expect(mockAppointmentsService.getByUser).toHaveBeenCalledWith('u1');
+    });
+
+    it('should handle error from leaveGroupAppointment and finalize action', async () => {
+      const error = new Error('Leaving failed');
+      leaveGroupSpy.and.returnValue(Promise.reject(error));
+      mockAppointmentsService.getByUser.and.returnValue(Promise.resolve(mockAppointments));
+
+      spyOn(console, 'error');
+
+      await component.handleLeaveGroup(data);
+
+      expect(leaveGroupSpy).toHaveBeenCalledWith(data.therapyId, data.appointmentId);
+      expect(console.error).toHaveBeenCalledWith('Leaving error:', error);
+
+      expect(mockAppointmentsService.getByUser).toHaveBeenCalledWith('u1');
+      expect(component.isCancelling()).toBeFalse();
+    });
   });
 });
