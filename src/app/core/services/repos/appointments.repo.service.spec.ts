@@ -81,6 +81,30 @@ describe('AppointmentsRepoService', () => {
     req.flush(mockResponse);
   });
 
+  it('should update appointment notes using PATCH method', () => {
+    const therapyId = 't1';
+    const appointmentId = 'a1';
+    const notes = 'Nota';
+
+    const mockUpdatedAppt: Partial<Appointment> = {
+      appointmentId,
+      notes
+    };
+
+    service.updateNote(therapyId, appointmentId, notes).subscribe((appt) => {
+      expect(appt).toEqual(mockUpdatedAppt as Appointment);
+    });
+
+    const expectedUrl = `${apiUrl}/therapies/${therapyId}/appointments/${appointmentId}`;
+    const expectedBody = { notes: notes };
+
+    const req = httpMock.expectOne(expectedUrl);
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.body).toEqual(expectedBody);
+
+    req.flush(mockUpdatedAppt as Appointment);
+  });
+
   it('should request an appointment', () => {
     const therapyId = 't1';
     const appointmentId = '1';
