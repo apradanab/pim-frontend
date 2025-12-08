@@ -203,10 +203,12 @@ describe('AppointmentsListComponent', () => {
     const nonExistentData = { appointmentId: '999', therapyId: 't1' };
 
     const leaveGroupSpy = mockAppointmentsService.leaveGroupAppointment as jasmine.Spy;
+    const getByUserSpy = mockAppointmentsService.getByUser as jasmine.Spy;
 
     beforeEach(() => {
-        mockAppointmentsService.getByUser.calls.reset();
-        leaveGroupSpy.calls.reset();
+      getByUserSpy.calls.reset();
+      leaveGroupSpy.calls.reset();
+      getByUserSpy.and.returnValue(Promise.resolve(mockAppointments));
     });
 
     it('should not proceed if appointment is not found in userAppointments', async () => {
@@ -219,7 +221,6 @@ describe('AppointmentsListComponent', () => {
 
     it('should call leaveGroupAppointment, finalize action on success, and reload appointments', async () => {
       leaveGroupSpy.and.returnValue(Promise.resolve({ message: 'Left' }));
-      mockAppointmentsService.getByUser.and.returnValue(Promise.resolve(mockAppointments));
 
       const promise = component.handleLeaveGroup(data);
 
@@ -235,7 +236,6 @@ describe('AppointmentsListComponent', () => {
     it('should handle error from leaveGroupAppointment and finalize action', async () => {
       const error = new Error('Leaving failed');
       leaveGroupSpy.and.returnValue(Promise.reject(error));
-      mockAppointmentsService.getByUser.and.returnValue(Promise.resolve(mockAppointments));
 
       spyOn(console, 'error');
 
