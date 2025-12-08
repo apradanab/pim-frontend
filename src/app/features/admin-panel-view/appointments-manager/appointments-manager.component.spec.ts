@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
-
 import { AppointmentsManagerComponent } from './appointments-manager.component';
 import { AppointmentsStateService } from '../../../core/services/states/appointments.state.service';
 import { TherapiesStateService } from '../../../core/services/states/therapies.state.service';
@@ -9,29 +8,30 @@ import { AppointmentState } from '../../../models/state.model';
 import { AppointmentKeys } from '../../../models/appointment.model';
 
 const mockAppointmentState: AppointmentState = {
-    availableAppointments: [],
-    userAppointments: [],
-    current: null,
-    isLoading: false,
-    error: null
+  availableAppointments: [],
+  userAppointments: [],
+  current: null,
+  isLoading: false,
+  error: null
 };
 
 class MockAppointmentsStateService {
-    appointmentsState = signal(mockAppointmentState);
-    listAppointments = jasmine.createSpy('listAppointments');
-    approveAppt = jasmine.createSpy('approveAppt');
-    approveCancellation = jasmine.createSpy('approveCancellation');
-    deleteAppointment = jasmine.createSpy('deleteAppointment');
+  appointmentsState = signal(mockAppointmentState);
+  listAppointments = jasmine.createSpy('listAppointments');
+  approveAppt = jasmine.createSpy('approveAppt');
+  approveCancellation = jasmine.createSpy('approveCancellation');
+  deleteAppointment = jasmine.createSpy('deleteAppointment');
+  updateAppointmentNote = jasmine.createSpy('updateAppointmentNote').and.returnValue(Promise.resolve());
 }
 
 class MockTherapiesStateService {
-    therapiesState = signal({ list: [], current: null, error: null });
-    listTherapies = jasmine.createSpy('listTherapies');
+  therapiesState = signal({ list: [], current: null, error: null });
+  listTherapies = jasmine.createSpy('listTherapies');
 }
 
 class MockUsersStateService {
-    usersState = signal({ list: [], currentUser: null, isLoading: false, error: null });
-    listUsers = jasmine.createSpy('listUsers');
+  usersState = signal({ list: [], currentUser: null, isLoading: false, error: null });
+  listUsers = jasmine.createSpy('listUsers');
 }
 
 describe('AppointmentsManagerComponent', () => {
@@ -107,4 +107,37 @@ describe('AppointmentsManagerComponent', () => {
       expect(apptsService.deleteAppointment).toHaveBeenCalledWith(mockKeys.therapyId, mockKeys.appointmentId);
       expect(component.appointmentToDelete()).toBeNull();
   });
+
+  describe('saveEditNote', () => {
+    const mockEditedAppt = {
+      notes: 'Nota',
+      therapyId: 'T1',
+      appointmentId: 'A1'
+    };
+
+    it('should call apptService.updateAppointmentNote with corret payload', () => {
+      spyOn(console, 'error');
+
+      component.saveEditedNote(mockEditedAppt);
+
+      expect(apptsService.updateAppointmentNote).toHaveBeenCalledWith(
+        mockEditedAppt.therapyId,
+        mockEditedAppt.appointmentId,
+        mockEditedAppt.notes
+      );
+      expect(console.error).not.toHaveBeenCalled();
+    });
+
+    it('hould log error to console if updateAppointmentNote fails', async() => {
+      const mockError = new Error('Update failed');
+
+      (apptsService.updateAppointmentNote as jasmine.Spy).and.returnValue(Promise.reject(mockError));
+      spyOn(console, 'error');
+
+      component.saveEditedNote(mockEditedAppt);
+      await fixture.whenStable();
+
+      expect(console.error).toHaveBeenCalledWith('Error saving note:', mockError);
+    })
+  })
 });
