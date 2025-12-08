@@ -130,6 +130,22 @@ describe('AppointmentCardComponent', () => {
     expect(component.isExpanded()).toBeTrue();
   });
 
+  it('should emit noteSaved event and set isEditingNote to false', () => {
+    const newNote = 'Nota';
+    const expectedPayload = {
+      notes: newNote,
+      therapyId: mockAppt.therapyId,
+      appointmentId: mockAppt.appointmentId
+    };
+
+    spyOn(component.noteSaved, 'emit');
+    component.isEditingNote.set(true);
+
+    component.handleNoteSave(newNote);
+    expect(component.noteSaved.emit).toHaveBeenCalledWith(expectedPayload);
+    expect(component.isEditingNote()).toBeFalse();
+  })
+
   describe('should emit requestApproval on approveAppt', () => {
     const expectedPayload = {
       therapyId: mockAppt.therapyId,

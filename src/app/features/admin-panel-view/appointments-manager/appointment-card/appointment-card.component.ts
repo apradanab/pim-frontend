@@ -2,12 +2,13 @@ import { Component, computed, inject, input, output, signal } from '@angular/cor
 import { Appointment } from '../../../../models/appointment.model';
 import { DateTimeService } from '../../../../core/services/utils/date-time.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faBan, faChevronDown, faChevronUp, faThumbsUp, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faBan, faChevronDown, faChevronUp, faPencil, faThumbsUp, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { NoteEditComponent } from "../note-edit/note-edit.component";
 
 @Component({
   selector: 'pim-appointment-card',
   standalone: true,
-  imports: [FontAwesomeModule],
+  imports: [FontAwesomeModule, NoteEditComponent],
   template: `
     <div class="card" [class]="statusDisplay().colorClass">
       <div class="header">
@@ -45,9 +46,9 @@ import { faBan, faChevronDown, faChevronUp, faThumbsUp, faTrash } from '@fortawe
                   class="toggle-notes-btn"
                   [class.toggle-expanded-button]="isExpanded()">
           @if (isExpanded()) {
-            <fa-icon [icon]="faDown"></fa-icon>
+            <fa-icon [icon]="faDown" title="Cerrar"></fa-icon>
           } @else {
-            <fa-icon [icon]="faUp"></fa-icon>
+            <fa-icon [icon]="faUp" title="Ver nota"></fa-icon>
           }
           </button>
         }
@@ -62,10 +63,22 @@ import { faBan, faChevronDown, faChevronUp, faThumbsUp, faTrash } from '@fortawe
                   }
                 </ul>
               </div>
-            } @else if (appt().notes) {
-              <div class="note-content">
-                <p>{{ appt().notes }}</p>
-              </div>
+            } @else {
+              @if (isEditingNote()) {
+                <pim-note-edit
+                  [initialNote]="appt().notes || ''"
+                  (noteSaved)="handleNoteSave($event)"
+                  (cancel)="isEditingNote.set(false)"
+                />
+              } @else if (appt().notes) {
+                <div class="note-content">
+                  <p>{{ appt().notes }}</p>
+
+                </div>
+                <button class="edit-note-btn" (click)="isEditingNote.set(true)" title="Editar">
+                    <fa-icon [icon]="faPencil"/>
+                  </button>
+              }
             }
           </div>
         }
@@ -178,10 +191,8 @@ import { faBan, faChevronDown, faChevronUp, faThumbsUp, faTrash } from '@fortawe
     z-index: 8;
   }
 
-  .toggle-notes-button.toggle-expanded-button {
-    top: 10px;
-    left: auto;
-    z-index: 12;
+  .toggle-notes-btn.toggle-expanded-button {
+    background-color: white;
   }
 
   .message-area {
@@ -202,12 +213,13 @@ import { faBan, faChevronDown, faChevronUp, faThumbsUp, faTrash } from '@fortawe
   }
 
   .message-area.expanded {
+    position: relative;
     top: -137px;
     left: -10px;
     width: 242px;
     height: 163px;
-    border-radius: 15px;
-    padding: 10px;
+    border-radius: 18px;
+    padding: 0 0 30px 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     z-index: 7;
     background-color: #f5f5f5;
@@ -216,8 +228,11 @@ import { faBan, faChevronDown, faChevronUp, faThumbsUp, faTrash } from '@fortawe
   .note-content {
     font-size: 0.9rem;
     text-align: left;
-    margin-top: 5px;
+    padding-top: 5px;
+    max-height: 100%;
     color: #343a40;
+    overflow-y: auto;
+    scrollbar-color: lightgray #f5f5f5;
   }
 
   .approve-btn {
@@ -229,6 +244,18 @@ import { faBan, faChevronDown, faChevronUp, faThumbsUp, faTrash } from '@fortawe
     top: -1px;
     left: 44px;
     border: 1px solid #ddd;
+  }
+
+  .edit-note-btn {
+    background-color: white;
+    padding: 6px 12px;
+    color: #717171ff;
+    border: 1px solid #ddd;
+    border-radius: 12px 12px 0 0;
+    cursor: pointer;
+    position: absolute;
+    left: 55px;
+    bottom: -1px;
   }
 
   .delete-btn {
@@ -255,6 +282,10 @@ export class AppointmentCardComponent {
   requestApproval = output<{ therapyId: string; appointmentId: string }>();
   requestCancelApproval = output<{ therapyId: string; appointmentId: string }>()
   requestDeletion = output<{ therapyId: string; appointmentId: string }>();
+  noteSaved = output<{ notes: string, therapyId: string, appointmentId: string }>();
+
+  isExpanded = signal(false);
+  isEditingNote = signal(false);
 
   private readonly statusMap = {
     OCCUPIED: { text: 'Ocupada', colorClass: 'occupied-color', color: '#b7a8ed' },
@@ -269,9 +300,8 @@ export class AppointmentCardComponent {
   faBan = faBan;
   faDown = faChevronDown;
   faUp = faChevronUp;
+  faPencil = faPencil;
   faTrash = faTrash;
-
-  isExpanded = signal(false);
 
   isGroupAppointment = computed(() => (this.appt().maxParticipants ?? 1) > 1);
 
@@ -310,12 +340,20 @@ export class AppointmentCardComponent {
     this.isExpanded.update(value => !value);
   }
 
+  handleNoteSave(newNote: string) {
+    this.noteSaved.emit({
+      notes: newNote,
+      therapyId: this.appt().therapyId,
+      appointmentId: this.appt().appointmentId
+    });
+    this.isEditingNote.set(false);
+  }
+
   approveAppt() {
     const payload = {
       therapyId: this.appt().therapyId,
       appointmentId: this.appt().appointmentId
     };
-    console.log('card emit: solicitando aprobación para:', payload);
     this.requestApproval.emit(payload);
   }
 
