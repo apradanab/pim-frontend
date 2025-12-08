@@ -180,6 +180,56 @@ describe('AppointmentsStateService', () => {
 
       await expectAsync(service.createAppt(apptInput)).toBeRejected();
       expect(service.appointmentsState().availableAppointments).toEqual(initialAppointments);
+    });
+  });
+
+  describe('updateAppointmentNote', () => {
+    const notes = 'Nota';
+    const initialAppts: Appointment[] = [
+      mockInitialAppointment,
+      { therapyId: 't1', appointmentId: 'Id', date: '2025-11-09', startTime: '12:00', endTime: '13:00', status: AppointmentStatus.AVAILABLE, currentParticipants: 0, maxParticipants: 1, createdAt: '' }
+    ];
+    const updatedAppt: Appointment = {
+      ...mockInitialAppointment,
+      notes: notes,
+    };
+
+    beforeEach(async () => {
+      mockRepo.listAppointments.and.returnValue(of(initialAppts));
+      await service.listAppointments();
+      expect(service.appointmentsState().availableAppointments.length).toBe(2);
+    });
+
+    it('should call repo, update appointment note in state, and clear error on success', async () => {
+      mockRepo.updateNote = jasmine.createSpy().and.returnValue(of(updatedAppt));
+
+      const result = await service.updateAppointmentNote(therapyId, appointmentId, notes);
+
+      expect(mockRepo.updateNote).toHaveBeenCalledWith(therapyId, appointmentId, notes);
+      expect(result).toEqual(updatedAppt);
+
+      const state =service.appointmentsState();
+      const apptInState = state.availableAppointments.find(a => a.appointmentId === appointmentId);
+
+      expect(apptInState?.notes).toBe(notes);
+      expect(state.isLoading).toBeFalse();
+      expect(state.error).toBeNull();
+      expect(state.availableAppointments.find(a => a.appointmentId === 'Id')?.notes).toBeUndefined();
+    });
+
+    it('should handle error, update state with error message, and throw error', async () => {
+      const error = { message: 'Update note failed' };
+      mockRepo.updateNote = jasmine.createSpy().and.returnValue(throwError(() => error));
+      const consoleSpy = spyOn(console, 'error');
+
+      await expectAsync(service.updateAppointmentNote(therapyId, appointmentId, notes)).toBeRejectedWith(error);
+
+      expect(consoleSpy).toHaveBeenCalledWith('Error updating appointment note:', error.message);
+
+      const state = service.appointmentsState();
+      expect(state.error).toBe(error.message);
+      expect(state.isLoading).toBeFalse();
+      expect(state.availableAppointments.find(a => a.appointmentId === appointmentId)).toEqual(mockInitialAppointment);
     })
   })
 
