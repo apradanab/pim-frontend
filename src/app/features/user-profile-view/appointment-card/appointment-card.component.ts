@@ -24,14 +24,10 @@ import { faBan, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-i
       <p class="status-badge" [style.backgroundColor]="translatedStatus().color">{{ translatedStatus().text }}</p>
       </div>
 
-
-
       @if (appointment().notes; as notes) {
 
         <div class="notes-area" [class.notes-expanded]="isExpanded()" [style.maxHeight]="maxHeight()">
           <p class="notes-text"> {{ notes }}</p>
-
-
         </div>
 
         @if (needsExpansion()) {
@@ -134,12 +130,12 @@ import { faBan, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-i
   }
 
   .notes-area {
-    margin-top: 2.4rem;
-    min-width: 215px;
-    padding: 2px 5px;
+    margin-top: 2.2rem;
+    width: 193px;
+    padding: 3px;
     background-color: white;
     border-radius: 8px;
-    border: 1px solid #51454585;
+    border: 1px solid lightgray;
     overflow: hidden;
   }
 
@@ -147,6 +143,7 @@ import { faBan, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-i
     position: absolute;
     top: 0;
     left: 0;
+    width: 242px;
     height: 180px;
     margin-top: 0;
     border-radius: 16px;
@@ -178,12 +175,12 @@ import { faBan, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-i
     padding: 4px 7px 2px;
     position: absolute;
     bottom: 50px;
-    right: 19px;
-    z-index: 3;
+    right: 50px;
   }
 
   .toggle-notes-button.toggle-expanded-button {
     bottom: 178px;
+    right: 20px;
   }
 
   .cancel-btn {
@@ -233,7 +230,7 @@ export class AppointmentCardComponent {
     this.isExpanded() ? '400px' : `${this.collapsedHeight}px`
   );
 
-  needsExpansion = computed(() => (this.appointment().notes?.length ?? 0) > 150)
+  needsExpansion = computed(() => !!this.appointment().notes)
 
   translatedStatus = computed(() => {
     const status = this.appointment().status;

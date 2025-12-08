@@ -93,15 +93,6 @@ describe('AppointmentCardComponent', () => {
     expect(component.maxHeight()).toBe('400px');
   });
 
-  it('should compute needsExpansion correctly', () => {
-    fixture.componentRef.setInput('appointment', {
-      ...mockAppointment,
-      notes: 'Notas breves'
-    });
-    fixture.detectChanges();
-    expect(component.needsExpansion()).toBeFalse();
-  });
-
   it('should handle undefined notes in needsExpansion', () => {
     fixture.componentRef.setInput('appointment', {
       ...mockAppointment,
