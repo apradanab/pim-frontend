@@ -47,6 +47,7 @@ import { AppointmentsFilterComponent } from "../appointments-filter/appointments
         (requestApproval)="requestApproval.emit($event)"
         (requestCancelApproval)="requestCancelApproval.emit($event)"
         (requestDeletion)="requestDeletion.emit($event)"
+        (noteSaved)="noteSaved.emit($event)"
       />
     }
   }
@@ -89,12 +90,12 @@ export class AppointmentsListComponent {
   requestApproval = output<AppointmentKeys>();
   requestCancelApproval = output<AppointmentKeys>();
   requestDeletion = output<AppointmentKeys>();
+  noteSaved = output<{ notes: string, therapyId: string, appointmentId: string }>();
   toggleCreateForm = output<boolean>();
   apptCreated = output<void>();
 
-  faPlus = faCirclePlus;
-
   filterCriteria = signal<FilterCriteria>({});
+  faPlus = faCirclePlus;
 
   therapiesForForm = computed(() => this.therapiesState().list);
   private readonly therapyMap = computed<Map<string, string>>(() => {
