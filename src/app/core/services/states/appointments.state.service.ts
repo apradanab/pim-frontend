@@ -92,6 +92,30 @@ export class AppointmentsStateService {
     )
   }
 
+  updateAppointmentNote = (therapyId: string, appointmentId: string, notes: string): Promise<Appointment> => {
+    return lastValueFrom(
+      this.appointmentsRepo.updateNote(therapyId, appointmentId, notes).pipe(
+        tap((updateAppt: Appointment) => {
+          this.#state.update(s => ({
+            ...s,
+            isLoading: false,
+            availableAppointments: s.availableAppointments.map(appt =>
+              appt.appointmentId === appointmentId
+                ? updateAppt
+                : appt
+            ),
+            error: null,
+          }));
+        }),
+        catchError((err: ApiError) => {
+          console.error('Error updating appointment note:', err.message);
+          this.#state.update(s => ({ ...s, isLoading: false, error: err.message }));
+          throw err;
+        })
+      )
+    );
+  }
+
   requestAppointment = (therapyId: string, appointmentId: string, notes?: string): Promise<{ message: string }> => {
     const apptTorequest = this.#state().availableAppointments.find(
       (appt) => appt.appointmentId === appointmentId
