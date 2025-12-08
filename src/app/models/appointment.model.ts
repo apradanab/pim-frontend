@@ -1,11 +1,4 @@
 export interface Appointment {
-  PK?: string;
-  SK?: string;
-  Type?: 'Appointment';
-  GSI1PK?: string;
-  GSI1SK?: string;
-  GSI2PK?: string;
-  GSI2SK?: string;
   appointmentId: string;
   therapyId: string;
   userId?: string;
@@ -18,7 +11,6 @@ export interface Appointment {
   maxParticipants?: number;
   status: AppointmentStatus;
   notes?: string;
-  adminNotes?: string;
   createdAt: string;
   requestedAt?: string;
 }
