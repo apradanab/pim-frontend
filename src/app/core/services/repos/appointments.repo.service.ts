@@ -26,6 +26,12 @@ export class AppointmentsRepoService {
     return this.http.post<Appointment>(url, data);
   }
 
+  updateNote(therapyId: string, appointmentId: string, notes: string): Observable<Appointment> {
+    const url = `${this.apiUrl}/therapies/${therapyId}/appointments/${appointmentId}`;
+    const payload = { notes: notes };
+    return this.http.patch<Appointment>(url, payload);
+  }
+
   requestAppointment(therapyId: string, appointmentId: string, notes?: string): Observable<{ message: string }> {
     const body = { notes };
     return this.http.post<{ message: string }>(
