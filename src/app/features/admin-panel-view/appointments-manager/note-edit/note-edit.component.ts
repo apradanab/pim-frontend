@@ -15,7 +15,7 @@ import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
           <button class="save-note-btn" (click)="saveNote()" title="Guardar">
               <fa-icon [icon]="faSave"/>
           </button>
-          <button class="cancel-note-btn" (click)="cancel.emit()" title="Cancelar">
+          <button class="cancel-note-btn" (click)="cancelClick.emit()" title="Cancelar">
               <fa-icon [icon]="faTimes"/>
           </button>
       </div>
@@ -60,7 +60,7 @@ import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 export class NoteEditComponent implements OnInit{
   initialNote = input<string>('');
   noteSaved = output<string>();
-  cancel = output<void>();
+  cancelClick = output<void>();
 
   currentNote = signal('');
 
