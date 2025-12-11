@@ -29,6 +29,7 @@ export interface AdviceState {
   list: Advice[];
   filtered: Advice[];
   current: Advice | null;
+  isLoading: boolean;
   error: string | null;
 }
 
