@@ -1,9 +1,10 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { Advice } from '../../../../models/advice.model';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { AdviceEditFormComponent } from "../advice-edit-form/advice-edit-form.component";
 import { ImageService } from '../../../../core/services/utils/image.service';
+import { Therapy } from '../../../../models/therapy.model';
 
 @Component({
   selector: 'pim-advice-card',
@@ -13,6 +14,7 @@ import { ImageService } from '../../../../core/services/utils/image.service';
   @if (isEdit) {
     <pim-advice-edit-form
       [advice]="advice()"
+      [therapyTitle]="therapyTitle()"
       (update)="handleUpdate($event)"
       (cancelClick)="toggleEditMode()"/>
   } @else {
@@ -32,8 +34,8 @@ import { ImageService } from '../../../../core/services/utils/image.service';
 
       <div class="card-side">
         <div class="card-side">
-          @if (advice().image.url) {
-            <img [src]="advice().image.url" [alt]="advice().title">
+          @if (advice().image?.url) {
+            <img [src]="advice().image?.url" [alt]="advice().title">
           } @else {
             <img [src]="images.icons.orangeLogo" alt="Placeholder de imagen">
           }
@@ -92,7 +94,6 @@ import { ImageService } from '../../../../core/services/utils/image.service';
   .therapy-title {
     padding: 10px;
     background-color: #e8e8e8ff;
-    position: relative;
     color: #717171ff;
     border-radius: 20px 0 0 20px;
     position: absolute;
@@ -101,7 +102,7 @@ import { ImageService } from '../../../../core/services/utils/image.service';
   }
 
   .content {
-    line-height: 1.4;
+    line-height: 1.2;
     color: #555;
   }
 
@@ -147,7 +148,7 @@ export class AdviceCardComponent {
   readonly images = inject(ImageService);
 
   advice = input.required<Advice>();
-  therapyTitle = input<string>();
+  availableTherapies = input.required<Therapy[]>();
   edit = output<Advice>();
   delete = output<string>();
 
@@ -155,6 +156,14 @@ export class AdviceCardComponent {
 
   faPencil = faPencil;
   faTrash = faTrash;
+
+  therapyTitle = computed(() => {
+    const therapies = this.availableTherapies()
+    const advice = this.advice();
+
+    const therapy = therapies.find(t => t.therapyId === advice.therapyId);
+    return therapy?.title ?? '';
+  });
 
   toggleEditMode() {
     this.isEdit = !this.isEdit;

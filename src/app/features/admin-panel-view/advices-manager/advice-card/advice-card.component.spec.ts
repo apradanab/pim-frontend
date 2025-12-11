@@ -3,6 +3,7 @@ import { AdviceCardComponent } from './advice-card.component';
 import { Advice } from '../../../../models/advice.model';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { Therapy } from '../../../../models/therapy.model';
 
 describe('AdviceCardComponent', () => {
   let component: AdviceCardComponent;
@@ -18,6 +19,11 @@ describe('AdviceCardComponent', () => {
     createdAt: '2025-01-01'
   };
 
+  const mockTherapies: Therapy[] = [
+    { therapyId: 't1', title: 'Terapia', description: 'Desctipción', content: 'Contenido', maxParticipants: 1, createdAt: '' },
+    { therapyId: 't2', title: 'Otra Terapia', description: 'Descripción', content: 'Contenido', maxParticipants: 1, createdAt: '' },
+  ]
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AdviceCardComponent],
@@ -31,6 +37,7 @@ describe('AdviceCardComponent', () => {
     component = fixture.componentInstance;
 
     fixture.componentRef.setInput('advice', mockAdvice);
+    fixture.componentRef.setInput('availableTherapies', mockTherapies);
     fixture.detectChanges();
   });
 
@@ -66,5 +73,17 @@ describe('AdviceCardComponent', () => {
     spyOn(component.delete, 'emit');
     component.delete.emit(mockAdvice.adviceId);
     expect(component.delete.emit).toHaveBeenCalledWith(mockAdvice.adviceId);
+  });
+
+  it('should calculate the correct therapy title based on availableTherapies', () => {
+    expect(component.therapyTitle()).toBe('Terapia');
+
+    fixture.componentRef.setInput('advice', { ...mockAdvice, therapyId: 't99' });
+    fixture.detectChanges();
+    expect(component.therapyTitle()).toBe('');
+
+    fixture.componentRef.setInput('availableTherapies', []);
+    fixture.detectChanges();
+    expect(component.therapyTitle()).toBe('');
   });
 });
