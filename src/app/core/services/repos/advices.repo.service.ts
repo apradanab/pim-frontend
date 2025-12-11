@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment.development';
 import { Observable } from 'rxjs';
-import { Advice } from '../../../models/advice.model';
+import { Advice, AdviceInput } from '../../../models/advice.model';
 
 @Injectable({
   providedIn: 'root'
@@ -24,8 +24,8 @@ export class AdvicesRepoService {
     return this.http.get<Advice[]>(`${this.therapiesUrl}/${therapyId}/advices`);
   }
 
-  createAdvice(advice: Advice): Observable<Advice> {
-    return this.http.post<Advice>(`${this.therapiesUrl}/${advice.therapyId}/advices`, advice);
+  createAdvice(data: AdviceInput): Observable<Advice> {
+    return this.http.post<Advice>(`${this.therapiesUrl}/${data.therapyId}/advices`, data);
   }
 
   updateAdvice(id: string, advice: Partial<Advice>): Observable<Advice> {
