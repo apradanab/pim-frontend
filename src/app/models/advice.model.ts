@@ -4,7 +4,7 @@ export type Advice = {
   title: string;
   description: string;
   content: string;
-  image: {
+  image?: {
     key: string;
     url: string;
     size?: number;
@@ -17,4 +17,14 @@ export interface AdviceFormValue {
   title: string;
   description: string;
   content: string;
+  therapyId: string;
+}
+
+export interface AdviceInput {
+  title: string;
+  description: string;
+  content: string;
+  therapyId: string;
+  imageKey?: string;
+  [key: string]: unknown;
 }
