@@ -50,6 +50,7 @@ describe('AdviceEditFormComponent', () => {
     mediaService = TestBed.inject(MediaService) as unknown as MockMediaService;
 
     fixture.componentRef.setInput('advice', mockAdvice);
+    fixture.componentRef.setInput('therapyTitle', 'Título de prueba');
 
     fixture.detectChanges();
     await fixture.whenStable();
@@ -106,7 +107,7 @@ describe('AdviceEditFormComponent', () => {
     }));
   });
 
-  it('should emit updated advice with undefined image when advice has no image and no file', async () => {
+  it('should emit updated advice with undefined image when advice has no image and no file', fakeAsync (() => {
     spyOn(component.update, 'emit');
 
     fixture.componentRef.setInput('advice', {
@@ -114,10 +115,12 @@ describe('AdviceEditFormComponent', () => {
       image: undefined
     });
 
+    tick();
     fixture.detectChanges();
     component.file.set(null);
 
-    await component.submit();
+    component.submit();
+    tick();
 
     expect(component.update.emit).toHaveBeenCalledWith({
       ...mockAdvice,
@@ -125,8 +128,10 @@ describe('AdviceEditFormComponent', () => {
       title: component.adviceForm.value.title!,
       description: component.adviceForm.value.description!,
       content: component.adviceForm.value.content!,
+      therapyId: component.adviceForm.value.therapyId!,
+      createdAt: '2025-01-01'
     });
-  });
+  }));
 
   it('should not submit if form is invalid', async () => {
     spyOn(component.update, 'emit');

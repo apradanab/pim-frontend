@@ -14,11 +14,16 @@ import { ImageInfo } from '../../../../models/form.model';
   <form [formGroup]="adviceForm" class="edit-form">
     <div class="card-text-details">
       <div class="header">
-        <input type="text" formControlName="title" class="title">
-        <input type="text" formControlName="description" class="description">
+        <div>
+          <input id="title" type="text" formControlName="title">
+          <input id="description" type="text" formControlName="description">
+        </div>
+        <div class="therapy-display">
+          <p>{{ therapyTitle() }}</p>
+        </div>
       </div>
       <div class="content-wrapper">
-        <textarea formControlName="content" class="content"></textarea>
+        <textarea id="content" formControlName="content"></textarea>
       </div>
     </div>
 
@@ -61,38 +66,53 @@ import { ImageInfo } from '../../../../models/form.model';
 
   .header {
     display: flex;
-    justify-content: space-between;
     position: relative;
   }
 
-  .title {
+  #title {
+    width: 500px;
+    padding: 0 20px;
     font: 400 2.5rem/1 'Caprasimo', cursive;
     color: #2f2929;
-    border: none;
-    outline: none;
+    border: 2px solid #ddd;
+    border-radius: 12px;
     background: transparent;
-    width: 100%;
   }
 
-  .description {
-    color: #9e9e9b;
+  #description {
+    width: 100%;
+    padding: 0 20px;
+    margin-top: 5px;
     font-size: 1.3rem;
-    border: none;
-    outline: none;
+    color: #9e9e9b;
+    border: 2px solid #ddd;
+    border-radius: 12px;
     background: transparent;
-    width: 100%;
   }
 
-  .content {
+  .therapy-display {
+    position: absolute;
+    top: 17px;
+    right: -48px;
+    font: 400 1rem 'Carlito', sans-serif;
+    padding: 10px;
+    background-color: #e8e8e8ff;
+    color: #717171ff;
+    border: none;
+    border-radius: 20px 0 0 20px;
+  }
+
+  #content {
+    font: 400 1rem 'Carlito', sans-serif;
     width: 100%;
+    height: 210px;
     min-height: 150px;
     border-radius: 10px;
-    border: 1px solid #ddd;
+    border: 2px solid #ddd;
     padding: 10px;
-    font-family: inherit;
-    font-size: 1.1rem;
     color: #555;
-    resize: vertical;
+    overflow-y: auto;
+    scrollbar-color: #d1d2d0ff white;
   }
 
   .card-side {
@@ -102,21 +122,33 @@ import { ImageInfo } from '../../../../models/form.model';
     align-items: center;
   }
 
-  .image-upload-area {
-    position: relative;
+  .card-side img {
     width: 250px;
     height: 260px;
-    border-radius: 20px;
-    overflow: hidden;
+    object-fit: cover;
     border: 2px solid #ebece940;
+    border-radius: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .image-upload-area {
+    position: relative;
+  }
+
+  .overlay {
+    position: absolute;
+    bottom: 44%;
+    right: 43%;
+    padding: 10px 12px;
+    background-color: #ebece9;
+    border-radius: 50%;
     cursor: pointer;
   }
 
-  .image-upload-area img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  .overlay:active {
+    box-shadow: 0px 0px 10px 10px rgba(191, 207, 207, 0.54);
+    border-color: rgba(81, 69, 69, 0.8);
+    padding: 9px 11px;
   }
 
   .placeholder-img {
@@ -131,20 +163,6 @@ import { ImageInfo } from '../../../../models/form.model';
     text-align: center;
   }
 
-  .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.2);
-    color: white;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
 
   .actions {
     display: flex;
@@ -176,10 +194,13 @@ export class AdviceEditFormComponent extends BaseEditForm<Advice>{
   update = output<Advice>();
   cancelClick = output<void>();
 
+  therapyTitle = input.required<string>();
+
   adviceForm = this.fb.group({
     title: ['', Validators.required],
     description: ['', Validators.required],
-    content: ['', Validators.required]
+    content: ['', Validators.required],
+    therapyId: ['', Validators.required]
   });
 
   faTimes = faTimes;
@@ -195,6 +216,7 @@ export class AdviceEditFormComponent extends BaseEditForm<Advice>{
         title: currentAdvice.title,
         description: currentAdvice.description,
         content: currentAdvice.content,
+        therapyId: currentAdvice.therapyId
       }, { emitEvent: false });
 
       this.previewUrl.set(currentAdvice.image?.url);
@@ -214,13 +236,15 @@ export class AdviceEditFormComponent extends BaseEditForm<Advice>{
   override  buildUpdatedItem(formValue: object, image: ImageInfo | undefined): Advice {
     const currentAdvice = this.advice();
     const values = formValue as AdviceFormValue;
+    const newImage = image ?? currentAdvice.image;
 
     return {
       ...currentAdvice,
       title: values.title,
       description: values.description,
       content: values.content,
-      image: image
+      therapyId: values.therapyId,
+      image: newImage
     } as Advice;
   }
 
