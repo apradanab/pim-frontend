@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { AdvicesRepoService } from '../repos/advices.repo.service';
 import { AdviceState } from '../../../models/state.model';
 import { ApiError } from '../../interceptors/error.interceptor';
-import { Advice } from '../../../models/advice.model';
+import { Advice, AdviceInput } from '../../../models/advice.model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,19 +14,23 @@ export class AdvicesStateService {
     list: [],
     filtered: [],
     current: null,
+    isLoading: false,
     error: null,
   });
   advicesState = this.#state.asReadonly();
 
   listAdvices = () => {
+    this.#state.update(s => ({ ...s, isLoading: true, error: null }));
     this.advicesRepo.listAdvices().subscribe({
       next: (advices) => this.#state.update(s => ({
         ...s,
-        list: advices
+        list: advices,
+        isLoading: false,
       })),
       error: (err: ApiError)=> this.#state.update(s => ({
         ...s,
         list: [],
+        isLoading: false,
         error: err.message
       }))
     });
@@ -61,16 +65,22 @@ export class AdvicesStateService {
     });
   }
 
-  createAdvice = (advice: Advice) => {
-    return this.advicesRepo.createAdvice(advice).subscribe({
-      next: (newAdvice) => this.#state.update(s => ({
+  createAdvice = (data: AdviceInput) => {
+    this.#state.update(s => ({ ...s, isLoading: true, error: null }));
+
+    return this.advicesRepo.createAdvice(data).subscribe({
+      next: (newAdvice) => {
+      this.#state.update(s => ({
         ...s,
-        list: [...s.list, newAdvice]
-      })),
+        list: [...s.list, newAdvice],
+        isLoading: false,
+      }));
+      },
       error: (err: ApiError) => {
         console.error('Error creating advice:', err.message);
+        this.#state.update(s => ({ ...s, isLoading: false, error: err.message }));
       }
-    })
+    });
   }
 
   updateAdvice = (id: string, advice: Partial<Advice>) => {
