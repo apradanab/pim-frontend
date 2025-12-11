@@ -236,7 +236,7 @@ export class AdviceEditFormComponent extends BaseEditForm<Advice>{
   override  buildUpdatedItem(formValue: object, image: ImageInfo | undefined): Advice {
     const currentAdvice = this.advice();
     const values = formValue as AdviceFormValue;
-    const newImage = image !== undefined ? image : currentAdvice.image;
+    const newImage = image ?? currentAdvice.image;
 
     return {
       ...currentAdvice,
