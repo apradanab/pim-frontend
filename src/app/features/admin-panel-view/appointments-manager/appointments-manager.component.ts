@@ -35,6 +35,9 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
       </div>
     }
+
+  </div>
+  <div class="footer"></div>
     @if (appointmentToDelete(); as info) {
       <pim-confirmation-modal
         [id]="info.appointmentId"
@@ -46,10 +49,24 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
   styles: `
   .management {
     min-height: 500px;
+    position: relative;
+    border-top: 4px solid #ebece9;
+    background-color: white;
+    animation: fadeIn 0.5s ease;
+    box-shadow:
+        8px 0 15px -10px rgba(0,0,0,0.2),
+        -8px 0 15px -10px rgba(0,0,0,0.2);
+    z-index: 1;
   }
 
   .loading-overlay {
-    height: 300px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 600px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -63,23 +80,26 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
   }
 
   .list {
-    border-top: 4px solid #ebece9;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     position: relative;
     gap: 1rem;
     padding: 2rem 4rem;
     background-color: white;
     z-index: 1;
     animation: fadeIn 0.5s ease;
-    box-shadow:
-        8px 0 15px -10px rgba(0,0,0,0.2),
-        -8px 0 15px -10px rgba(0,0,0,0.2);
   }
 
   .card {
     display: flex;
+  }
+
+  .footer {
+    height: 30px;
+    background-color: #ebece9;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 8px 0 15px -10px rgba(0, 0, 0, 0.2),
+                -8px 0 15px -10px rgba(0, 0, 0, 0.2);
   }
 
   @keyframes fadeIn {
