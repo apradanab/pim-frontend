@@ -1,15 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { TherapiesManagerComponent } from "../therapies-manager/therapies-manager.component";
 import { AdvicesManagerComponent } from "../advices-manager/advices-manager.component";
 import { UsersManagerComponent } from "../users-manager/users-manager.component";
 import { AppointmentsManagerComponent } from "../appointments-manager/appointments-manager.component";
+import { AuthStateService } from '../../../core/services/states/auth.state.service';
+import { Router } from '@angular/router';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'pim-admin-tabs-controller',
   standalone: true,
-  imports: [TherapiesManagerComponent, AdvicesManagerComponent, UsersManagerComponent, AppointmentsManagerComponent],
+  imports: [TherapiesManagerComponent, AdvicesManagerComponent, UsersManagerComponent, AppointmentsManagerComponent, FontAwesomeModule],
   template: `
     <div class="admin-tabs">
+      <button class="logout-btn" (click)="logout()"><fa-icon [icon]="faBracket"/>Cerrar sesión</button>
       <div class="grid-background"></div>
 
       <div class="tabs-header">
@@ -44,6 +49,29 @@ import { AppointmentsManagerComponent } from "../appointments-manager/appointmen
     padding: 2rem 8.4vw;
     padding-top: 65px;
     background-color: #fcfcf9;
+  }
+
+  .logout-btn {
+    position: absolute;
+    top: 8px;
+    right: 130px;
+    background-color: #f5f5f5;
+    color: #717171ff;
+    border: 1px solid #ddd;
+    padding: 10px 15px;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+  }
+
+  .logout-btn fa-icon {
+    padding: 0 10px 0 0;
+    color: #717171ff;
+  }
+
+  .logout-btn:active {
+    background-color: #ebece9;
   }
 
   .grid-background {
@@ -97,7 +125,11 @@ import { AppointmentsManagerComponent } from "../appointments-manager/appointmen
   `
 })
 export class AdminTabsControllerComponent {
+  private readonly authService = inject(AuthStateService);
+  private readonly router = inject(Router);
+
   activeTab: string = 'therapies';
+  faBracket = faRightFromBracket;
 
   tabs = [
     { key: 'therapies', label: 'Terapias'},
@@ -108,5 +140,10 @@ export class AdminTabsControllerComponent {
 
   setActiveTab(tabKey: string) {
     this.activeTab = tabKey;
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/home']);
   }
 }
