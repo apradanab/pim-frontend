@@ -171,7 +171,7 @@ import { ImageService } from '../../../core/services/utils/image.service';
   }
 
   .schedule-button:active {
-    background-color: #cddb66ff;
+    background-color: #dbea6fff;
     color: white;
   }
 
@@ -192,7 +192,7 @@ import { ImageService } from '../../../core/services/utils/image.service';
   }
 
   .edit-button:active {
-    background-color: #ddd;
+    background-color: #ebece9;
   }
 
   .logout-button {
@@ -212,7 +212,7 @@ import { ImageService } from '../../../core/services/utils/image.service';
   }
 
   .logout-button:active {
-    background-color: #ddd;
+    background-color: #ebece9;
   }
 
   `

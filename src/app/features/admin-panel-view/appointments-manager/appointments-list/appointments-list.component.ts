@@ -21,7 +21,7 @@ import { AppointmentsFilterComponent } from "../appointments-filter/appointments
   />
   <div class="list">
   @if (!isCreateForm()) {
-    <button class="create-card card" (click)="toggleCreateForm.emit(true)">
+    <button class="create-card card" (click)="toggleCreateForm.emit(true)" title="Crear cita">
       <fa-icon [icon]="faPlus" size="2x" class="create-icon"/>
     </button>
   } @else {
@@ -68,11 +68,16 @@ import { AppointmentsFilterComponent } from "../appointments-filter/appointments
   }
 
   .card {
+    font-size: 1.2rem;
     width: 250px;
     height: 165px;
     border-radius: 20px;
-    border: 1px solid lightgray;
-    color: white;
+    border: 1.5px solid #7171713b;
+    color: #717171ff;
+  }
+
+  fa-icon:active {
+    font-size: 1rem;
   }
   `
 })

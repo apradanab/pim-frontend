@@ -26,7 +26,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
               (keyup.enter)="toggleCard(advice.adviceId)"
               tabindex="0">
             <div class="card-content">
-              <img [src]="advice.image.url" alt="{{advice.title}}" class="card-image">
+              <img [src]="advice.image?.url" alt="{{advice.title}}" class="card-image">
               <h3>{{ advice.title }}</h3>
               <p class="description">{{ advice.description }}</p>
 

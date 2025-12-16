@@ -44,8 +44,9 @@ import { faArrowRotateRight, faEllipsisVertical } from '@fortawesome/free-solid-
   styles: `
   .filters-container {
     display: flex;
-    justify-content: center;
     margin-bottom: 1.5rem;
+    position: relative;
+    right: -305px;
   }
 
   .icon {

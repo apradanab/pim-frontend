@@ -40,18 +40,16 @@ import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background-color: #92d4d5;
+    background-color: #c6c6c6ff;
   }
 
   .icon-circle fa-icon {
-    color: white;
     font-size: small;
   }
 
   h3 {
     font-size: 1.25rem;
     font-weight: 100;
-    color: white;
   }
   `
 })

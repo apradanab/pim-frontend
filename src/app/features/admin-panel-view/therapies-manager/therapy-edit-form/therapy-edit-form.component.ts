@@ -14,11 +14,11 @@ import { ImageInfo } from '../../../../models/form.model';
   <form [formGroup]="therapyForm" class="edit-form">
       <div class="card-text-details">
         <div class="header">
-          <input type="text" formControlName="title" class="title">
-          <input type="text" formControlName="description" class="description">
+          <input id="title" type="text" formControlName="title">
+          <input id="description" type="text" formControlName="description">
         </div>
         <div class="content-wrapper">
-          <textarea formControlName="content" class="content"></textarea>
+          <textarea id="content" formControlName="content" class="content" name="content"></textarea>
         </div>
       </div>
 
@@ -35,10 +35,10 @@ import { ImageInfo } from '../../../../models/form.model';
 
         <div class="footer-side">
           <div class="color-wrapper">
-            <input type="color" formControlName="bgColor" class="color-picker-hidden">
+            <input id="bgColor" type="color" formControlName="bgColor">
             <div class="color-picker-indicator" [style.background]="therapyForm.get('bgColor')?.value"></div>
           </div>
-            <input type="number" formControlName="maxParticipants" class="participants-input">
+            <input id="participants" type="number" formControlName="maxParticipants" class="participants-input">
 
             <div class="actions">
               <button class="save-btn" (click)="submit()" [disabled]="therapyForm.invalid"><fa-icon [icon]="faSave"/>Guardar</button>
@@ -60,18 +60,24 @@ import { ImageInfo } from '../../../../models/form.model';
     gap: 0.5rem;
   }
 
-  .title {
+  #title {
     font: 400 2.6rem/1 'Caprasimo', cursive;
     width: 500px;
+    padding: 0 25px;
+    border: 2px solid #ebece9a7;
+    border-radius: 12px;
   }
 
-  .description {
+  #description {
     width: 500px;
     font-size: 1.35rem;
     display: flex;
     justify-content: flex-end;
+    padding: 0 25px;
     margin-top: 5px;
     margin-right: 13px;
+    border: 2px solid #ebece9a7;
+    border-radius: 12px;
   }
 
   .content-wrapper {
@@ -83,11 +89,15 @@ import { ImageInfo } from '../../../../models/form.model';
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
 
-  .content {
-    height: 100%;
-    width: 100%;
+  #content {
+    position: relative;
+    top: -1px;
+    right: 6px;
+    font: 400 1rem 'Carlito', sans-serif;
+    height: 102%;
+    width: 101%;
     background-color: white;
-    padding: 8px 20px;
+    padding: 8px 25px;
     overflow-y: auto;
     overflow-x: hidden;
     scrollbar-color: #d1d2d0ff white;
@@ -145,7 +155,7 @@ import { ImageInfo } from '../../../../models/form.model';
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
 
-  .color-picker-hidden {
+  #bgColor {
     opacity: 0;
     height: 39px;
     width: 40px;
@@ -166,13 +176,13 @@ import { ImageInfo } from '../../../../models/form.model';
   }
 
   .participants-input {
+    font: 400 1.4rem 'Carlito', sans-serif;
     width: 50px;
     text-align: center;
     padding: 13px 0;
     background-color: white;
     border-radius: 12px;
     align-self: flex-end;
-    font-size: 1.4rem;
     border: 2px solid #ebece9a7;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }

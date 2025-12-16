@@ -29,7 +29,7 @@ import { ContactModalComponent } from "../../../shared/contact-modal/contact-mod
   .intro-section {
     position: relative;
     text-align: center;
-    padding: 60px 40px;
+    padding: 50px 40px;
     display: flex;
     justify-content: center;
     background-color: #fcfcf9;
@@ -41,7 +41,7 @@ import { ContactModalComponent } from "../../../shared/contact-modal/contact-mod
     left: 50%;
     transform: translateX(-50%);
     width: 83%;
-    height: 350px;
+    height: 320px;
     background-color: white;
     background-image:
       repeating-linear-gradient(90deg, #f4f2ed 0, #f4f2ed 1px, transparent 1px, transparent 100%),
@@ -63,7 +63,7 @@ import { ContactModalComponent } from "../../../shared/contact-modal/contact-mod
     font-weight: normal;
     font-size: 4.6rem;
     position: relative;
-    bottom: 20px;
+    bottom: 25px;
   }
 
   .intro-section h2 {
@@ -71,7 +71,7 @@ import { ContactModalComponent } from "../../../shared/contact-modal/contact-mod
     font-weight: normal;
     font-size: 3.8rem;
     position: relative;
-    bottom: 25px;
+    bottom: 35px;
   }
 
   .intro-section p {
@@ -81,7 +81,7 @@ import { ContactModalComponent } from "../../../shared/contact-modal/contact-mod
     width: 570px;
     z-index: 1;
     position: relative;
-    bottom: 13px;
+    bottom: 23px;
   }
 
   .intro-section button {
@@ -96,7 +96,7 @@ import { ContactModalComponent } from "../../../shared/contact-modal/contact-mod
     cursor: pointer;
     transition: all 0.2s ease;
     position: relative;
-    top: 16px;
+    top: -3px;
   }
 
   .intro-section button:active {
