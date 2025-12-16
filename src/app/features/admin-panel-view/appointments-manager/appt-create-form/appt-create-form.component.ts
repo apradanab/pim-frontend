@@ -2,7 +2,7 @@ import { Component, inject, input, OnInit, output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AppointmentsStateService } from '../../../../core/services/states/appointments.state.service';
-import { faCalendarPlus, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarCheck, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { AppointmentInput, UserOption } from '../../../../models/appointment.model';
 import { Therapy } from '../../../../models/therapy.model';
 
@@ -28,13 +28,18 @@ import { Therapy } from '../../../../models/therapy.model';
             <option [value]="therapy.therapyId">{{ therapy.title }}</option>
           }
         </select>
-        @if (apptForm.get('therapyId')?.invalid && apptForm.get('therapyId')?.touched) {
-          <div class="error-text">La terapia es obligatoria</div>
+        @if (
+          (apptForm.get('therapyId')?.invalid && apptForm.get('therapyId')?.touched) ||
+          (apptForm.get('date')?.invalid && apptForm.get('date')?.touched) ||
+          (apptForm.get('startTime')?.invalid && apptForm.get('startTime')?.touched) ||
+          (apptForm.get('endTime')?.invalid && apptForm.get('endTime')?.touched)
+        ) {
+          <div class="error-text">La terapia, la hora y el día son obligatorios</div>
         }
       </div>
       <div class="form-group grid-col-2">
-        <label for="userEmail">
-          <select id="userEmail" formControlName="userEmail" class="input-field">
+        <label for="user-email">
+          <select id="user-email" formControlName="userEmail" class="input-field">
             <option value="">Paciente</option>
             @for (user of availableUsers(); track user.email) {
               <option [value]="user.email">{{ user.name }}</option>
@@ -44,7 +49,7 @@ import { Therapy } from '../../../../models/therapy.model';
 
           <div class="form-group">
             <label for="maxParticipants">
-              <input id="maxParticipants" type="number" formControlName="maxParticipants" class="participants-input-field" min="1" placeholder="Participantes" />
+              <input id="maxParticipants" type="number" formControlName="maxParticipants" class="participants-input-field" min="1" placeholder="Nº" />
             </label>
           </div>
       </div>
@@ -56,12 +61,12 @@ import { Therapy } from '../../../../models/therapy.model';
 
       <div class="duration-row">
         <div class="form-group">
-          <label for="startTime">Hora Inicio</label>
+          <label for="startTime">Empieza:</label>
           <input id="startTime" type="time" formControlName="startTime" class="input-field" />
         </div>
 
         <div class="form-group">
-          <label for="endTime">Hora Fin</label>
+          <label for="endTime">Acaba:</label>
           <input id="endTime" type="time" formControlName="endTime" class="input-field" />
         </div>
       </div>
@@ -74,7 +79,7 @@ import { Therapy } from '../../../../models/therapy.model';
         [disabled]="apptForm.invalid || apptsState().isLoading"
       >
         <fa-icon [icon]="apptsState().isLoading ? faCheck : faCalendar"/>
-        {{ apptsState().isLoading ? 'Creando...' : 'Crear Cita' }}
+        {{ apptsState().isLoading ? 'Guardando...' : 'Guardar' }}
       </button>
 
       <button
@@ -101,16 +106,51 @@ import { Therapy } from '../../../../models/therapy.model';
     position: relative;
   }
 
+  .error-text {
+    position: absolute;
+    color: #f15e5eff;;
+    font-size: 0.7rem;
+    font-weight: bold;
+    top: 0;
+    left: 1rem;
+  }
+
   .grid-col-2 {
     display: flex;
+    justify-content: space-between;
+    position: relative;
+  }
+
+  #user-email {
+    width: 145px;
+  }
+
+  .input-field {
+    border-radius: 10px;
+    border: none;
+    padding: 0px 3px 1px 5px;
+    color: #717171ff;
   }
 
   .duration-row {
+    font-size: 1rem;
     display: flex;
   }
 
+  .duration-row label {
+    font-size: 0.9rem;
+  }
+
   .participants-input-field {
-    width: 60px;
+    width: 40px;
+    height: 30px;
+    position: absolute;
+    right: 5px;
+    padding-left: 8px;
+    padding-right: 3px;
+    border-radius: 10px;
+    border: none;
+    top: -18px;
   }
 
   .actions {
@@ -123,17 +163,25 @@ import { Therapy } from '../../../../models/therapy.model';
     display: flex;
     justify-content: space-around;
     align-items: center;
-    background-color: #e8e8e8ff;
+    background-color: #f5f5f5;
     gap: 0.5rem;
     border: 1px solid #ddd;
-    border-radius: 30px;
+    border-radius: 20px 20px 0 0;
     cursor: pointer;
     color: #717171ff;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    bottom: 0;
+    left: 40px;
+  }
+
+  .save-btn:active {
+    background-color: #e8e8e8ff;
   }
 
   .cancel-btn {
-    padding: 6.5px;
+    padding: 7px;
+    font-size: 1rem;
     border-radius: 15px 5px;
     color: #717171ff;
     background-color: #f5f5f5;
@@ -144,8 +192,8 @@ import { Therapy } from '../../../../models/therapy.model';
     right: 0;
   }
 
-  .cancel-btn fa-icon {
-    font-size: 1.2rem;
+  .cancel-btn:active {
+    background-color: #e8e8e8ff;
   }
   `
 })
@@ -161,7 +209,7 @@ export class ApptCreateFormComponent implements OnInit {
 
   apptsState = this.apptsService.appointmentsState;
 
-  faCalendar = faCalendarPlus;
+  faCalendar = faCalendarCheck;
   faTimes = faTimes;
   faCheck = faCheck;
 

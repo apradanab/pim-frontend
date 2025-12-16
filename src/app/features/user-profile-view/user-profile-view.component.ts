@@ -16,7 +16,11 @@ import { AppointmentsListComponent } from './appointments-list/appointments-list
     <pim-footer></pim-footer>
   </div>
   `,
-  styles: ``
+  styles: `
+  div {
+    background-color: #fcfcf9;
+  }
+  `
 })
 export default class UserProfileViewComponent {
 

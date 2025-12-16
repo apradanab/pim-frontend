@@ -15,7 +15,7 @@ import { DateTimeService } from '../../../core/services/utils/date-time.service'
 
       @if (usersState().isLoading) {
         <div class="loading-overlay">
-          <fa-icon [icon]="faSpinner" size="2x"></fa-icon>
+          <fa-icon [icon]="faSpinner" class="fas fa-spinner fa-spin"></fa-icon>
         </div>
       }
 
@@ -43,6 +43,7 @@ import { DateTimeService } from '../../../core/services/utils/date-time.service'
         />
       }
     </div>
+    <div class="footer"></div>
   `,
   styles: `
     .management {
@@ -84,9 +85,20 @@ import { DateTimeService } from '../../../core/services/utils/date-time.service'
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      font-size: 1.2rem;
       color: #1bbdbf;
-      z-index: 10;
+      z-index: 2;
+    }
+
+    .loading-overlay fa-icon {
+      font-size: 45px;
+    }
+
+    .footer {
+      height: 30px;
+      background-color: #ebece9;
+      border-radius: 0 0 12px 12px;
+      box-shadow: 8px 0 15px -10px rgba(0, 0, 0, 0.2),
+                  -8px 0 15px -10px rgba(0, 0, 0, 0.2);
     }
   `
 })

@@ -22,7 +22,8 @@ import { ConfirmationModalComponent } from "../../shared/confirmation-modal/conf
         }
       </div>
     }
-
+  </div>
+  <div class="footer"></div>
     @if (therapyToDelete()) {
       <pim-confirmation-modal
           [id]="therapyToDelete()!"
@@ -30,7 +31,7 @@ import { ConfirmationModalComponent } from "../../shared/confirmation-modal/conf
           (modalClosed)="cancelDelete()"
       />
     }
-  </div>
+
   `,
   styles: `
   .management {
@@ -51,6 +52,14 @@ import { ConfirmationModalComponent } from "../../shared/confirmation-modal/conf
     box-shadow:
         8px 0 15px -10px rgba(0,0,0,0.2),
         -8px 0 15px -10px rgba(0,0,0,0.2);
+  }
+
+  .footer {
+    height: 30px;
+    background-color: #ebece9;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 8px 0 15px -10px rgba(0, 0, 0, 0.2),
+                -8px 0 15px -10px rgba(0, 0, 0, 0.2);
   }
 
   @keyframes fadeIn {
