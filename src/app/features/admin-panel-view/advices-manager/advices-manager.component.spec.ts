@@ -71,10 +71,15 @@ describe('AdvicesManagerComponent', () => {
     expect(mockService.listAdvices).toHaveBeenCalled();
   });
 
-  it('should return the correct therapy title', () => {
-    expect(component.getTherapyTitle('1')).toBe('Terapia');
-    expect(component.getTherapyTitle('nonexistent')).toBe('Terapia');
-  });
+  it('should toggle isCreateForm signal', () => {
+    expect(component.isCreateForm()).toBeFalse();
+
+    component.toggleCreateForm(true)
+    expect(component.isCreateForm()).toBeTrue();
+
+    component.toggleCreateForm(false);
+    expect(component.isCreateForm()).toBeFalse();
+  })
 
   it('should call updateAdvice when handleEdit is triggered', () => {
     component.handleEdit(mockAdvice);
