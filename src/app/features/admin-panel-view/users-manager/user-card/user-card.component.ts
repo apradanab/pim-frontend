@@ -116,7 +116,7 @@ import { User } from '../../../../models/user.model';
       left: 0;
       width: 100%;
       height: 100%;
-      padding: 1.5rem;
+      padding: 1rem 0.7rem;
       overflow-y: auto;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
