@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { AppointmentsListComponent } from './appointments-list.component';
 import { AppointmentsStateService } from '../../../core/services/states/appointments.state.service';
 import { DateTimeService } from '../../../core/services/utils/date-time.service';
@@ -219,33 +219,36 @@ describe('AppointmentsListComponent', () => {
       expect(mockAppointmentsService.getByUser).not.toHaveBeenCalled();
     });
 
-    it('should call leaveGroupAppointment, finalize action on success, and reload appointments', async () => {
+    it('should call leaveGroupAppointment, finalize action on success, and reload appointments', fakeAsync(() => {
       leaveGroupSpy.and.returnValue(Promise.resolve({ message: 'Left' }));
 
-      const promise = component.handleLeaveGroup(data);
+      component.handleLeaveGroup(data);
 
       expect(component.isCancelling()).toBeTrue();
-
-      await promise;
-
       expect(leaveGroupSpy).toHaveBeenCalledWith(data.therapyId, data.appointmentId);
+
+      tick();
+      tick();
+
       expect(component.isCancelling()).toBeFalse();
       expect(mockAppointmentsService.getByUser).toHaveBeenCalledWith('u1');
-    });
+    }));
 
-    it('should handle error from leaveGroupAppointment and finalize action', async () => {
+    it('should handle error from leaveGroupAppointment and finalize action', fakeAsync(() => {
       const error = new Error('Leaving failed');
       leaveGroupSpy.and.returnValue(Promise.reject(error));
 
       spyOn(console, 'error');
 
-      await component.handleLeaveGroup(data);
+      component.handleLeaveGroup(data);
+      tick();
+      tick();
 
       expect(leaveGroupSpy).toHaveBeenCalledWith(data.therapyId, data.appointmentId);
       expect(console.error).toHaveBeenCalledWith('Leaving error:', error);
 
       expect(mockAppointmentsService.getByUser).toHaveBeenCalledWith('u1');
       expect(component.isCancelling()).toBeFalse();
-    });
+    }));
   });
 });
