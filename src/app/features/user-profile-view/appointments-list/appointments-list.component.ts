@@ -28,7 +28,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
     @if (appointmentsState().isLoading) {
       <div class="loading-overlay">
-        <fa-icon [icon]="faSpinner"/>
+        <fa-icon [icon]="faSpinner" class="fas fa-spinner fa-spin"/>
       </div>
     } @else if (sortedAppointments().length > 0) {
 
