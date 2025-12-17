@@ -155,16 +155,16 @@ export class AdviceCardComponent {
   advice = input.required<Advice>();
   therapyTitle = input<string | null>(null);
   isExpanded = input<boolean>(false);
-  toggle = output<string>();
+  toggleAdvice = output<string>();
 
   faLeft = faAngleLeft;
 
   handleToggle() {
-    if (!this.isExpanded()) this.toggle.emit(this.advice().adviceId);
+    if (!this.isExpanded()) this.toggleAdvice.emit(this.advice().adviceId);
   }
 
   handleClose(event: Event) {
     event.stopPropagation();
-    this.toggle.emit(this.advice().adviceId);
+    this.toggleAdvice.emit(this.advice().adviceId);
   }
 }
