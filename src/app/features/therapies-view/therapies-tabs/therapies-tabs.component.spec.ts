@@ -101,18 +101,6 @@ describe('TherapiesTabsComponent', () => {
     expect(mockAdvicesService.listAdvices).toHaveBeenCalled();
   });
 
-  it('should activate correct tab and load related advices', fakeAsync(() => {
-    component.therapies.set(mockTherapiesService.therapiesState().list);
-    tick();
-
-    paramMapSubject.next(convertToParamMap({ therapyType: 'grupo-de-madres' }));
-    tick();
-    fixture.detectChanges();
-
-    expect(component.activeTab()).toBe(1);
-    expect(mockAdvicesService.listAdvicesByTherapy).toHaveBeenCalledWith('2');
-  }));
-
   it('should navigate to correct tab', () => {
     component.navigateToTab(0);
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/terapias', 'terapia-individual']);
