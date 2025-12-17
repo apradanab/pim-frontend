@@ -1,18 +1,17 @@
-import { Component, inject, signal, effect } from '@angular/core';
+import { Component, inject, signal, effect, OnInit, computed } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import DOMPurify from 'dompurify';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Advice } from '../../../models/advice.model';
 import { CommonModule } from '@angular/common';
-import { Therapy } from '../../../models/therapy.model';
 import { TherapiesStateService } from '../../../core/services/states/therapies.state.service';
 import { AdvicesStateService } from '../../../core/services/states/advices.state.service';
+import { TherapyFooterComponent } from "../therapy-footer/therapy-footer.component";
 
 @Component({
   selector: 'pim-therapies-tabs',
   standalone: true,
-  imports: [FontAwesomeModule, CommonModule],
+  imports: [FontAwesomeModule, CommonModule, TherapyFooterComponent],
   template: `
     <div class="therapies-tabs">
       <div class="grid-background"></div>
@@ -49,14 +48,7 @@ import { AdvicesStateService } from '../../../core/services/states/advices.state
         </div>
         <div class="tab-footer" [style.background]="getActiveTabBgColor()">
 
-            <h4>Consejos relacionados</h4>
-            @for (advice of relatedAdvices(); track advice.adviceId) {
-              <button class="advice-button"
-                      [style.background]="getActiveTabBgColor()"
-                      (click)="navigateToAdvice(advice.adviceId)">
-                    {{ advice.title }}
-              </button>
-            }
+            <pim-therapy-footer [advices]="relatedAdvices()" (adviceClick)="navigateToAdvice($event)"/>
 
         </div>
       </div>
@@ -172,7 +164,7 @@ import { AdvicesStateService } from '../../../core/services/states/advices.state
 
     .description {
       font-size: 1.2rem;
-      color: #555;
+      color: #9e9e9b;
       margin-bottom: 1.8rem;
       line-height: 1.5;
     }
@@ -189,6 +181,8 @@ import { AdvicesStateService } from '../../../core/services/states/advices.state
       border-radius: 12px;
       object-fit: cover;
       object-position: 100% 25%;
+      border: 2px solid #ebece978;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     }
 
     .content {
@@ -258,7 +252,7 @@ import { AdvicesStateService } from '../../../core/services/states/advices.state
     }
   `
 })
-export class TherapiesTabsComponent {
+export class TherapiesTabsComponent implements OnInit {
   private readonly therapiesService = inject(TherapiesStateService);
   private readonly advicesService = inject(AdvicesStateService);
   private readonly route = inject(ActivatedRoute);
@@ -266,12 +260,28 @@ export class TherapiesTabsComponent {
 
   faChevron = faChevronUp;
   activeTab = signal(0);
-  relatedAdvices = signal<Advice[]>([]);
-  therapies = signal<Therapy[]>([]);
+
+
+  therapies = computed(() => {
+    const list = [...this.therapiesService.therapiesState().list];
+    return list.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  });
+  relatedAdvices = computed(() => this.advicesService.advicesState().filtered ?? []);
 
   private readonly therapyRoutes = ['terapia-individual', 'grupo-de-madres', 'terapia-pedagogica'];
 
   constructor() {
+    effect(() => {
+      const currentTherapies = this.therapies();
+      const index = this.activeTab();
+      if (currentTherapies.length > 0 && currentTherapies[index]) {
+        const therapyId = currentTherapies[index].therapyId;
+        this.advicesService.listAdvicesByTherapy(therapyId);
+      }
+    }, { allowSignalWrites: true });
+  }
+
+  ngOnInit() {
     this.therapiesService.listTherapies();
     this.advicesService.listAdvices();
 
@@ -281,26 +291,8 @@ export class TherapiesTabsComponent {
 
       if (tabIndex > -1) {
         this.activeTab.set(tabIndex);
-        this.loadRelatedAdvices(tabIndex);
       }
     });
-
-    effect(() => {
-      const list = [...this.therapiesService.therapiesState().list];
-      list.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-      this.therapies.set(list);
-    }, { allowSignalWrites: true });
-
-    effect(() => {
-      this.relatedAdvices.set(this.advicesService.advicesState().filtered ?? []);
-    }, { allowSignalWrites: true });
-  }
-
-  private loadRelatedAdvices(tabIndex: number) {
-    const therapy = this.therapies()[tabIndex];
-    if (!therapy?.therapyId) return;
-
-    this.advicesService.listAdvicesByTherapy(therapy.therapyId);
   }
 
   navigateToTab(index: number) {
