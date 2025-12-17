@@ -19,7 +19,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
             [advice]="advice"
             [therapyTitle]="getTherapyTitle(advice.therapyId)"
             [isExpanded]="true"
-            (toggle)="handleCardAction($event)"/>
+            (toggleAdvice)="handleCardAction($event)"/>
         </div>
       }
 
@@ -28,7 +28,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
           @if (expandedCardId() !== advice.adviceId) {
             <pim-advice-card
               [advice]="advice"
-              (toggle)="handleCardAction($event)"/>
+              (toggleAdvice)="handleCardAction($event)"/>
           }
         }
       </div>

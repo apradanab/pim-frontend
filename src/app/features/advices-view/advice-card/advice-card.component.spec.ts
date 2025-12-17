@@ -36,20 +36,20 @@ describe('AdviceCardComponent', () => {
     fixture.componentRef.setInput('isExpanded', false);
     fixture.detectChanges();
 
-    spyOn(component.toggle, 'emit');
+    spyOn(component.toggleAdvice, 'emit');
 
     component.handleToggle();
 
-    expect(component.toggle.emit).toHaveBeenCalledWith(mockAdvice.adviceId);
+    expect(component.toggleAdvice.emit).toHaveBeenCalledWith(mockAdvice.adviceId);
   });
 
   it('should stop propagation and emit toggle when handleClose is called', () => {
     const mockEvent = jasmine.createSpyObj('Event', ['stopPropagation']);
-    spyOn(component.toggle, 'emit');
+    spyOn(component.toggleAdvice, 'emit');
 
     component.handleClose(mockEvent);
 
     expect(mockEvent.stopPropagation).toHaveBeenCalled();
-    expect(component.toggle.emit).toHaveBeenCalledWith('a1');
+    expect(component.toggleAdvice.emit).toHaveBeenCalledWith('a1');
   })
 });
