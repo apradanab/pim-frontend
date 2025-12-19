@@ -54,6 +54,16 @@ import { DateTimeService } from '../../../core/services/utils/date-time.service'
     .cell.pending   { background-color: #fbc3b4ff; color: #6c5203ff; }
     .cell.completed { background-color: #c6c6c6ff; color: #093841ff; }
     .cell.cancelled { background-color: #fbc3b4ff; color: #5d161dff; text-decoration: line-through; }
+    .cell.blocked {
+      background-color: #f4f4f4;
+      background-image: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(150, 150, 150, 0.1) 10px,
+        rgba(150, 150, 150, 0.1) 20px
+      );
+     }
 
     .cell.first-cell { border-top-left-radius: 8px; border-top-right-radius: 8px; }
     .cell.last-cell  { border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
@@ -165,6 +175,10 @@ export class ScheduleCellComponent {
     const modifiers: string[] = [];
     if (this.firstCellInAppointment()) modifiers.push('first-cell');
     if (this.lastCellInAppointment()) modifiers.push('last-cell');
+
+    if(this.logicService.isBlocked(this.dateIso(), this.hour())) {
+      modifiers.push('blocked');
+    }
 
     return [baseClass, ...modifiers].join(' ');
   });
