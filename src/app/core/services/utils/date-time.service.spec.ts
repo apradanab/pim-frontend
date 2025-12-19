@@ -15,7 +15,7 @@ describe('DateTimeService', () => {
   });
 
   it('should compute weekDays and month label', () => {
-    expect(service.weekDays().length).toBe(5);
+    expect(service.weekDays().length).toBe(4);
     expect(typeof service.currentMonthLabel()).toBe('string');
   });
 
@@ -48,12 +48,12 @@ describe('DateTimeService', () => {
 
   describe('getNextHour', () => {
     it('should return the next half-hour slot', () => {
-      const next = service.getNextHour('13:00');
-      expect(next).toBe('13:30');
+      const next = service.getNextHour('10:00');
+      expect(next).toBe('10:20');
     });
 
     it('should return an empty string if there is no next hour', () => {
-      const next = service.getNextHour('20:00');
+      const next = service.getNextHour('19:15');
       expect(next).toBe('');
     });
   });
@@ -128,8 +128,6 @@ describe('DateTimeService', () => {
       expect(service.sortItemsByDate([], (item: Appointment) => item.date)).toEqual([]);
     });
 
-    // it('should return an empty array if the input array is null')
-
     it('should correctly sort appointments by date and time', () => {
       const sorted = service.sortItemsByDate(
         mockApts,
@@ -152,6 +150,14 @@ describe('DateTimeService', () => {
       );
 
       expect(sorted.map((a: Appointment) => a.appointmentId)).toEqual(['i1', 'i2']);
-    })
-  })
+    });
+  });
+
+  describe('isBlocked', () => {
+    it('should block any hour on Friday', () => {
+      const fridayIso = '2025-12-19';
+      expect(service.isBlocked(fridayIso, '10:00')).toBeTrue();
+      expect(service.isBlocked(fridayIso, '17:00')).toBeTrue();
+    });
+  });
 });

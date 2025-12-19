@@ -10,10 +10,8 @@ export class DateTimeService {
   private readonly weeksInFuture = 3;
 
   readonly hours = [
-    '9:00', '9:30', '10:00', '10:30', '11:00', '11:30',
-    '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
-    '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
-    '18:00', '18:30', '19:00', '19:30', '20:00'
+    '9:15', '9:35', '10:00', '10:20', '10:45', '11:05','11:30', '11:50',
+    '16:15', '16:35', '17:00', '17:20', '17:45', '18:05', '18:30', '18:50', '19:15'
   ].map(time => this.normalizeTime(time));
 
   readonly weekDays = computed<WeekDay[]>(() => this.getWeekDays(this.currentWeek()));
@@ -57,7 +55,7 @@ export class DateTimeService {
   private getWeekDays(startDate: Date): WeekDay[] {
     const start = this.getMonday(startDate);
 
-    return Array.from({ length: 5 }, (_, i) => {
+    return Array.from({ length: 4 }, (_, i) => {
       const day = new Date(start);
       day.setDate(start.getDate() + i);
 
@@ -148,5 +146,19 @@ export class DateTimeService {
 
       return 0;
     })
+  }
+
+  public isBlocked(dateIso: string, hour: string): boolean {
+    const date = new Date(dateIso);
+    const day = date.getDay();
+    const timeMin = this.timeToMinutes(hour);
+
+    if (day === 5) return true;
+    if (hour === '11:30' || hour === '11:50') return true;
+
+    const isMorningTime = timeMin >= this.timeToMinutes('9:15') && timeMin <= this.timeToMinutes('11:30');
+    if ((day === 1 || day === 4) && isMorningTime) return true;
+
+    return false;
   }
 }
