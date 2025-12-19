@@ -36,6 +36,10 @@ class MockScheduleLogicService {
   normalizeTime(time: string): string {
     return time
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  isBlocked(dateIso: string, hour: string): boolean {
+    return false
+  }
 }
 
 class TestScheduleCellComponent extends ScheduleCellComponent {

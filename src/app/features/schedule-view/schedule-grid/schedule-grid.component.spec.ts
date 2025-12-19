@@ -42,14 +42,17 @@ class MockAppointmentsStateService {
 }
 
 class MockScheduleLogicService {
-  hours = ['9:00', '9:30', '10:00'];
+  hours = ['9:15', '10:00', '16:15', '19:15'];
   weekDays = signal([
     { name: 'Mon', date: 20, isoDate: '2025-10-20' },
   ]);
   getNextHour(hour: string) {
-    const hours = ['9:00', '9:30', '10:00', '10:30'];
-    const index = hours.indexOf(hour);
-    return hours[index + 1] || hour;
+    const index = this.hours.indexOf(hour);
+    return this.hours[index + 1] || '';
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  isBlocked(dateIso: string, hour: string): boolean {
+    return false;
   }
 }
 
@@ -80,6 +83,7 @@ describe('ScheduleGridComponent', () => {
         { provide: DateTimeService, useClass: MockScheduleLogicService },
         { provide: TherapiesStateService, useClass: MockTherapiesStateService },
         { provide: AuthStateService, useClass: MockAuthStateService },
+        { provide: DateTimeService, useClass: MockScheduleLogicService },
       ]
     }).compileComponents();
 
