@@ -63,7 +63,7 @@ import { DateTimeService } from '../../../core/services/utils/date-time.service'
         rgba(150, 150, 150, 0.1) 10px,
         rgba(150, 150, 150, 0.1) 20px
       );
-     }
+    }
 
     .cell.first-cell { border-top-left-radius: 8px; border-top-right-radius: 8px; }
     .cell.last-cell  { border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }

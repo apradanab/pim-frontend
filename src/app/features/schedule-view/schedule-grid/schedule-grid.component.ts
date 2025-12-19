@@ -30,7 +30,8 @@ import { BookingModalComponent } from "../booking-modal/booking-modal.component"
         </div>
 
         @for (hour of logicService.hours; track hour) {
-          <div class="row">
+          @if (hour !== '19:15') {
+            <div class="row">
             <div class="time">{{ hour }}</div>
 
             @for (day of logicService.weekDays(); track day.isoDate) {
@@ -46,6 +47,8 @@ import { BookingModalComponent } from "../booking-modal/booking-modal.component"
               </pim-schedule-cell>
             }
           </div>
+          }
+
         }
       </div>
     </div>
@@ -63,7 +66,7 @@ import { BookingModalComponent } from "../booking-modal/booking-modal.component"
   styles: `
     .schedule {
       padding: 0 2rem;
-      max-width: 1000px;
+      max-width: 900px;
       margin: 0 auto;
       margin-bottom: 30px;
       font-family: "Carlito", sans-serif;
@@ -78,7 +81,7 @@ import { BookingModalComponent } from "../booking-modal/booking-modal.component"
 
     .header-row {
       display: grid;
-      grid-template-columns: 80px repeat(5, 1fr);
+      grid-template-columns: 80px repeat(4, 1fr);
       background: #f5f5f5;
     }
 
@@ -116,7 +119,7 @@ import { BookingModalComponent } from "../booking-modal/booking-modal.component"
 
     .row {
       display: grid;
-      grid-template-columns: 80px repeat(5, 1fr);
+      grid-template-columns: 80px repeat(4, 1fr);
     }
 
     .row:last-child {
@@ -138,6 +141,24 @@ import { BookingModalComponent } from "../booking-modal/booking-modal.component"
       font-size: 0.9rem;
       justify-content: end;
       color: #676762ff;
+    }
+
+    @media (max-width: 480px) {
+      .header-row {
+        grid-template-columns: 40px repeat(4, 1fr);
+      }
+
+      .time-header fa-icon {
+        font-size: 10px;
+      }
+
+      .row {
+        grid-template-columns: 40px repeat(4, 1fr);
+      }
+
+      .day-number {
+        font-size: 1.4em;
+      }
     }
   `
 })
